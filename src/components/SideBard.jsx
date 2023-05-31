@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import logo from "../../assets/logo.png";
-import guest from "../../assets/guest.jpg";
+import logo from "../assets/logo.png";
+import guest from "../assets/guest.jpg";
 import { RxDashboard } from "react-icons/rx";
 import { TfiKey } from "react-icons/tfi";
 import { BsCalendarCheck } from "react-icons/bs";
@@ -9,10 +9,14 @@ import { HiOutlinePuzzle } from "react-icons/hi";
 import { useState } from "react";
 
 const SbContainer = styled.div`
+  position: absolute;
+  transform: ${props => props.openSideBar ? "translate(0px)" : "translate(-250px)"};
+  transition: transform 0.5s ease-in;
   padding-top: 40px;
   padding-bottom: 40px;
   width: 16%;
-  font-family: "Poppins", sans-serif;
+  padding-right: 20px;
+  
 `;
 
 const LogoContainer = styled.div`
@@ -26,25 +30,26 @@ const LinksContainer = styled.div`
   gap: 30px;
 `;
 
-const LinkContainer = styled.div<{ $primary  }>`
+const LinkContainer = styled.div`
   display: flex;
   gap: 25px;
   align-items: center;
-  color: #799283;
   font-weight: bold;
+  color: ${props => props.active ? "#E23428" : "#799283"};
   font-size: 20px;
   padding-left: 40px;
    padding-top: 10px;
    padding-bottom: 10px;
-   color: ${props => props.$primary ? "white" : "#BF4F74"};
+   border-left: ${props => props.active ? "4px solid #E23428" : "none"};
+  border-radius: 4px 0px 0px 4px;
 `;
 
-const StyledLink = styled.a`
-  text-decoration: none;
+const StyledLink = styled.div`
   font-weight: 300;
   color: #799283;
   font-size: 15px;
- 
+  cursor: pointer;
+  color: ${props => props.active ? "#E23428" : "#799283"};
 `;
 
 const CardContainer = styled.div`
@@ -59,7 +64,7 @@ const CardContainer = styled.div`
   padding-bottom: 20px;
 `;
 
-const CardTitle = styled.div`
+const CardTitle = styled.h1`
   font-size: 12px;
   color: #393939;
   font-weight: 600;
@@ -69,7 +74,7 @@ const CardTitle = styled.div`
   margin-bottom: 8px;
 `;
 
-const Email = styled.div`
+const Email = styled.h6`
   color: #b2b2b2;
   font-size: 10px;
   font-weight: 400;
@@ -91,53 +96,62 @@ const ContactUsButton = styled.button`
 
 const FootTitle = styled(CardTitle)`
   font-weight: 900;
-  width: 100%;
   width: 80%;
 `;
 
-const Rights = styled.div`
+const Rights = styled.h6`
   font-size: 9px;
   color: #799283;
   font-weight: 300;
   width: 80%;
+  margin: 0 auto;
 `;
 
-const SideBard = () => {
+const SideBard = ({ openSideBar }) => {
   const [activeLink, setActiveLink] = useState([false, false, false, false, false]);
 
+  const changeActive = (index) => {
+    const updatedLinks = [...activeLink]
+    for (let i = 0; i < updatedLinks.length; i++) {
+      updatedLinks[i] = false
+    }  
+    updatedLinks[index] = true
+    setActiveLink(updatedLinks)
+  }
+
   return (
-    <SbContainer>
+    <SbContainer openSideBar={openSideBar}>
       <LogoContainer>
         <img src={logo} alt="" width={200} height={50} />
       </LogoContainer>
       <LinksContainer>
-        <LinkContainer $primary onClick={() => setActiveLink([...activeLink, activeLink[0] === true])} active={activeLink[0]}>
+        <LinkContainer onClick={() => changeActive(0)} active={activeLink[0]}>
           <RxDashboard />
-          <StyledLink href="/" alt="">
+          <StyledLink href="/asd" alt="" active={activeLink[0]}>
             Dashboard
           </StyledLink>
         </LinkContainer>
-        <LinkContainer>
+        <LinkContainer onClick={() => changeActive(1)} active={activeLink[1]}>
           <TfiKey />
-          <StyledLink href="/" alt="">
+          <StyledLink href="/" alt="" active={activeLink[1]}>
             Room
           </StyledLink>
         </LinkContainer>
-        <LinkContainer>
+        <LinkContainer onClick={() => changeActive(2)} active={activeLink[2]}>
           <BsCalendarCheck />
-          <StyledLink href="/" alt="">
+          <StyledLink href="/" alt="" active={activeLink[2]}>
             Bookings
           </StyledLink>
         </LinkContainer>
-        <LinkContainer>
+        <LinkContainer onClick={() => changeActive(3)} active={activeLink[3]}>
           <BiUser />
-          <StyledLink href="/" alt="">
+          <StyledLink href="/" alt="" active={activeLink[3]}>
             Guest
           </StyledLink>
         </LinkContainer>
-        <LinkContainer>
+        <LinkContainer onClick={() => changeActive(4)} active={activeLink[4]}>
           <HiOutlinePuzzle />
-          <StyledLink href="/" alt="">
+          <StyledLink href="/" alt="" active={activeLink[4]}>
             Concierge
           </StyledLink>
         </LinkContainer>
