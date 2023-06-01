@@ -1,11 +1,14 @@
 import { useState } from "react";
-import room  from "../../assets/room2.jpg"
+import room2  from "../../assets/room2.jpg"
+import room1  from "../../assets/room1.jpg"
+import room3  from "../../assets/room3.jpg"
 import styled from "styled-components";
 
 
 const Container = styled.div`
   background-color:  #FFF;
     border-radius: 5px;
+    margin: 20px;
 `;
 
 const ReservContainer = styled.div`
@@ -14,6 +17,7 @@ const ReservContainer = styled.div`
     align-items: center; 
     padding-left: 40px;
     padding-right: 40px;
+    margin-bottom: 20px;
     
 `;
 
@@ -57,13 +61,10 @@ const ViewMore = styled.h1`
   font-weight: 600;
 `;
 
-const Reservations = () => {
-  const colors = ["#135846", "#E23428", "#FB9F44"]
-  const [reservations, setReservations] = useState([
-    {
+const reservations = [{
       id: 1,
       title: "Queen Bed A-12324",
-      image: room,
+      image: room1,
       room: "3",
       client: "James Doe",
       entry: "1/05/2023",
@@ -71,24 +72,25 @@ const Reservations = () => {
     },
     {
       id: 2,
-      title: "Queen Bed A-12324",
-      image: room,
-      room: "3",
-      client: "James Doe",
+      title: "Classic B-12324",
+      image: room2,
+      room: "10",
+      client: "Laura Lopez",
       entry: "1/05/2023",
       departure: "12/08/2023",
     },
     {
       id: 3,
-      title: "Queen Bed A-12324",
-      image: room,
-      room: "3",
-      client: "James Doe",
+      title: "Luxury Room  D-1231",
+      image: room3,
+      room: "2",
+      client: "José García",
       entry: "1/05/2023",
       departure: "12/08/2023",
-    },
-  ]);
+    },]
 
+const Reservations = () => {
+  const colors = ["#135846", "#E23428", "#FB9F44"]
   return (
     <Container>
       {reservations.map((reservation, index) => (

@@ -8,6 +8,7 @@ const ContainerFlex = styled.div`
   justify-content: space-between;
   gap: 40px;
   margin-bottom: 40px;
+  padding: 20px;
   
 `;
 

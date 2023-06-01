@@ -6,12 +6,13 @@ import Guest from "../pages/Guest";
 import Bookings from '../pages/Bookings'
 import Concierge from '../pages/Concierge'
 import Reviews from '../pages/Reviews'
+import BookingsDetail from "../pages/BookingsDetail";
 
-createBrowserRouter([
+export const router = createBrowserRouter([
   {
     path: "/",
     element: <Dashboard />,
-    children: [
+  },
       {
         path: "room",
         element: <Room/>,
@@ -21,8 +22,8 @@ createBrowserRouter([
         element: <Bookings/>,
       },
       {
-        path: "guest",
-        element: <Guest/>,
+        path: "bookings/:id",
+        element: <BookingsDetail/>,
       },
 
       {
@@ -36,10 +37,11 @@ createBrowserRouter([
       {
         path: "login",
         element: <Login />,
+      
       },
       {
         path: "logout",
+     
       },
-    ],
-  },
+  
 ]);

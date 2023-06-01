@@ -9,9 +9,10 @@ import { ContainerBetween } from "../../styledComponents/styled";
 const Container = styled.div`
   padding: 20px;
   padding-bottom: 20px;
-  margin-top: 40px;
   background-color: #fff;
   border-radius: 5px;
+  margin: 20px;
+    margin-top: 40px;
 `;
 
 const MessagesContainer = styled.div`

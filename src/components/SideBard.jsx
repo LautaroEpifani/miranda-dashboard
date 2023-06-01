@@ -7,21 +7,18 @@ import { BsCalendarCheck } from "react-icons/bs";
 import { BiUser } from "react-icons/bi";
 import { HiOutlinePuzzle } from "react-icons/hi";
 import { useState } from "react";
+import { LogoContainer } from "../styledComponents/styled";
+import { NavLink } from "react-router-dom";
 
 const SbContainer = styled.div`
   position: absolute;
-  transform: ${props => props.openSideBar ? "translate(0px)" : "translate(-250px)"};
+  transform: ${(props) =>
+    props.openSideBar ? "translate(0px)" : "translate(-250px)"};
   transition: transform 0.5s ease-in;
   padding-top: 40px;
   padding-bottom: 40px;
   width: 16%;
   padding-right: 20px;
-  
-`;
-
-const LogoContainer = styled.div`
-  margin-bottom: 40px;
-  padding-left: 40px;
 `;
 
 const LinksContainer = styled.div`
@@ -35,21 +32,23 @@ const LinkContainer = styled.div`
   gap: 25px;
   align-items: center;
   font-weight: bold;
-  color: ${props => props.active ? "#E23428" : "#799283"};
+  color: ${(props) => (props.active ? "#E23428" : "#799283")};
   font-size: 20px;
   padding-left: 40px;
-   padding-top: 10px;
-   padding-bottom: 10px;
-   border-left: ${props => props.active ? "4px solid #E23428" : "none"};
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-left: ${(props) => (props.active ? "4px solid #E23428" : "none")};
+
   border-radius: 4px 0px 0px 4px;
 `;
 
-const StyledLink = styled.div`
+const StyledLink = styled.a`
+  text-decoration: none;
   font-weight: 300;
   color: #799283;
   font-size: 15px;
   cursor: pointer;
-  color: ${props => props.active ? "#E23428" : "#799283"};
+  color: ${(props) => (props.active ? "#E23428" : "#799283")};
 `;
 
 const CardContainer = styled.div`
@@ -108,16 +107,22 @@ const Rights = styled.h6`
 `;
 
 const SideBard = ({ openSideBar }) => {
-  const [activeLink, setActiveLink] = useState([false, false, false, false, false]);
+  const [activeLink, setActiveLink] = useState([
+    false,
+    false,
+    false,
+    false,
+    false,
+  ]);
 
   const changeActive = (index) => {
-    const updatedLinks = [...activeLink]
+    const updatedLinks = [...activeLink];
     for (let i = 0; i < updatedLinks.length; i++) {
-      updatedLinks[i] = false
-    }  
-    updatedLinks[index] = true
-    setActiveLink(updatedLinks)
-  }
+      updatedLinks[i] = false;
+    }
+    updatedLinks[index] = true;
+    setActiveLink(updatedLinks);
+  };
 
   return (
     <SbContainer openSideBar={openSideBar}>
@@ -127,33 +132,29 @@ const SideBard = ({ openSideBar }) => {
       <LinksContainer>
         <LinkContainer onClick={() => changeActive(0)} active={activeLink[0]}>
           <RxDashboard />
-          <StyledLink href="/asd" alt="" active={activeLink[0]}>
-            Dashboard
-          </StyledLink>
+          <NavLink to="/" style={{ textDecoration: "none" }}>
+            <StyledLink active={activeLink[0]}>Dashboard</StyledLink>
+          </NavLink>
         </LinkContainer>
         <LinkContainer onClick={() => changeActive(1)} active={activeLink[1]}>
           <TfiKey />
-          <StyledLink href="/" alt="" active={activeLink[1]}>
-            Room
-          </StyledLink>
+          <NavLink to="/room" style={{ textDecoration: "none" }}>
+            <StyledLink active={activeLink[1]}>Room</StyledLink>
+          </NavLink>
         </LinkContainer>
         <LinkContainer onClick={() => changeActive(2)} active={activeLink[2]}>
           <BsCalendarCheck />
-          <StyledLink href="/" alt="" active={activeLink[2]}>
-            Bookings
-          </StyledLink>
+          <NavLink to="/bookings" style={{ textDecoration: "none" }}>
+            <StyledLink active={activeLink[2]}>Bookings</StyledLink>
+          </NavLink>
         </LinkContainer>
         <LinkContainer onClick={() => changeActive(3)} active={activeLink[3]}>
           <BiUser />
-          <StyledLink href="/" alt="" active={activeLink[3]}>
-            Guest
-          </StyledLink>
+          <StyledLink active={activeLink[3]}>Guest</StyledLink>
         </LinkContainer>
         <LinkContainer onClick={() => changeActive(4)} active={activeLink[4]}>
           <HiOutlinePuzzle />
-          <StyledLink href="/" alt="" active={activeLink[4]}>
-            Concierge
-          </StyledLink>
+          <StyledLink active={activeLink[4]}>Concierge</StyledLink>
         </LinkContainer>
       </LinksContainer>
       <CardContainer>
