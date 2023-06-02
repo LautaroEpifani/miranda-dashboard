@@ -6,9 +6,9 @@ import { TfiKey } from "react-icons/tfi";
 import { BsCalendarCheck } from "react-icons/bs";
 import { BiUser } from "react-icons/bi";
 import { HiOutlinePuzzle } from "react-icons/hi";
-import { useState } from "react";
+import {  useState } from "react";
 import { LogoContainer } from "../styledComponents/styled";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const SbContainer = styled.div`
   position: absolute;
@@ -38,12 +38,14 @@ const LinkContainer = styled.div`
   padding-top: 10px;
   padding-bottom: 10px;
   border-left: ${(props) => (props.active ? "4px solid #E23428" : "none")};
-
   border-radius: 4px 0px 0px 4px;
 `;
 
-const StyledLink = styled.a`
+const StyledLink = styled(Link)`
   text-decoration: none;
+`;
+
+const ContainerNavLink = styled.div`
   font-weight: 300;
   color: #799283;
   font-size: 15px;
@@ -106,6 +108,7 @@ const Rights = styled.h6`
   margin: 0 auto;
 `;
 
+
 const SideBard = ({ openSideBar }) => {
   const [activeLink, setActiveLink] = useState([
     false,
@@ -116,45 +119,50 @@ const SideBard = ({ openSideBar }) => {
   ]);
 
   const changeActive = (index) => {
-    const updatedLinks = [...activeLink];
+    let updatedLinks = [...activeLink];
     for (let i = 0; i < updatedLinks.length; i++) {
       updatedLinks[i] = false;
     }
     updatedLinks[index] = true;
-    setActiveLink(updatedLinks);
+    console.log(activeLink);
+   setActiveLink(updatedLinks)
+    ;
   };
+
 
   return (
     <SbContainer openSideBar={openSideBar}>
       <LogoContainer>
         <img src={logo} alt="" width={200} height={50} />
       </LogoContainer>
+
       <LinksContainer>
-        <LinkContainer onClick={() => changeActive(0)} active={activeLink[0]}>
-          <RxDashboard />
-          <NavLink to="/" style={{ textDecoration: "none" }}>
-            <StyledLink active={activeLink[0]}>Dashboard</StyledLink>
-          </NavLink>
-        </LinkContainer>
-        <LinkContainer onClick={() => changeActive(1)} active={activeLink[1]}>
-          <TfiKey />
-          <NavLink to="/room" style={{ textDecoration: "none" }}>
-            <StyledLink active={activeLink[1]}>Room</StyledLink>
-          </NavLink>
-        </LinkContainer>
-        <LinkContainer onClick={() => changeActive(2)} active={activeLink[2]}>
-          <BsCalendarCheck />
-          <NavLink to="/bookings" style={{ textDecoration: "none" }}>
-            <StyledLink active={activeLink[2]}>Bookings</StyledLink>
-          </NavLink>
-        </LinkContainer>
+        <StyledLink to="/">
+          <LinkContainer onClick={() => changeActive(0)} active={activeLink[0]}>
+            <RxDashboard />
+            <ContainerNavLink active={activeLink[0]}>Dashboard</ContainerNavLink>
+          </LinkContainer>
+        </StyledLink>
+        <StyledLink to="/room">
+          <LinkContainer onClick={() => changeActive(1)} active={activeLink[1]}>
+            <TfiKey />
+            <ContainerNavLink active={activeLink[1]}>Room</ContainerNavLink>
+          </LinkContainer>
+        </StyledLink>
+        <StyledLink to="/bookings">
+          <LinkContainer onClick={() => changeActive(2)} active={activeLink[2]}>
+            <BsCalendarCheck />
+            <ContainerNavLink active={activeLink[2]}>Bookings</ContainerNavLink>
+          </LinkContainer>
+        </StyledLink>
+
         <LinkContainer onClick={() => changeActive(3)} active={activeLink[3]}>
           <BiUser />
-          <StyledLink active={activeLink[3]}>Guest</StyledLink>
+          <ContainerNavLink active={activeLink[3]}>Guest</ContainerNavLink>
         </LinkContainer>
         <LinkContainer onClick={() => changeActive(4)} active={activeLink[4]}>
           <HiOutlinePuzzle />
-          <StyledLink active={activeLink[4]}>Concierge</StyledLink>
+          <ContainerNavLink active={activeLink[4]}>Concierge</ContainerNavLink>
         </LinkContainer>
       </LinksContainer>
       <CardContainer>

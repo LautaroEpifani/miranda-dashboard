@@ -77,7 +77,7 @@ const Popup = styled.div`
   gap: 10px;
 `;
 
-const SliderButtons = styled.button`
+export const SliderButtons = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;

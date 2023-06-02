@@ -3,6 +3,7 @@ import { ContainerBetween } from "../../styledComponents/styled";
 import styled from "styled-components";
 import { StyledInput } from "../../components/login/Login";
 import { TiArrowSortedDown } from "react-icons/ti";
+import { Link } from "react-router-dom";
 
 
 const ContainerMenu = styled.div`
@@ -17,7 +18,7 @@ const SubContainer = styled(ContainerBetween)`
 `;
 
 const Bar = styled.div`
-  width: 45%;
+  width: 38%;
   margin-left: 20px;
   margin-top: 5px;
   height: 2px;
@@ -39,22 +40,6 @@ const ContainerSections = styled.div`
   gap: 60px;
 `;
 
-const ContainerInput = styled.div`
-  margin-left: 20px;
-  position: relative;
-`;
-
-const StyledSearch = styled(StyledInput)`
-  width: 100%;
-`;
-
-const Icon = styled(BiSearchAlt)`
-  position: absolute;
-  right: 5px;
-  top: 5px;
-  color: #838383;
-`;
-
 const SelectContainer = styled.div`
   position: relative;
 `;
@@ -70,9 +55,22 @@ const StyledSelect = styled.select`
   border-radius: 8px;
   padding: 8px;
   padding-left: 12px;
+  padding-right: 24px;
   color: #135846;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
+`;
+
+const StyledButton = styled.button`
+  background-color: #135846;
+  color: #FFF;
+  padding: 12px;
+  padding-left: 40px;
+  padding-right: 40px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: 'Poppins', sans-serif;
+  margin-right: 20px;
 `;
 
 const StyledOption = styled.option`
@@ -92,21 +90,19 @@ const Menu = () => {
     <ContainerMenu>
         <SubContainer>
           <ContainerSections>
-            <StyledA href="">All Bookings</StyledA>
-            <StyledA href="">Cheking In</StyledA>
-            <StyledA href="">Cheking Out</StyledA>
-            <StyledA href="">In Progress</StyledA>
+            <StyledA href="">All Rooms</StyledA>
+            <StyledA href="">Active Employee</StyledA>
+            <StyledA href="">Inactive Employee</StyledA>
           </ContainerSections>
-          <ContainerInput>
-            <StyledSearch type="text" name="search" />
-            <Icon />
-          </ContainerInput>
           <SelectContainer>
+            <Link to="/newRoom">
+              <StyledButton>+ New Room</StyledButton>
+            </Link>
             <StyledSelect name="" id="">
-              <StyledOption value="">Guest</StyledOption>
-              <StyledOption value="">Order Date</StyledOption>
-              <StyledOption value="">Check In</StyledOption>
-              <StyledOption value="">Check Out</StyledOption>
+              <StyledOption value="">Room Number</StyledOption>
+              <StyledOption value="">Avaliable</StyledOption>
+              <StyledOption value="">Booked</StyledOption>
+              <StyledOption value="">Price</StyledOption>
             </StyledSelect>
             <StyledArrow />
           </SelectContainer>

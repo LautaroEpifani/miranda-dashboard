@@ -32,7 +32,7 @@ export const StyledInput = styled.input`
 
 const StyledButton = styled.button`
   padding: 10px;
-  background-color: #3d7653;
+  background-color: #135846;
   color: #fff;
   border-radius: 2px;
   border: none;
@@ -53,12 +53,7 @@ const Login = () => {
       email,
       password,
     });
-
-    if (loginUser.email !== email && loginUser.password !== password) {
-      navigate("/login");
-    } else {
-      navigate("/");
-    }
+    navigate("/");
   };
 
   useEffect(() => {
@@ -76,7 +71,7 @@ const Login = () => {
         <StyledLabel htmlFor="userName">Username</StyledLabel>
         <StyledInput
           type="text"
-          onChange={(e) => setUserName(e.target.value)}
+          onSubmit={(e) => setUserName(e.target.value)}
         />
       </InputContainer>
       <InputContainer>
@@ -84,7 +79,7 @@ const Login = () => {
         <StyledInput
           type="email"
           name="email"
-          onChange={(e) => setEmail(e.target.value)}
+          onSubmit={(e) => setEmail(e.target.value)}
         />
       </InputContainer>
       <InputContainer>
@@ -92,7 +87,7 @@ const Login = () => {
         <StyledInput
           type="password"
           name="password"
-          onChange={(e) => setPassword(e.target.value)}
+          onSubmit={(e) => setPassword(e.target.value)}
         />
       </InputContainer>
       <StyledButton type="submit">Log In</StyledButton>
