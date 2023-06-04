@@ -17,9 +17,11 @@ const Container = styled.div`
 
 const MessagesContainer = styled.div`
   position: relative;
+  opacity: ${(props) => (props.popup ? "0.5" : "1")};
 `;
 
 const MessagesSubContainer = styled.div`
+  
   display: flex;
   gap: 20px;
   font-size: 10px;
@@ -66,8 +68,8 @@ const Closed = styled(BsCheck2Circle)`
 const Popup = styled.div`
   display: ${(props) => (props.popup ? "flex" : "none")};
   position: absolute;
-  z-index: 1;
-  width: 50%;
+  z-index: 2;
+  width: 30%;
   padding: 20px;
   top: -70px;
   left: 50%;
@@ -75,6 +77,14 @@ const Popup = styled.div`
   background-color: #f5f5f5;
   border-radius: 10px;
   gap: 10px;
+`;
+
+const PopupContainer = styled.div`
+    background-color: #FFF;
+    padding: 20px;
+    line-height: 20px;
+    display: flex;
+    border-radius: 10px;
 `;
 
 export const SliderButtons = styled.button`
@@ -101,6 +111,7 @@ const ButtonLeft = styled(SliderButtons)`
 const ButtonRight = styled(SliderButtons)`
   right: 0;
 `;
+
 
 const Messages = () => {
   const [messages, setMessages] = useState(mock.slice(0, 5));
@@ -161,11 +172,11 @@ const Messages = () => {
   return (
     <Container>
       <h1 style={{ color: "#393939" }}>New Messages</h1>
-      <MessagesContainer>
+      <MessagesContainer >
         {console.log(slideIndex)}
         <MessagesSubContainer>
           {messages.slice(slideIndex, messages.length).map((message, index) => (
-            <Message key={message.id}>
+            <Message  key={message.id}>
               <div>
                 <h6>{message.subject}</h6>
                 <Text onClick={() => displayPopup(index)}>
@@ -180,6 +191,7 @@ const Messages = () => {
               </ContainerBetween>
               {popup[index] ? (
                 <Popup popup={popup}>
+                  <PopupContainer>
                   <div style={{ whiteSpace: "normal" }}>
                     {message.message.slice(0, 500)}
                   </div>
@@ -191,6 +203,7 @@ const Messages = () => {
                       cursor: "pointer",
                     }}
                   />
+                  </PopupContainer>
                 </Popup>
               ) : (
                 <></>

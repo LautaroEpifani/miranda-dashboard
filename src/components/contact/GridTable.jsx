@@ -31,21 +31,14 @@ const StyledTh = styled.th`
 const StyledTd = styled.td`
   padding: 20px;
   font-size: 12px;
-  padding-left: 50px;
+
   padding-right: 30px;
   color: #393939;
   font-weight: 600;
+  text-align: center; 
+    vertical-align: middle;
 `;
 
-const StyledButtonView = styled.button`
-  padding: 30px;
-  padding-top: 14px;
-  padding-bottom: 14px;
-  border-radius: 7px;
-  border: 1px solid #799283;
-  color: #799283;
-  background-color: #fff;
-`;
 
 const StyledDate = styled.h6`
   font-weight: 400;
@@ -57,7 +50,7 @@ const StyledButtonStatus = styled.button`
   padding-bottom: 14px;
   border-radius: 7px;
   border: none;
-  background-color: ${(props) => props.bgColor};
+  background-color: #FFF;
   color: ${(props) => props.color};
 `;
 
@@ -116,9 +109,8 @@ const GridTable = () => {
     reservationsJSON.slice(0, 47)
   );
   const pages = [1, 2, 3, 4, 5];
-  const [color, setColor] = useState("#FFF");
-  const [bgColor, setBgColor] = useState("#FB9F44");
-  const [status, setStatus] = useState("In Progress");
+  const [color, setColor] = useState("#E23428");
+  const [status, setStatus] = useState("Archive");
   const [activeButton, setActiveButton] = useState([
     true,
     false,
@@ -171,24 +163,20 @@ const GridTable = () => {
         <StyledTable>
           <thead>
             <tr>
-              <StyledTh scope="col">Guest</StyledTh>
-              <StyledTh scope="col">Order Date</StyledTh>
-              <StyledTh scope="col">Check In</StyledTh>
-              <StyledTh scope="col">Check Out</StyledTh>
-              <StyledTh scope="col">Special Request</StyledTh>
-              <StyledTh scope="col">Room Type</StyledTh>
-              <StyledTh scope="col">Status</StyledTh>
+              <StyledTh scope="col">Date</StyledTh>
+              <StyledTh scope="col">Customer</StyledTh>
+              <StyledTh scope="col">Comment</StyledTh>
+              <StyledTh scope="col">Action</StyledTh>
             </tr>
           </thead>
           <tbody>
             {reservations.slice(firstElement, lastElement).map((reserv) => (
-                <Link style={{ textDecoration: "none" }} to={`/bookings/${reserv.id}`} state={{ reservations: reserv }}>
               <tr key={reserv.id}>
               
-                  <StyledTd>{reserv.guest}</StyledTd>
-             
+                  <StyledTd>{reserv.order_date}</StyledTd>
+                
                 <StyledTd>
-                  <StyledDate>{reserv.order_date}</StyledDate>
+                  <StyledDate>{reserv.guest}</StyledDate>
                 </StyledTd>
                 <StyledTd>
                   <CheckContainer>
@@ -197,25 +185,14 @@ const GridTable = () => {
                   </CheckContainer>
                 </StyledTd>
                 <StyledTd>
-                  <CheckContainer>
-                    <h1>{reserv.checkout}</h1>
-                    <Styledh6>hour</Styledh6>
-                  </CheckContainer>
-                </StyledTd>
-                <StyledTd>
-                  <StyledButtonView>View Notes</StyledButtonView>
-                </StyledTd>
-                <StyledTd>{reserv.room_type}</StyledTd>
-                <StyledTd>
                   <ContainerStatus>
-                    <StyledButtonStatus color={color} bgColor={bgColor}>
+                    <StyledButtonStatus color={color} >
                       {status}
                     </StyledButtonStatus>
                     <BsThreeDotsVertical />
                   </ContainerStatus>
                 </StyledTd>
               </tr>
-                 </Link>
             ))}
           </tbody>
         </StyledTable>

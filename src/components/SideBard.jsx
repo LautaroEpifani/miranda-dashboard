@@ -124,7 +124,6 @@ const SideBard = ({ openSideBar }) => {
       updatedLinks[i] = false;
     }
     updatedLinks[index] = true;
-    console.log(activeLink);
    setActiveLink(updatedLinks)
     ;
   };
@@ -156,14 +155,18 @@ const SideBard = ({ openSideBar }) => {
           </LinkContainer>
         </StyledLink>
 
+    <StyledLink to="/contact">
         <LinkContainer onClick={() => changeActive(3)} active={activeLink[3]}>
           <BiUser />
-          <ContainerNavLink active={activeLink[3]}>Guest</ContainerNavLink>
+          <ContainerNavLink active={activeLink[3]}>Contact</ContainerNavLink>
         </LinkContainer>
+        </StyledLink>
+        <StyledLink to="/users">
         <LinkContainer onClick={() => changeActive(4)} active={activeLink[4]}>
           <HiOutlinePuzzle />
-          <ContainerNavLink active={activeLink[4]}>Concierge</ContainerNavLink>
+          <ContainerNavLink active={activeLink[4]}>Users</ContainerNavLink>
         </LinkContainer>
+        </StyledLink>
       </LinksContainer>
       <CardContainer>
         <img

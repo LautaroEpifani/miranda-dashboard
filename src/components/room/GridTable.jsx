@@ -3,6 +3,9 @@ import styled from "styled-components";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { roomsList } from '../../mockData/Rooms.js'
 import { ContainerBetween } from '../../styledComponents/styled.jsx'
+import { useSelector } from "react-redux";
+import { AmenitiesIcon } from "../Amenities.jsx";
+import { getItem } from "../../utils/localStorage.js";
 
 const ContainerTable = styled.div`
   margin: 40px;
@@ -116,8 +119,15 @@ const ContainerTd = styled(ContainerBetween)`
     gap: 20px;
 `;
 
+const StyledAmenities = styled.div`
+    display: flex;
+    gap: 5px;
+`;
+
 const GridTable = () => {
-  const [rooms, setRooms] = useState(roomsList);
+
+  const roomsRedux = useSelector((state) => state.rooms.roomsState);
+  const [rooms, setRooms] = useState(roomsRedux);
   const pages = [1, 2, 3, 4, 5];
   const [color, setColor] = useState("#FFF");
   const [bgColor, setBgColor] = useState("#5AD07A");
@@ -153,7 +163,6 @@ const GridTable = () => {
   };
 
   const colorButton = (index) => {
-    console.log(index);
     const newArray = [...activeButton];
     if (newArray[index] !== true) {
       let i = 0;
@@ -169,6 +178,7 @@ const GridTable = () => {
     colorButton(indexPagination - 1);
   }, [indexPagination]);
 
+  console.log(rooms)
   return (
     <>
       <ContainerTable>
@@ -187,8 +197,13 @@ const GridTable = () => {
           <tbody>
             {rooms.map((room) => (
               <tr key={room.id}>
+               
                 <StyledTd>
-                  <ContainerTd><StyledImg src={room.image} alt=""/><h1>{room.title}</h1></ContainerTd>
+                  <ContainerTd>
+                   
+                    <StyledImg src={room.images.images0} alt=""/>
+            
+                  </ContainerTd>
                 </StyledTd>
                 <StyledTd>
                   <StyledDate>{room.id}</StyledDate>
@@ -197,9 +212,9 @@ const GridTable = () => {
                   {room.room_type}
                 </StyledTd>
                 <StyledTd>
-            
-                    <Styledh6>{room.amenities}</Styledh6>
-               
+                    <StyledAmenities>{room.amenities.map((amenitie,index) => (
+                        <AmenitiesIcon key={index}  icon={amenitie.icon}/>
+                    ))}</StyledAmenities>
                 </StyledTd>
                 <StyledTd>
                   {room.price}

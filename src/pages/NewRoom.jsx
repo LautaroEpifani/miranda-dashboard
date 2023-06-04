@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
+import { setItem } from "../utils/localStorage";
+import { addRoom } from "../features/rooms/roomsSlice";
+import uuid from "react-uuid";
+import { AiOutlineWifi } from 'react-icons/ai'
 
 const StyledContainer = styled.div`
   margin: 40px;
   background-color: #fff;
   padding: 20px;
+  padding-left: 60px;
+  padding-top: 40px;
 `;
 
 const StyledInputContainer = styled.div`
@@ -16,10 +23,19 @@ const StyledInputContainer = styled.div`
 
 const StyledLabel = styled.label`
   width: 30%;
+  padding: 8px;
 `;
 
 const StyledInput = styled.input`
   width: 40%;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px #aaa3a3 solid;
+  &:focus {
+    border: 1px #135846 solid;
+    outline: none;
+    box-shadow: 0 0 10px #719ece;
+  }
 `;
 
 const StyledCheckBox = styled.div`
@@ -29,9 +45,46 @@ const StyledCheckBox = styled.div`
   width: 500px;
 `;
 
+const StyledInputBox = styled.input`
+  width: 5%;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px #aaa3a3 solid;
+  &:focus {
+    border: 1px #135846 solid;
+    outline: none;
+    box-shadow: 0 0 10px #719ece;
+  }
+`;
+
+const StyledSelect = styled.select`
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
+  outline: 0;
+  box-shadow: none;
+  border: 1px #aaa3a3 solid;
+  border-radius: 5px;
+  width: 20%;
+  &:focus {
+    border: 1px #135846 solid;
+    outline: none;
+    box-shadow: 0 0 10px #719ece;
+  }
+`;
+
+const StyledButton = styled.button`
+  padding: 20px;
+  border-radius: 5px;
+  background-color: #135846;
+  color: #fff;
+`;
+
 const NewRoom = () => {
   const [room, setRoom] = useState({});
   const [amenities, setAmenities] = useState([]);
+  const [images, setImages] = useState([]);
   const [isChecked, setIsChecked] = useState([
     false,
     false,
@@ -44,67 +97,61 @@ const NewRoom = () => {
     false,
     false,
   ]);
+  const setTitle = useOutletContext();
+  const rooms = useSelector((state) => state.rooms.roomsState);
+  const filteredRooms = useSelector((state) => state.rooms.filteredRooms);
+  const dispatch = useDispatch();
+
+  const navigate = useNavigate()
 
   const handleChange = ({ target: { name, value } }) => {
     setRoom({ ...room, [name]: value });
   };
 
-  const handleCheckbox = ({ target: { name } }) => {
-    let icon = "";
-    switch (name) {
-      case "wifi":
-        icon = "AiOutlineWifi";
-        break;
-      case "air_conditioner":
-        icon = "TbAirConditioningDisabled";
-        break;
-      case "breakfast":
-        icon = "GiCoffeePot";
-         break;
-      case "kitchen":
-        icon = "MdOutlineFoodBank";
-         break;
-      case "cleaning":
-        icon = "MdOutlineDryCleaning";
-         break;
-        case "shower":
-        icon = "BiShower";
-         break;
-        case "grocery":
-        icon = "IoFastFoodOutline";
-         break;
-        case "shop_near":
-        icon = "BsShop";
-         break;
-      case "single_bed":
-        icon = "LuBedSingle";
-         break;
-        case "double_bed":
-        icon = "LuBedDouble";
-         break;
-         case "towels":
-        icon = "GiTowel";
-         break;
-      default:
-         break;
+ 
+
+  const handleImages = (e) => {
+    const formData = new FormData()
+    for (let i = 0; i < e.target.files.length; i++) {
+      formData.append(`images${i}`, e.target.files[i]) ;
     }
-    setAmenities([...amenities, { [name]: name, icon }]);
+    fetch('https://httpbin.org/post', {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => setImages(data.files))
+    ;
+  };
+
+  const handleCheckbox = ({ target: { name, checked } }) => {
+    setIsChecked(!isChecked);
+    if (checked) {
+    
+      setAmenities([...amenities, { a_name: name, icon: name }]);
+    } else {
+   
+      const filtered = amenities.filter(ame => ame.a_name !== name)
+      setAmenities(filtered)
+    }
+  
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // console.log(newRoom)
-    room.price = room.price/room.discount
-    setRoom(room)
-    // //Logica de Redux para agregar nueva Room
-    // console.log(room);
-    console.log(room.price)
+    room.offer_price = (room.price - (room.price * room.discount) / 100).toFixed(2);
+    room.images = images;
+    room.amenities = amenities;
+    room.id = uuid();
+    setRoom(room);
+    dispatch(addRoom(room));
+    navigate("/room")
   };
 
-  const setTitle = useOutletContext();
   useEffect(() => {
     setTitle("New Room");
-  }, []);
+    setItem("rooms", [...rooms]);
+  }, [rooms]);
 
   return (
     <StyledContainer>
@@ -113,17 +160,18 @@ const NewRoom = () => {
           {" "}
           <StyledLabel htmlFor="">Image</StyledLabel>
           <StyledInput
+            multiple
             className=""
             type="file"
             name="image"
             id=""
-            onChange={handleChange}
+            onChange={handleImages}
           />
         </StyledInputContainer>
         <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Room Type</StyledLabel>
-          <StyledInput onChange={handleChange} type="text" name="room_number" />
+          <StyledInput onChange={handleChange} type="text" name="room_type" />
         </StyledInputContainer>
         <StyledInputContainer>
           <StyledLabel htmlFor="">Room Number</StyledLabel>
@@ -141,11 +189,11 @@ const NewRoom = () => {
         <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Offer</StyledLabel>
-          <select onChange={handleChange} name="offer">
+          <StyledSelect onChange={handleChange} name="offer">
             <option value=""></option>
             <option value="yes">YES</option>
             <option value="no">NO</option>
-          </select>
+          </StyledSelect>
         </StyledInputContainer>
 
         <StyledInputContainer>
@@ -171,120 +219,118 @@ const NewRoom = () => {
           <div>
             <StyledCheckBox>
               <StyledLabel htmlFor="">High speed wifi</StyledLabel>
-              <StyledInput
+              <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
                 name="wifi"
                 checked={isChecked[0]}
-                onClick={() => setIsChecked(!isChecked)}
               />
             </StyledCheckBox>
             <StyledCheckBox>
               <StyledLabel htmlFor="">Air conditioner</StyledLabel>
-              <StyledInput
+              <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
                 name="air_conditioner"
                 checked={isChecked[1]}
-                onClick={() => setIsChecked(!isChecked)}
+              
               />
             </StyledCheckBox>
             <StyledCheckBox>
               <StyledLabel htmlFor="">BreakFast</StyledLabel>
-              <StyledInput
+              <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
                 name="breakfast"
                 checked={isChecked[2]}
-                onClick={() => setIsChecked(!isChecked)}
+             
               />
             </StyledCheckBox>
 
             <StyledCheckBox>
               <StyledLabel htmlFor="">Kitchen</StyledLabel>
-              <StyledInput
+              <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
                 name="kitchen"
                 checked={isChecked[3]}
-                onClick={() => setIsChecked(!isChecked)}
+              
               />
             </StyledCheckBox>
             <StyledCheckBox>
               <StyledLabel htmlFor="">Cleaning</StyledLabel>
-              <StyledInput
+              <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
                 name="cleaning"
                 checked={isChecked[4]}
-                onClick={() => setIsChecked(!isChecked)}
+             
               />
             </StyledCheckBox>
             <StyledCheckBox>
               {" "}
               <StyledLabel htmlFor="">Shower</StyledLabel>
-              <StyledInput
+              <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
                 name="shower"
                 checked={isChecked[5]}
-                onClick={() => setIsChecked(!isChecked)}
+            
               />
             </StyledCheckBox>
             <StyledCheckBox>
               <StyledLabel htmlFor="">Grocery</StyledLabel>
-              <StyledInput
+              <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
                 name="grocery"
                 checked={isChecked[6]}
-                onClick={() => setIsChecked(!isChecked)}
+          
               />
             </StyledCheckBox>
             <StyledCheckBox>
               <StyledLabel htmlFor="">Single Bed</StyledLabel>
-              <StyledInput
+              <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
                 name="single_bed"
                 checked={isChecked[7]}
-                onClick={() => setIsChecked(!isChecked)}
+          
               />
             </StyledCheckBox>
             <StyledCheckBox>
               <StyledLabel htmlFor="">Double Bed</StyledLabel>
-              <StyledInput
+              <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
                 name="double_bed"
                 checked={isChecked[8]}
-                onClick={() => setIsChecked(!isChecked)}
+             
               />
             </StyledCheckBox>
             <StyledCheckBox>
               <StyledLabel htmlFor="">Shop near</StyledLabel>
-              <StyledInput
+              <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
                 name="shop_near"
                 checked={isChecked[9]}
-                onClick={() => setIsChecked(!isChecked)}
+              
               />
             </StyledCheckBox>
             <StyledCheckBox>
               {" "}
               <StyledLabel htmlFor="">Towels</StyledLabel>
-              <StyledInput
+              <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
                 name="towels"
                 checked={isChecked[10]}
-                onClick={() => setIsChecked(!isChecked)}
               />
             </StyledCheckBox>
           </div>
         </StyledInputContainer>
-        <button type="submit">Add new room</button>
+        <StyledButton type="submit">Add new room</StyledButton>
       </form>
     </StyledContainer>
   );
