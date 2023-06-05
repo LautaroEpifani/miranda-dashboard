@@ -18,13 +18,13 @@ const SubContainer = styled(ContainerBetween)`
 `;
 
 const Bar = styled.div`
-  width: 38%;
+  width: 10%;
   margin-left: 20px;
   margin-top: 5px;
   height: 2px;
   background: -moz-linear-gradient(left, #135846 75%, #d4d4d4 25%);
   background: -webkit-linear-gradient(left, #135846 75%, #d4d4d4 25%);
-  background: linear-gradient(to right, #135846 25%, #d4d4d4 25%);
+  background: linear-gradient(to right, #135846 100%, #d4d4d4 25%);
 `;
 
 const StyledA = styled.a`
@@ -91,8 +91,6 @@ const Menu = () => {
         <SubContainer>
           <ContainerSections>
             <StyledA href="">All Rooms</StyledA>
-            <StyledA href="">Active Employee</StyledA>
-            <StyledA href="">Inactive Employee</StyledA>
           </ContainerSections>
           <SelectContainer>
             <Link to="/newRoom">

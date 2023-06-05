@@ -39,16 +39,16 @@ const ContainerSections = styled.div`
   gap: 60px;
 `;
 
-const ContainerInput = styled.div`
+export const ContainerInput = styled.div`
   margin-left: 20px;
   position: relative;
 `;
 
-const StyledSearch = styled(StyledInput)`
+export const StyledSearch = styled(StyledInput)`
   width: 100%;
 `;
 
-const Icon = styled(BiSearchAlt)`
+export const Icon = styled(BiSearchAlt)`
   position: absolute;
   right: 5px;
   top: 5px;

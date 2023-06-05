@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { BsThreeDotsVertical } from "react-icons/bs";
 import reservationsJSON from "../../mockData/Reservations.json";
-import { Link } from "react-router-dom";
 
 const ContainerTable = styled.div`
   margin: 40px;
@@ -35,10 +33,9 @@ const StyledTd = styled.td`
   padding-right: 30px;
   color: #393939;
   font-weight: 600;
-  text-align: center; 
-    vertical-align: middle;
+  text-align: center;
+  vertical-align: middle;
 `;
-
 
 const StyledDate = styled.h6`
   font-weight: 400;
@@ -50,14 +47,8 @@ const StyledButtonStatus = styled.button`
   padding-bottom: 14px;
   border-radius: 7px;
   border: none;
-  background-color: #FFF;
+  background-color: #fff;
   color: ${(props) => props.color};
-`;
-
-const ContainerStatus = styled.div`
-  display: flex;
-  gap: 10px;
-  align-items: center;
 `;
 
 const CheckContainer = styled.div``;
@@ -172,9 +163,8 @@ const GridTable = () => {
           <tbody>
             {reservations.slice(firstElement, lastElement).map((reserv) => (
               <tr key={reserv.id}>
-              
-                  <StyledTd>{reserv.order_date}</StyledTd>
-                
+                <StyledTd>{reserv.order_date}</StyledTd>
+
                 <StyledTd>
                   <StyledDate>{reserv.guest}</StyledDate>
                 </StyledTd>
@@ -185,12 +175,9 @@ const GridTable = () => {
                   </CheckContainer>
                 </StyledTd>
                 <StyledTd>
-                  <ContainerStatus>
-                    <StyledButtonStatus color={color} >
-                      {status}
-                    </StyledButtonStatus>
-                    <BsThreeDotsVertical />
-                  </ContainerStatus>
+                  <StyledButtonStatus color={color}>
+                    {status}
+                  </StyledButtonStatus>
                 </StyledTd>
               </tr>
             ))}

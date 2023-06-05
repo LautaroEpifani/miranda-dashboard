@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import reservationsJSON from "../../mockData/Reservations.json";
-import { Link } from "react-router-dom";
+import { roomsList } from "../../mockData/Rooms.js";
+import { ContainerBetween } from "../../styledComponents/styled.jsx";
+import { useSelector } from "react-redux";
+import { AmenitiesIcon } from "../Amenities.jsx";
+import { getItem } from "../../utils/localStorage.js";
+import guest from "../../assets/guest.jpg";
+import uuid from "react-uuid";
 
 const ContainerTable = styled.div`
   margin: 40px;
@@ -31,20 +36,10 @@ const StyledTh = styled.th`
 const StyledTd = styled.td`
   padding: 20px;
   font-size: 12px;
-  padding-left: 50px;
-  padding-right: 30px;
   color: #393939;
   font-weight: 600;
-`;
-
-const StyledButtonView = styled.button`
-  padding: 30px;
-  padding-top: 14px;
-  padding-bottom: 14px;
-  border-radius: 7px;
-  border: 1px solid #799283;
-  color: #799283;
-  background-color: #fff;
+  text-align: center;
+  vertical-align: middle;
 `;
 
 const StyledDate = styled.h6`
@@ -71,6 +66,9 @@ const CheckContainer = styled.div``;
 
 const Styledh6 = styled.h6`
   font-weight: 300;
+  font-size: 10px;
+  padding: 0;
+  margin: 0;
 `;
 
 const PaginationContainer = styled.div`
@@ -111,14 +109,29 @@ const ShowingData = styled.h6`
   font-size: 10px;
 `;
 
+const StyledImg = styled.img`
+  width: 80px;
+  height: 40px;
+  border-radius: 10px;
+`;
+
+const ContainerTd = styled(ContainerBetween)`
+  justify-content: left;
+  gap: 20px;
+`;
+
+const StyledAmenities = styled.div`
+  display: flex;
+  gap: 5px;
+`;
+
 const GridTable = () => {
-  const [reservations, setReservations] = useState(
-    reservationsJSON.slice(0, 47)
-  );
+  const usersState = useSelector((state) => state.users.usersState);
+  const [users, setUsers] = useState(usersState);
   const pages = [1, 2, 3, 4, 5];
   const [color, setColor] = useState("#FFF");
-  const [bgColor, setBgColor] = useState("#FB9F44");
-  const [status, setStatus] = useState("In Progress");
+  const [bgColor, setBgColor] = useState("#5AD07A");
+  const [status, setStatus] = useState("Avaliable");
   const [activeButton, setActiveButton] = useState([
     true,
     false,
@@ -165,64 +178,51 @@ const GridTable = () => {
     colorButton(indexPagination - 1);
   }, [indexPagination]);
 
+
   return (
     <>
       <ContainerTable>
         <StyledTable>
           <thead>
             <tr>
-              <StyledTh scope="col">Guest</StyledTh>
-              <StyledTh scope="col">Order Date</StyledTh>
-              <StyledTh scope="col">Check In</StyledTh>
-              <StyledTh scope="col">Check Out</StyledTh>
-              <StyledTh scope="col">Special Request</StyledTh>
-              <StyledTh scope="col">Room Type</StyledTh>
+              <StyledTh scope="col">Employee</StyledTh>
+              <StyledTh scope="col">Name</StyledTh>
+              <StyledTh scope="col">ID Employee</StyledTh>
+              <StyledTh scope="col">Email</StyledTh>
+              <StyledTh scope="col">Start Date</StyledTh>
+              <StyledTh scope="col">Description</StyledTh>
+              <StyledTh scope="col">Contact</StyledTh>
               <StyledTh scope="col">Status</StyledTh>
             </tr>
           </thead>
           <tbody>
-            {reservations.slice(firstElement, lastElement).map((reserv) => (
-               
-              <tr key={reserv.id}>
-                  <Link style={{ textDecoration: "none" }} to={`/bookings/${reserv.id}`} state={{ reservations: reserv }}>    
-                  <StyledTd>{reserv.guest}</StyledTd>
-                    </Link>
+            {users.map((user) => (
+              <tr key={user.id}>
                 <StyledTd>
-                  <StyledDate>{reserv.order_date}</StyledDate>
+                  <ContainerTd>
+                    <StyledImg src={guest} alt="" />
+                  </ContainerTd>
                 </StyledTd>
+                <StyledTd>{user.employee_name}</StyledTd>
                 <StyledTd>
-                  <CheckContainer>
-                    <h1>{reserv.check_in}</h1>
-                    <Styledh6>hour</Styledh6>
-                  </CheckContainer>
+                  <StyledDate>{user.id}</StyledDate>
                 </StyledTd>
+                <StyledTd>ads@asd.com</StyledTd>
+                <StyledTd>10/10/2022</StyledTd>
+                <StyledTd>Client attention</StyledTd>
+                <StyledTd>726 28 28 28</StyledTd>
                 <StyledTd>
-                  <CheckContainer>
-                    <h1>{reserv.checkout}</h1>
-                    <Styledh6>hour</Styledh6>
-                  </CheckContainer>
+                  <StyledButtonStatus color={color} bgColor={bgColor}>
+                    Active
+                  </StyledButtonStatus>
                 </StyledTd>
-                <StyledTd>
-                  <StyledButtonView>View Notes</StyledButtonView>
-                </StyledTd>
-                <StyledTd>{reserv.room_type}</StyledTd>
-                <StyledTd>
-                  <ContainerStatus>
-                    <StyledButtonStatus color={color} bgColor={bgColor}>
-                      {status}
-                    </StyledButtonStatus>
-                    <BsThreeDotsVertical />
-                  </ContainerStatus>
-                </StyledTd>
-             
               </tr>
-                  
             ))}
           </tbody>
         </StyledTable>
       </ContainerTable>
       <ShowingData>
-        Showing {reservations.length} of {reservations.length} Data
+        Showing {users.length} of {users.length} Data
       </ShowingData>
       <PaginationContainer>
         <DirectionButton onClick={() => movePaginationLeft()}>

@@ -3,6 +3,8 @@ import { ContainerBetween } from "../../styledComponents/styled";
 import styled from "styled-components";
 import { StyledInput } from "../../components/login/Login";
 import { TiArrowSortedDown } from "react-icons/ti";
+import { Link } from "react-router-dom";
+import { ContainerInput, Icon, StyledSearch } from "../bookings/Menu";
 
 
 const ContainerMenu = styled.div`
@@ -17,13 +19,13 @@ const SubContainer = styled(ContainerBetween)`
 `;
 
 const Bar = styled.div`
-  width: 25%;
+  width: 42%;
   margin-left: 20px;
   margin-top: 5px;
   height: 2px;
   background: -moz-linear-gradient(left, #135846 75%, #d4d4d4 25%);
   background: -webkit-linear-gradient(left, #135846 75%, #d4d4d4 25%);
-  background: linear-gradient(to right, #135846 50%, #d4d4d4 25%);
+  background: linear-gradient(to right, #135846 28%, #d4d4d4 25%);
 `;
 
 const StyledA = styled.a`
@@ -37,22 +39,6 @@ const ContainerSections = styled.div`
   display: flex;
   justify-content: space-between;
   gap: 60px;
-`;
-
-const ContainerInput = styled.div`
-  margin-left: 20px;
-  position: relative;
-`;
-
-const StyledSearch = styled(StyledInput)`
-  width: 100%;
-`;
-
-const Icon = styled(BiSearchAlt)`
-  position: absolute;
-  right: 5px;
-  top: 5px;
-  color: #838383;
 `;
 
 const SelectContainer = styled.div`
@@ -70,9 +56,22 @@ const StyledSelect = styled.select`
   border-radius: 8px;
   padding: 8px;
   padding-left: 12px;
+  padding-right: 24px;
   color: #135846;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
+`;
+
+const StyledButton = styled.button`
+  background-color: #135846;
+  color: #FFF;
+  padding: 12px;
+  padding-left: 40px;
+  padding-right: 40px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: 'Poppins', sans-serif;
+  margin-right: 20px;
 `;
 
 const StyledOption = styled.option`
@@ -92,13 +91,20 @@ const Menu = () => {
     <ContainerMenu>
         <SubContainer>
           <ContainerSections>
-            <StyledA href="">All Contacts</StyledA>
-            <StyledA href="">Archived</StyledA>
+            <StyledA href="">All Employee</StyledA>
+            <StyledA href="">Active Employee</StyledA>
+            <StyledA href="">Inactive Employee</StyledA>
           </ContainerSections>
+          <ContainerInput>
+            <StyledSearch type="text" name="search" />
+            <Icon />
+          </ContainerInput>
           <SelectContainer>
+            <Link to="/newUser">
+              <StyledButton>+ New Employee</StyledButton>
+            </Link>
             <StyledSelect name="" id="">
-              <StyledOption value="">Date</StyledOption>
-              <StyledOption value="">Customer</StyledOption>
+              <StyledOption value="">Entry Date</StyledOption>
             </StyledSelect>
             <StyledArrow />
           </SelectContainer>

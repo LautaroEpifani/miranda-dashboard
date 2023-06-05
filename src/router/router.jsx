@@ -10,6 +10,7 @@ import Layout from "../pages/Layout";
 import NewRoom from "../pages/NewRoom";
 import Contact from "../pages/Contact";
 import { Users } from "../pages/Users";
+import NewUser from "../pages/NewUser";
 
 const user = await getItem("loginUser");
 
@@ -44,6 +45,10 @@ export const router = createBrowserRouter([
   {
     path: "/users",
     element: <Users/>,
+  },
+   {
+    path: "/newUser",
+    element: <NewUser/>,
   },
   {
     path: "/login",

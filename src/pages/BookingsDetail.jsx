@@ -20,9 +20,9 @@ const DetailContainer = styled(ContainerBetween)`
 
 const Details = styled(ContainerBetween)`
   display: block;
-  width: 80%;
+  width: 50%;
  padding-top: 20px;
- padding-left: 20px;
+ padding-left: 40px;
 `;
 
 const SliderContainer = styled(ContainerBetween)`
@@ -198,7 +198,7 @@ const StyledBar = styled.div`
   height: 2px;
   background-color: #d3d3d3;
   opacity: 0.5;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 `;
 
 const BookingsDetail = () => {

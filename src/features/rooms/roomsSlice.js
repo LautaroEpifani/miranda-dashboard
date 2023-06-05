@@ -3,7 +3,7 @@ import { getItem } from "../../utils/localStorage.js";
 
 const initialState = {
   roomsState: getItem("rooms") || [],
-  filteredRoom : [],
+  filteredRooms : [],
 }
 
 export const roomsSlice = createSlice({
@@ -19,7 +19,7 @@ export const roomsSlice = createSlice({
       );
       return {
         ...state,
-        filteredRoom:
+        filteredRooms:
           action.payload.length > 0 ? filteredRoom : [...state.roomsState]
       };
     },
@@ -31,7 +31,7 @@ export const roomsSlice = createSlice({
       return {
         ...state,
         roomsState: state.roomsState.filter((room) => room.id !== action.payload.id),
-        filteredRoom: state.filteredRoom.filter((room) => room.id !== action.payload.id)
+        filteredRooms: state.filteredRooms.filter((room) => room.id !== action.payload.id)
       } 
     },
     sortBy : (state, action) => {
