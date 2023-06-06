@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { roomsList } from '../../mockData/Rooms.js'
-import { ContainerBetween } from '../../styledComponents/styled.jsx'
-import { useSelector } from "react-redux";
+import { ContainerBetween } from "../../styledComponents/styled.jsx";
+import { useDispatch, useSelector } from "react-redux";
 import { AmenitiesIcon } from "../Amenities.jsx";
-import { getItem } from "../../utils/localStorage.js";
+import { editRoom, findRoom, getRooms } from "../../features/rooms/roomsSlice.js";
+import { Link, useNavigate } from "react-router-dom";
 
 const ContainerTable = styled.div`
   margin: 40px;
@@ -36,8 +36,8 @@ const StyledTd = styled.td`
   font-size: 12px;
   color: #393939;
   font-weight: 600;
-  text-align: center; 
-    vertical-align: middle;
+  text-align: center;
+  vertical-align: middle;
 `;
 
 const StyledDate = styled.h6`
@@ -60,8 +60,7 @@ const ContainerStatus = styled.div`
   align-items: center;
 `;
 
-const CheckContainer = styled.div`
-`;
+const CheckContainer = styled.div``;
 
 const Styledh6 = styled.h6`
   font-weight: 300;
@@ -109,25 +108,28 @@ const ShowingData = styled.h6`
 `;
 
 const StyledImg = styled.img`
-    width: 80px;
-    height: 40px;
-    border-radius: 10px;
+  width: 80px;
+  height: 40px;
+  border-radius: 10px;
 `;
 
 const ContainerTd = styled(ContainerBetween)`
-    justify-content: left;
-    gap: 20px;
+  justify-content: left;
+  gap: 20px;
 `;
 
 const StyledAmenities = styled.div`
-    display: flex;
-    gap: 5px;
+  display: flex;
+  gap: 5px;
+`;
+
+const StyledOfferPrice = styled.h6`
+  color: red;
 `;
 
 const GridTable = () => {
-
-  const roomsRedux = useSelector((state) => state.rooms.roomsState);
-  const [rooms, setRooms] = useState(roomsRedux);
+  const rooms = useSelector((state) => state.rooms.roomsState);
+  const dispatch = useDispatch();
   const pages = [1, 2, 3, 4, 5];
   const [color, setColor] = useState("#FFF");
   const [bgColor, setBgColor] = useState("#5AD07A");
@@ -143,6 +145,8 @@ const GridTable = () => {
   const [indexPagination, setIndexPagination] = useState(1);
   let firstElement = indexPagination * 10 - 10;
   let lastElement = indexPagination * 10;
+
+  const navigate = useNavigate()
 
   const movePaginationRight = () => {
     console.log(indexPagination);
@@ -174,11 +178,12 @@ const GridTable = () => {
     setActiveButton(newArray);
   };
 
+  console.log(rooms)
   useEffect(() => {
     colorButton(indexPagination - 1);
+    // setItem("rooms", rooms);
   }, [indexPagination]);
 
-  console.log(rooms)
   return (
     <>
       <ContainerTable>
@@ -186,6 +191,7 @@ const GridTable = () => {
           <thead>
             <tr>
               <StyledTh scope="col">Room Name</StyledTh>
+              <StyledTh scope="col">Room Number</StyledTh>
               <StyledTh scope="col">ID Room</StyledTh>
               <StyledTh scope="col">Room Type</StyledTh>
               <StyledTh scope="col">Amenities</StyledTh>
@@ -195,52 +201,55 @@ const GridTable = () => {
             </tr>
           </thead>
           <tbody>
-            {rooms.map((room) => (
-              <tr key={room.id}>
-               
-                <StyledTd>
-                  <ContainerTd>
-                   
-                    <StyledImg src={room.images.images0} alt=""/>
-            
-                  </ContainerTd>
-                </StyledTd>
-                <StyledTd>
-                  <StyledDate>{room.id}</StyledDate>
-                </StyledTd>
-                <StyledTd>
-                  {room.room_type}
-                </StyledTd>
-                <StyledTd>
-                    <StyledAmenities>{room.amenities.map((amenitie,index) => (
-                        <AmenitiesIcon key={index}  icon={amenitie.icon}/>
-                    ))}</StyledAmenities>
-                </StyledTd>
-                <StyledTd>
-                  {room.price}
-                </StyledTd>
-                <StyledTd>
-                  {room.offer_price}
-                </StyledTd>
-                <StyledTd>
-                  <ContainerStatus>
-                    <StyledButtonStatus color={color} bgColor={bgColor}>
-                      {status}
-                    </StyledButtonStatus>
-                    <BsThreeDotsVertical />
-                  </ContainerStatus>
-                </StyledTd>
-              </tr>
-            ))}
+            {rooms.length ? (
+              rooms.slice(firstElement, lastElement).map((room) => (
+                <tr key={room.id}>
+                  <StyledTd>
+                    <ContainerTd>
+                      <StyledImg src={room.image ? room.image : room.images.images0} alt="" />
+                    </ContainerTd>
+                  </StyledTd>
+                  <StyledTd>{room.room_number}</StyledTd>
+                  <StyledTd>
+                    <StyledDate>{room.id}</StyledDate>
+                  </StyledTd>
+                  <StyledTd>{room.room_type}</StyledTd>
+                  <StyledTd>
+                    <StyledAmenities>
+                      {room.amenities.map((amenitie, index) => (
+                        <AmenitiesIcon key={index} icon={amenitie.icon} />
+                      ))}
+                    </StyledAmenities>
+                  </StyledTd>
+                  <StyledTd>{room.price}</StyledTd>
+                  <StyledTd>
+                    <StyledOfferPrice>{room.offer_price}</StyledOfferPrice>
+                  </StyledTd>
+                  <StyledTd>
+                    <ContainerStatus>
+                      <StyledButtonStatus color={color} bgColor={bgColor}>
+                        {status}
+                      </StyledButtonStatus>
+                      <Link style={{ textDecoration: "none" }} to={"/newRoom"} state={{ room }}>
+                      <BsThreeDotsVertical />
+                      </Link>
+                    </ContainerStatus>
+                  </StyledTd>
+                </tr>
+              ))
+            ) : (
+              <></>
+            )}
           </tbody>
         </StyledTable>
       </ContainerTable>
       <ShowingData>
-        Showing {rooms.length} of {rooms.length} Data
+        Showing {rooms.slice(firstElement, lastElement).length} of{" "}
+        {rooms.length} Data
       </ShowingData>
       <PaginationContainer>
         <DirectionButton onClick={() => movePaginationLeft()}>
-          Prev  
+          Prev
         </DirectionButton>
         {pages.map((page, index) => (
           <PageButton

@@ -1,10 +1,33 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getItem } from "../../utils/localStorage.js";
+import  { roomsList }  from "../../mockData/Rooms.js";
 
 const initialState = {
-  roomsState: getItem("rooms") || [],
-  filteredRooms : [],
+  roomsState:  roomsList || [],  // getItem("rooms")
+  loading: 'idle' | 'pending' | 'succeeded' | 'failed'
 }
+
+export const getRooms = createAsyncThunk(
+  'rooms/getRooms',
+  async () => {
+      const response = await new Promise((res) =>  setTimeout(() => {
+       res(roomsList)
+     }, 1000))
+      return response;
+  }
+);
+
+export const postRoom = createAsyncThunk(
+  "type/postRoom",
+  async (payload) => {
+    console.log(payload)
+      const response = await new Promise((res) =>  setTimeout(() => {
+       res(roomsList)
+     }, 1000))
+      response.push(payload)
+      return response
+  }
+);
 
 export const roomsSlice = createSlice({
   name: "rooms",
@@ -13,34 +36,30 @@ export const roomsSlice = createSlice({
     addRoom: (state, action) => {
       state.roomsState.push(action.payload);
     },
-    filterByDescription: (state, action) => {
-      const filteredRoom = state.roomsState.filter((room) =>
-        room.description.toLowerCase().includes(action.payload.toLowerCase())
-      );
-      return {
-        ...state,
-        filteredRooms:
-          action.payload.length > 0 ? filteredRoom : [...state.roomsState]
-      };
-    },
     editRoom: (state, action) => {
       const room = state.roomsState.find((room) => room.id === action.payload.id);
-      room.description = action.payload.description
-    },
+      const {  room_type, room_number, price, offer_price, amenities } = action.payload
+      room.room_type = room_type;
+      room.room_number = room_number;
+      room.price = price;
+      room.offer_price = offer_price;
+      room.amenities = amenities;
+    },  
     deleteRoom: (state, action) => {
-      return {
-        ...state,
-        roomsState: state.roomsState.filter((room) => room.id !== action.payload.id),
-        filteredRooms: state.filteredRooms.filter((room) => room.id !== action.payload.id)
-      } 
+     
     },
     sortBy : (state, action) => {
       state.roomsState.sort((a, b) => a[action.payload] < b[action.payload] ? 1 : -1)
     }
   },
+  extraReducers: (builder) => {
+    builder.addCase(getRooms.fulfilled, (state, action) => {
+      state.roomsState = action.payload
+    })
+  },
 });
 
-export const { addRoom } =
+export const { addRoom, editRoom, } =
   roomsSlice.actions;
 
 export default roomsSlice.reducer;

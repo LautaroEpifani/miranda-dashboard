@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { BsThreeDotsVertical } from "react-icons/bs";
-import { roomsList } from "../../mockData/Rooms.js";
 import { ContainerBetween } from "../../styledComponents/styled.jsx";
 import { useSelector } from "react-redux";
-import { AmenitiesIcon } from "../Amenities.jsx";
-import { getItem } from "../../utils/localStorage.js";
 import guest from "../../assets/guest.jpg";
-import uuid from "react-uuid";
+
 
 const ContainerTable = styled.div`
   margin: 40px;

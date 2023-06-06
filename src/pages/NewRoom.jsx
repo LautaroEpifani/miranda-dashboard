@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
 import { setItem } from "../utils/localStorage";
-import { addRoom } from "../features/rooms/roomsSlice";
+import { addRoom, editRoom, postRoom } from "../features/rooms/roomsSlice";
 import uuid from "react-uuid";
 import { AiOutlineWifi } from 'react-icons/ai'
 
@@ -96,10 +96,11 @@ const NewRoom = () => {
     false,
     false,
     false,
-  ]);
+  ])
+  const { state } = useLocation();
+  const editRoomSelected = state;
   const setTitle = useOutletContext();
   const rooms = useSelector((state) => state.rooms.roomsState);
-  const filteredRooms = useSelector((state) => state.rooms.filteredRooms);
   const dispatch = useDispatch();
 
   const navigate = useNavigate()
@@ -107,8 +108,6 @@ const NewRoom = () => {
   const handleChange = ({ target: { name, value } }) => {
     setRoom({ ...room, [name]: value });
   };
-
- 
 
   const handleImages = (e) => {
     const formData = new FormData()
@@ -120,21 +119,17 @@ const NewRoom = () => {
       body: formData
     })
     .then(res => res.json())
-    .then(data => setImages(data.files))
-    ;
+    .then(data => setImages(data.files));
   };
 
   const handleCheckbox = ({ target: { name, checked } }) => {
     setIsChecked(!isChecked);
     if (checked) {
-    
       setAmenities([...amenities, { a_name: name, icon: name }]);
     } else {
-   
       const filtered = amenities.filter(ame => ame.a_name !== name)
       setAmenities(filtered)
     }
-  
   };
 
   const handleSubmit = (e) => {
@@ -142,16 +137,22 @@ const NewRoom = () => {
     room.offer_price = (room.price - (room.price * room.discount) / 100).toFixed(2);
     room.images = images;
     room.amenities = amenities;
-    room.id = uuid();
     setRoom(room);
-    dispatch(addRoom(room));
+    if(!editRoom) {
+      room.id = uuid();
+      dispatch(addRoom(room));
+      dispatch(postRoom(room))
+    } else {
+      room.id = editRoomSelected.room.id;
+      dispatch(editRoom(room))
+    }
     navigate("/room")
   };
 
   useEffect(() => {
     setTitle("New Room");
-    setItem("rooms", [...rooms]);
-  }, [rooms]);
+  }, []);
+
 
   return (
     <StyledContainer>
@@ -171,7 +172,7 @@ const NewRoom = () => {
         <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Room Type</StyledLabel>
-          <StyledInput onChange={handleChange} type="text" name="room_type" />
+          <StyledInput onChange={handleChange} type="text" name="room_type" defaultValue={editRoomSelected ? editRoomSelected.room.room_type : null}/>
         </StyledInputContainer>
         <StyledInputContainer>
           <StyledLabel htmlFor="">Room Number</StyledLabel>
@@ -179,6 +180,7 @@ const NewRoom = () => {
             onChange={handleChange}
             type="number"
             name="room_number"
+         
           />
         </StyledInputContainer>
         <StyledInputContainer>
@@ -330,7 +332,12 @@ const NewRoom = () => {
             </StyledCheckBox>
           </div>
         </StyledInputContainer>
-        <StyledButton type="submit">Add new room</StyledButton>
+        { !editRoomSelected ?
+           <StyledButton type="submit">Add new room</StyledButton>
+           :
+           <StyledButton type="submit">Edit Room</StyledButton>
+        }
+       
       </form>
     </StyledContainer>
   );
