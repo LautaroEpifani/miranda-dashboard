@@ -1,10 +1,6 @@
-import room2 from "../assets/room2.jpg";
-import room1 from "../assets/room1.jpg";
-import room3 from "../assets/room3.jpg";
 
 export const reservationsData = [{
-      id: 1,
-      title: "Queen Bed A-12324",
+      guest: "Carlos Lopez",
       image: room1,
       room: "3",
       client: "James Doe",
@@ -12,8 +8,8 @@ export const reservationsData = [{
       departure: "12/08/2023",
     },
     {
-      id: 2,
-      title: "Classic B-12324",
+   
+      title: "Laura Maria",
       image: room2,
       room: "10",
       client: "Laura Lopez",
@@ -21,11 +17,21 @@ export const reservationsData = [{
       departure: "12/08/2023",
     },
     {
-      id: 3,
-      title: "Luxury Room  D-1231",
+    
+      title: "Julian Javier",
       image: room3,
       room: "2",
       client: "José García",
       entry: "1/05/2023",
       departure: "12/08/2023",
-    },]
+    },
+     {
+    
+      title: "Julian Javier",
+      image: room3,
+      room: "2",
+      client: "José García",
+      entry: "1/05/2023",
+      departure: "12/08/2023",
+    },
+]

@@ -1,9 +1,9 @@
-import { BiSearchAlt } from "react-icons/bi";
 import { ContainerBetween } from "../../styledComponents/styled";
 import styled from "styled-components";
-import { StyledInput } from "../../components/login/Login";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { sortBy } from "../../features/rooms/roomsSlice";
 
 
 const ContainerMenu = styled.div`
@@ -86,6 +86,13 @@ const StyledArrow = styled(TiArrowSortedDown)`
 
 const Menu = () => {
 
+  const dispatch = useDispatch()
+
+  const handleChange = (e) => {
+    console.log(e.target.value)
+    dispatch(sortBy(e.target.value))
+  }
+
   return (
     <ContainerMenu>
         <SubContainer>
@@ -96,11 +103,11 @@ const Menu = () => {
             <Link to="/newRoom">
               <StyledButton>+ New Room</StyledButton>
             </Link>
-            <StyledSelect name="" id="">
-              <StyledOption value="">Room Number</StyledOption>
-              <StyledOption value="">Avaliable</StyledOption>
-              <StyledOption value="">Booked</StyledOption>
-              <StyledOption value="">Price</StyledOption>
+            <StyledSelect onChange={handleChange} name="" id="">
+              <StyledOption value="room_number" >Room Number</StyledOption>
+              <StyledOption value="avaliable" >Avaliable</StyledOption>
+              <StyledOption value="booked">Booked</StyledOption>
+              <StyledOption value="price" >Price</StyledOption>
             </StyledSelect>
             <StyledArrow />
           </SelectContainer>

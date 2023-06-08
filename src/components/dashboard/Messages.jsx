@@ -21,7 +21,6 @@ const MessagesContainer = styled.div`
 `;
 
 const MessagesSubContainer = styled.div`
-  
   display: flex;
   gap: 20px;
   font-size: 10px;
@@ -36,12 +35,14 @@ const MessagesSubContainer = styled.div`
 
 const Message = styled.div`
   box-shadow: 0px 2px 2px #b3c0c6;
-  width: 27.5%;
+  width: 30%;
   padding: 20px;
   border-radius: 10px;
+  padding-top: 40px;
 `;
 
 const Text = styled.p`
+  margin-top: 10px;
   font-size: 8px;
   height: 40px;
   overflow: hidden;
@@ -51,6 +52,15 @@ const Text = styled.p`
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
   cursor: pointer;
+`;
+
+const StyledH6 = styled.h6`
+  color: "#799283";
+`;
+
+const StyledH2 = styled.h1`
+  color: "#262626";
+  font-size: 15px;
 `;
 
 const Pending = styled(RxCrossCircled)`
@@ -136,7 +146,6 @@ const Messages = () => {
     } else {
         setSlideIndex(slideIndex - 1)
     }
-    console.log(slideIndex)
   }
 
   const displayPopup = (index) => {
@@ -173,20 +182,19 @@ const Messages = () => {
     <Container>
       <h1 style={{ color: "#393939" }}>New Messages</h1>
       <MessagesContainer >
-        {console.log(slideIndex)}
         <MessagesSubContainer>
           {messages.slice(slideIndex, messages.length).map((message, index) => (
             <Message  key={message.id}>
               <div>
-                <h6>{message.subject}</h6>
+                <StyledH2>{message.subject}</StyledH2>
                 <Text onClick={() => displayPopup(index)}>
                   {message.message.slice(0, 400)}
                 </Text>
               </div>
+              <StyledH2>{message.name}</StyledH2>
               <ContainerBetween>
-                <h2 style={{ color: "#262626" }}>{message.name}</h2>
-                <h6 style={{ color: "#799283" }}>{message.email}</h6>
-                <h6 style={{ color: "#799283" }}>{message.phone}</h6>
+                <StyledH6>{message.email}</StyledH6>
+                <StyledH6>{message.phone}</StyledH6>
                 <div>{message.status ? <Closed /> : <Pending />}</div>
               </ContainerBetween>
               {popup[index] ? (

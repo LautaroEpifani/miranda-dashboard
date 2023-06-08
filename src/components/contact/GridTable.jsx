@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import reservationsJSON from "../../mockData/Reservations.json";
+import { reservationsData } from "../../mockData/Reservations";
 
 const ContainerTable = styled.div`
   margin: 40px;
@@ -97,7 +97,7 @@ const ShowingData = styled.h6`
 
 const GridTable = () => {
   const [reservations, setReservations] = useState(
-    reservationsJSON.slice(0, 47)
+    reservationsData.slice(0, 47)
   );
   const pages = [1, 2, 3, 4, 5];
   const [color, setColor] = useState("#E23428");

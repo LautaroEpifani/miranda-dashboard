@@ -1,33 +1,10 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getItem } from "../../utils/localStorage.js";
-import  { roomsList }  from "../../mockData/Rooms.js";
+import { createSlice } from "@reduxjs/toolkit";
+import { deleteRequestRoom, editRequestRoom, getRooms, postRoom } from "./roomApi.js";
 
 const initialState = {
-  roomsState:  roomsList || [],  // getItem("rooms")
-  loading: 'idle' | 'pending' | 'succeeded' | 'failed'
+  roomsState: [],
+  loading: 'idle'
 }
-
-export const getRooms = createAsyncThunk(
-  'rooms/getRooms',
-  async () => {
-      const response = await new Promise((res) =>  setTimeout(() => {
-       res(roomsList)
-     }, 1000))
-      return response;
-  }
-);
-
-export const postRoom = createAsyncThunk(
-  "type/postRoom",
-  async (payload) => {
-    console.log(payload)
-      const response = await new Promise((res) =>  setTimeout(() => {
-       res(roomsList)
-     }, 1000))
-      response.push(payload)
-      return response
-  }
-);
 
 export const roomsSlice = createSlice({
   name: "rooms",
@@ -46,20 +23,58 @@ export const roomsSlice = createSlice({
       room.amenities = amenities;
     },  
     deleteRoom: (state, action) => {
-     
+      return {
+        ...state,
+        roomsState:  state.roomsState.filter((room) => room.id !== action.payload)
+      }
     },
-    sortBy : (state, action) => {
-      state.roomsState.sort((a, b) => a[action.payload] < b[action.payload] ? 1 : -1)
+    sortBy: (state, action) => {
+      if(action.payload === "booked") {
+         state.roomsState.sort((a, b) => a.status > b.status ? 1 : -1)
+      }if(action.payload === "avaliable") {
+        state.roomsState.sort((a, b) => a.status > b.status ? 1 : -1)
+      } 
+      else {
+        state.roomsState.sort((a, b) => a[action.payload] < b[action.payload] ? 1 : -1)
+      }
     }
   },
   extraReducers: (builder) => {
+    builder.addCase(getRooms.pending, (state, action) => {
+      state.loading = " "
+    })
     builder.addCase(getRooms.fulfilled, (state, action) => {
+      console.log(action.payload)
       state.roomsState = action.payload
+      state.loading = "fulfilled"
+    })
+    builder.addCase(getRooms.rejected, (state, action) => {
+      state.roomsState = []
+      state.loading = "rejected"
+    })
+    builder.addCase(postRoom.fulfilled, (state, action) => { 
+      console.log(action.payload)
+      state.roomsState.push(action.payload)
+    })
+    builder.addCase(editRequestRoom.fulfilled, (state, action) => { 
+       const room = state.roomsState.find((room) => room.id === action.payload.id);
+        const {  room_type, room_number, price, offer_price, amenities } = action.payload
+        room.room_type = room_type;
+        room.room_number = room_number;
+        room.price = price;
+        room.offer_price = offer_price;
+        room.amenities = amenities;
+    })
+    builder.addCase(deleteRequestRoom.fulfilled, (state, action) => { 
+      return {
+        ...state,
+        roomsState:  state.roomsState.filter((room) => room.id !== action.payload)
+      }
     })
   },
 });
 
-export const { addRoom, editRoom, } =
+export const { addRoom, editRoom, deleteRoom, sortBy} =
   roomsSlice.actions;
 
 export default roomsSlice.reducer;

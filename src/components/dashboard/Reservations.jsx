@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { reservations } from '../../mockData/Reservations.js'
+import { reservationsData } from '../../mockData/Reservations.js'
 
 const Container = styled.div`
   background-color:  #FFF;
@@ -64,7 +64,7 @@ const Reservations = () => {
   const colors = ["#135846", "#E23428", "#FB9F44"]
   return (
     <Container>
-      {reservations.map((reservation, index) => (
+      {reservationsData.map((reservation, index) => (
         <ReservContainer key={reservation.id}>
           <SubContainer>
             <img style={{ borderRadius: '10px' }} src={reservation.image} alt="" width={150} height={100}/>

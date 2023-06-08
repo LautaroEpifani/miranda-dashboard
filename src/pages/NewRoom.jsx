@@ -2,17 +2,24 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
-import { setItem } from "../utils/localStorage";
-import { addRoom, editRoom, postRoom } from "../features/rooms/roomsSlice";
+import { addRoom, editRoom } from "../features/rooms/roomsSlice";
 import uuid from "react-uuid";
-import { AiOutlineWifi } from 'react-icons/ai'
+import ModalCrud from "../components/room/ModalCrud";
+import { editRequestRoom, getRooms, postRoom } from "../features/rooms/roomApi";
 
 const StyledContainer = styled.div`
-  margin: 40px;
   background-color: #fff;
   padding: 20px;
-  padding-left: 60px;
+  padding-left: 100px;
   padding-top: 40px;
+  position: relative;
+  border: 1px solid #135846;
+  box-shadow: 0px 2px 2px #b3c0c6;
+  border-radius: 10px;
+  width: 50%;
+  margin: 0 auto;
+  margin-top: 40px;
+  margin-bottom: 40px;
 `;
 
 const StyledInputContainer = styled.div`
@@ -20,6 +27,11 @@ const StyledInputContainer = styled.div`
   gap: 20px;
   margin-bottom: 20px;
 `;
+
+const StyledForm = styled.form`
+  opacity: ${(props) => (props.openModal ? "0.2" : "1")};
+`;
+
 
 const StyledLabel = styled.label`
   width: 30%;
@@ -38,23 +50,29 @@ const StyledInput = styled.input`
   }
 `;
 
+const StyledCheckContainer = styled.div`
+  width: 65%;
+  display: flex;
+  gap: 20px;
+`;
+
 const StyledCheckBox = styled.div`
   display: flex;
   gap: 40px;
   margin-bottom: 10px;
-  width: 500px;
+ width: 100%;
+`;
+
+const StyledLabelCheckBox = styled(StyledLabel)`
+    font-size: 10px;
+    white-space: nowrap;
+    width: 50%;
 `;
 
 const StyledInputBox = styled.input`
-  width: 5%;
-  padding: 8px;
+  width: 20px;
   border-radius: 10px;
   border: 1px #aaa3a3 solid;
-  &:focus {
-    border: 1px #135846 solid;
-    outline: none;
-    box-shadow: 0 0 10px #719ece;
-  }
 `;
 
 const StyledSelect = styled.select`
@@ -96,30 +114,31 @@ const NewRoom = () => {
     false,
     false,
     false,
-  ])
+  ]);
+  const [openModal, setOpenModal] = useState(false)
   const { state } = useLocation();
   const editRoomSelected = state;
   const setTitle = useOutletContext();
   const rooms = useSelector((state) => state.rooms.roomsState);
   const dispatch = useDispatch();
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleChange = ({ target: { name, value } }) => {
     setRoom({ ...room, [name]: value });
   };
 
   const handleImages = (e) => {
-    const formData = new FormData()
+    const formData = new FormData();
     for (let i = 0; i < e.target.files.length; i++) {
-      formData.append(`images${i}`, e.target.files[i]) ;
+      formData.append(`images${i}`, e.target.files[i]);
     }
-    fetch('https://httpbin.org/post', {
-      method: 'POST',
-      body: formData
+    fetch("https://httpbin.org/post", {
+      method: "POST",
+      body: formData,
     })
-    .then(res => res.json())
-    .then(data => setImages(data.files));
+      .then((res) => res.json())
+      .then((data) => setImages(data.files));
   };
 
   const handleCheckbox = ({ target: { name, checked } }) => {
@@ -127,36 +146,48 @@ const NewRoom = () => {
     if (checked) {
       setAmenities([...amenities, { a_name: name, icon: name }]);
     } else {
-      const filtered = amenities.filter(ame => ame.a_name !== name)
-      setAmenities(filtered)
+      const filtered = amenities.filter((ame) => ame.a_name !== name);
+      setAmenities(filtered);
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    room.offer_price = (room.price - (room.price * room.discount) / 100).toFixed(2);
+    room.offer_price = (
+      room.price -
+      (room.price * room.discount) / 100
+    ).toFixed(2);
     room.images = images;
     room.amenities = amenities;
     setRoom(room);
-    if(!editRoom) {
+    if (!editRoomSelected) {
       room.id = uuid();
-      dispatch(addRoom(room));
-      dispatch(postRoom(room))
+      // dispatch(addRoom(room));
+      dispatch(postRoom(room));
+      setOpenModal(true)
+     
     } else {
+      setOpenModal(true)
       room.id = editRoomSelected.room.id;
-      dispatch(editRoom(room))
+      // dispatch(editRoom(room));
+      dispatch(editRequestRoom(room))
+      setTimeout(() => { navigate("/room") }, 3000);
+      setTimeout(() => { setOpenModal(false) }, 3000);
     }
-    navigate("/room")
+    console.log(rooms)
+     window.scrollTo(0, 0)
   };
 
   useEffect(() => {
     setTitle("New Room");
   }, []);
 
+    
+
 
   return (
     <StyledContainer>
-      <form action="" onSubmit={handleSubmit}>
+      <StyledForm action="" onSubmit={handleSubmit} openModal={openModal}>
         <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Image</StyledLabel>
@@ -172,7 +203,19 @@ const NewRoom = () => {
         <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Room Type</StyledLabel>
-          <StyledInput onChange={handleChange} type="text" name="room_type" defaultValue={editRoomSelected ? editRoomSelected.room.room_type : null}/>
+          <StyledSelect
+            onChange={handleChange}
+            name="room_type"
+            defaultValue={
+              editRoomSelected ? editRoomSelected.room.offer_price : null
+            }
+          >
+            <option value=""></option>
+            <option value="Single Bed">Single Bed</option>
+            <option value="Double Bed">Double Bed</option>
+            <option value="Double Superior">Double Superior</option>
+            <option value="Suite">Suite</option>
+          </StyledSelect>
         </StyledInputContainer>
         <StyledInputContainer>
           <StyledLabel htmlFor="">Room Number</StyledLabel>
@@ -180,18 +223,33 @@ const NewRoom = () => {
             onChange={handleChange}
             type="number"
             name="room_number"
-         
+            defaultValue={
+              editRoomSelected ? editRoomSelected.room.room_number : null
+            }
           />
         </StyledInputContainer>
         <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Description</StyledLabel>
-          <StyledInput onChange={handleChange} type="text" name="description" />
+          <StyledInput
+            onChange={handleChange}
+            type="text"
+            name="description"
+            defaultValue={
+              editRoomSelected ? editRoomSelected.room.description : null
+            }
+          />
         </StyledInputContainer>
         <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Offer</StyledLabel>
-          <StyledSelect onChange={handleChange} name="offer">
+          <StyledSelect
+            onChange={handleChange}
+            name="offer"
+            defaultValue={
+              editRoomSelected ? editRoomSelected.room.offer_price : null
+            }
+          >
             <option value=""></option>
             <option value="yes">YES</option>
             <option value="no">NO</option>
@@ -201,7 +259,12 @@ const NewRoom = () => {
         <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Price</StyledLabel>
-          <StyledInput onChange={handleChange} type="number" name="price" />
+          <StyledInput
+            onChange={handleChange}
+            type="number"
+            name="price"
+            defaultValue={editRoomSelected ? editRoomSelected.room.price : null}
+          />
         </StyledInputContainer>
         <StyledInputContainer>
           {" "}
@@ -214,13 +277,17 @@ const NewRoom = () => {
             onChange={handleChange}
             type="text"
             name="cancellation"
+            defaultValue={
+              editRoomSelected ? editRoomSelected.room.cancellation : null
+            }
           />
         </StyledInputContainer>
         <StyledInputContainer>
           <StyledLabel htmlFor="">Amenities</StyledLabel>
-          <div>
+          <StyledCheckContainer>
+            <div>
             <StyledCheckBox>
-              <StyledLabel htmlFor="">High speed wifi</StyledLabel>
+              <StyledLabelCheckBox htmlFor="">High speed wifi</StyledLabelCheckBox>
               <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
@@ -229,100 +296,93 @@ const NewRoom = () => {
               />
             </StyledCheckBox>
             <StyledCheckBox>
-              <StyledLabel htmlFor="">Air conditioner</StyledLabel>
+              <StyledLabelCheckBox htmlFor="">Air conditioner</StyledLabelCheckBox>
               <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
                 name="air_conditioner"
                 checked={isChecked[1]}
-              
               />
             </StyledCheckBox>
             <StyledCheckBox>
-              <StyledLabel htmlFor="">BreakFast</StyledLabel>
+              <StyledLabelCheckBox htmlFor="">BreakFast</StyledLabelCheckBox>
               <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
                 name="breakfast"
                 checked={isChecked[2]}
-             
               />
             </StyledCheckBox>
 
             <StyledCheckBox>
-              <StyledLabel htmlFor="">Kitchen</StyledLabel>
+              <StyledLabelCheckBox htmlFor="">Kitchen</StyledLabelCheckBox>
               <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
                 name="kitchen"
                 checked={isChecked[3]}
-              
               />
             </StyledCheckBox>
             <StyledCheckBox>
-              <StyledLabel htmlFor="">Cleaning</StyledLabel>
+              <StyledLabelCheckBox htmlFor="">Cleaning</StyledLabelCheckBox>
               <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
                 name="cleaning"
                 checked={isChecked[4]}
-             
               />
             </StyledCheckBox>
+             </div>
+            <div>
             <StyledCheckBox>
               {" "}
-              <StyledLabel htmlFor="">Shower</StyledLabel>
+              <StyledLabelCheckBox htmlFor="">Shower</StyledLabelCheckBox>
               <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
                 name="shower"
                 checked={isChecked[5]}
-            
               />
             </StyledCheckBox>
             <StyledCheckBox>
-              <StyledLabel htmlFor="">Grocery</StyledLabel>
+              <StyledLabelCheckBox htmlFor="">Grocery</StyledLabelCheckBox>
               <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
                 name="grocery"
                 checked={isChecked[6]}
-          
               />
             </StyledCheckBox>
             <StyledCheckBox>
-              <StyledLabel htmlFor="">Single Bed</StyledLabel>
+              <StyledLabelCheckBox htmlFor="">Single Bed</StyledLabelCheckBox>
               <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
                 name="single_bed"
                 checked={isChecked[7]}
-          
               />
             </StyledCheckBox>
             <StyledCheckBox>
-              <StyledLabel htmlFor="">Double Bed</StyledLabel>
+              <StyledLabelCheckBox htmlFor="">Double Bed</StyledLabelCheckBox>
               <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
                 name="double_bed"
                 checked={isChecked[8]}
-             
               />
             </StyledCheckBox>
             <StyledCheckBox>
-              <StyledLabel htmlFor="">Shop near</StyledLabel>
+              <StyledLabelCheckBox htmlFor="">Shop near</StyledLabelCheckBox>
               <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
                 name="shop_near"
                 checked={isChecked[9]}
-              
               />
             </StyledCheckBox>
             <StyledCheckBox>
               {" "}
-              <StyledLabel htmlFor="">Towels</StyledLabel>
+              <StyledLabelCheckBox htmlFor="">Towels</StyledLabelCheckBox>
               <StyledInputBox
                 onChange={handleCheckbox}
                 type="checkbox"
@@ -330,15 +390,25 @@ const NewRoom = () => {
                 checked={isChecked[10]}
               />
             </StyledCheckBox>
-          </div>
+              </div>
+          </StyledCheckContainer>
         </StyledInputContainer>
-        { !editRoomSelected ?
-           <StyledButton type="submit">Add new room</StyledButton>
-           :
-           <StyledButton type="submit">Edit Room</StyledButton>
-        }
-       
-      </form>
+        {!editRoomSelected ? (
+          <StyledButton type="submit">Add new room</StyledButton>
+        ) : (
+          <StyledButton type="submit">Edit Room</StyledButton>
+        )}
+      </StyledForm>
+       {
+        openModal ? (
+        !editRoomSelected ? 
+        <ModalCrud title={"Added"} button={"Add another room"} setOpenModal={setOpenModal}/>
+        :
+        <ModalCrud title={"Updated"}/>
+        )
+        :
+        <></>
+       }
     </StyledContainer>
   );
 };

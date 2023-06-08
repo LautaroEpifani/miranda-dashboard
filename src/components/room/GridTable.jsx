@@ -4,8 +4,11 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { ContainerBetween } from "../../styledComponents/styled.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { AmenitiesIcon } from "../Amenities.jsx";
-import { editRoom, findRoom, getRooms } from "../../features/rooms/roomsSlice.js";
-import { Link, useNavigate } from "react-router-dom";
+import Options from "./Options.jsx";
+import { deleteRequestRoom, getRooms } from "../../features/rooms/roomApi.js";
+import { CiWarning } from "react-icons/ci";
+import { deleteRoom, sortBy } from "../../features/rooms/roomsSlice.js";
+import ModalDelete from "./ModalDelete.jsx";
 
 const ContainerTable = styled.div`
   margin: 40px;
@@ -45,19 +48,20 @@ const StyledDate = styled.h6`
 `;
 
 const StyledButtonStatus = styled.button`
-  padding: 30px;
+  width: 100px;
   padding-top: 14px;
   padding-bottom: 14px;
   border-radius: 7px;
   border: none;
   background-color: ${(props) => props.bgColor};
-  color: ${(props) => props.color};
+  color: #fff;
 `;
 
 const ContainerStatus = styled.div`
   display: flex;
   gap: 10px;
   align-items: center;
+  position: relative;
 `;
 
 const CheckContainer = styled.div``;
@@ -129,11 +133,12 @@ const StyledOfferPrice = styled.h6`
 
 const GridTable = () => {
   const rooms = useSelector((state) => state.rooms.roomsState);
+  const loading = useSelector((state) => state.rooms.loading);
   const dispatch = useDispatch();
   const pages = [1, 2, 3, 4, 5];
-  const [color, setColor] = useState("#FFF");
-  const [bgColor, setBgColor] = useState("#5AD07A");
-  const [status, setStatus] = useState("Avaliable");
+  const [roomId, setRoomId] = useState(null)
+  const [options, setOptions] = useState(new Array(rooms.length).fill(false));
+  const [modalDelete, setModalDelete] = useState(false);
   const [activeButton, setActiveButton] = useState([
     true,
     false,
@@ -145,8 +150,6 @@ const GridTable = () => {
   const [indexPagination, setIndexPagination] = useState(1);
   let firstElement = indexPagination * 10 - 10;
   let lastElement = indexPagination * 10;
-
-  const navigate = useNavigate()
 
   const movePaginationRight = () => {
     console.log(indexPagination);
@@ -178,11 +181,19 @@ const GridTable = () => {
     setActiveButton(newArray);
   };
 
-  console.log(rooms)
+  const setOptionsFunc = (index) => {
+    const newArray = [...options];
+    newArray[index] = !newArray[index];
+    setOptions(newArray);
+  };
+
   useEffect(() => {
     colorButton(indexPagination - 1);
-    // setItem("rooms", rooms);
-  }, [indexPagination]);
+    if (loading === "idle") {
+      dispatch(getRooms());
+    }
+    dispatch(sortBy("room_number"));
+  }, [indexPagination, loading, dispatch]);
 
   return (
     <>
@@ -190,7 +201,7 @@ const GridTable = () => {
         <StyledTable>
           <thead>
             <tr>
-              <StyledTh scope="col">Room Name</StyledTh>
+              <StyledTh scope="col">Room</StyledTh>
               <StyledTh scope="col">Room Number</StyledTh>
               <StyledTh scope="col">ID Room</StyledTh>
               <StyledTh scope="col">Room Type</StyledTh>
@@ -202,11 +213,14 @@ const GridTable = () => {
           </thead>
           <tbody>
             {rooms.length ? (
-              rooms.slice(firstElement, lastElement).map((room) => (
+              rooms.slice(firstElement, lastElement).map((room, index) => (
                 <tr key={room.id}>
                   <StyledTd>
                     <ContainerTd>
-                      <StyledImg src={room.image ? room.image : room.images.images0} alt="" />
+                      <StyledImg
+                        src={room.image ? room.image : room.images.images0}
+                        alt=""
+                      />
                     </ContainerTd>
                   </StyledTd>
                   <StyledTd>{room.room_number}</StyledTd>
@@ -227,14 +241,33 @@ const GridTable = () => {
                   </StyledTd>
                   <StyledTd>
                     <ContainerStatus>
-                      <StyledButtonStatus color={color} bgColor={bgColor}>
-                        {status}
+                      <StyledButtonStatus
+                        bgColor={
+                          room.status === "Avaliable" ? "#5AD07A" : "#E23428"
+                        }
+                      >
+                        {room.status}
                       </StyledButtonStatus>
-                      <Link style={{ textDecoration: "none" }} to={"/newRoom"} state={{ room }}>
-                      <BsThreeDotsVertical />
-                      </Link>
+                      {!options[index] ? (
+                        <BsThreeDotsVertical
+                          onClick={() => {setOptionsFunc(index);}}
+                        />
+                      ) : (
+                        <Options
+                          setModalDelete={setModalDelete}
+                          room={room}
+                          setOptions={setOptionsFunc}
+                          index={index}
+                          setRoomId={setRoomId}
+                        />
+                      )}
                     </ContainerStatus>
                   </StyledTd>
+                  {modalDelete ? (
+                    <ModalDelete setModalDelete={setModalDelete} id={roomId} />
+                  ) : (
+                    <></>
+                  )}
                 </tr>
               ))
             ) : (

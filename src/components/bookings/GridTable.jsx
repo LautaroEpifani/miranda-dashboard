@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import reservationsJSON from "../../mockData/Reservations.json";
+import { reservationsData } from "../../mockData/Reservations";
 import { Link } from "react-router-dom";
 
 const ContainerTable = styled.div`
@@ -113,12 +113,12 @@ const ShowingData = styled.h6`
 
 const GridTable = () => {
   const [reservations, setReservations] = useState(
-    reservationsJSON.slice(0, 47)
+    reservationsData.slice(0, 47)
   );
   const pages = [1, 2, 3, 4, 5];
-  const [color, setColor] = useState("#FFF");
-  const [bgColor, setBgColor] = useState("#FB9F44");
-  const [status, setStatus] = useState("In Progress");
+  const [color, setColor] = useState("");
+  const [bgColor, setBgColor] = useState("");
+  const [status, setStatus] = useState(reservations.map(r => r.status))
   const [activeButton, setActiveButton] = useState([
     true,
     false,
@@ -161,8 +161,27 @@ const GridTable = () => {
     setActiveButton(newArray);
   };
 
+  const setStatusColor = () => {
+    let i;
+    for(i = 0 ; i < status.length ; i++) {
+      if(status[i] === "Check In") {
+      setBgColor("#E8FFEE")
+      setColor("#5AD07A")
+      }
+      if(status[i] === "Check Out") {
+      setBgColor("#FFEDEC")
+      setColor("#E23428A")
+      }
+      else {
+      setBgColor("#d8b795")
+      setColor("#FF9C3A")
+      }
+    }
+  }
+
   useEffect(() => {
     colorButton(indexPagination - 1);
+    setStatusColor()
   }, [indexPagination]);
 
   return (
@@ -182,7 +201,6 @@ const GridTable = () => {
           </thead>
           <tbody>
             {reservations.slice(firstElement, lastElement).map((reserv) => (
-               
               <tr key={reserv.id}>
                   <Link style={{ textDecoration: "none" }} to={`/bookings/${reserv.id}`} state={{ reservations: reserv }}>    
                   <StyledTd>{reserv.guest}</StyledTd>
