@@ -57,6 +57,7 @@ export const roomsSlice = createSlice({
       state.roomsState.push(action.payload)
     })
     builder.addCase(editRequestRoom.fulfilled, (state, action) => { 
+      console.log(action)
        const room = state.roomsState.find((room) => room.id === action.payload.id);
         const {  room_type, room_number, price, offer_price, amenities } = action.payload
         room.room_type = room_type;

@@ -85,6 +85,7 @@ const StyledSelect = styled.select`
   border: 1px #aaa3a3 solid;
   border-radius: 5px;
   width: 20%;
+  padding-left: 5px;
   &:focus {
     border: 1px #135846 solid;
     outline: none;
@@ -153,23 +154,20 @@ const NewRoom = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    room.offer_price = (
+    if (!editRoomSelected) {
+      room.images = images;
+       room.amenities = amenities;
+      room.offer_price = (
       room.price -
       (room.price * room.discount) / 100
     ).toFixed(2);
-    room.images = images;
-    room.amenities = amenities;
-    setRoom(room);
-    if (!editRoomSelected) {
       room.id = uuid();
-      // dispatch(addRoom(room));
+      setRoom(room);
       dispatch(postRoom(room));
       setOpenModal(true)
-     
     } else {
+      console.log(room)
       setOpenModal(true)
-      room.id = editRoomSelected.room.id;
-      // dispatch(editRoom(room));
       dispatch(editRequestRoom(room))
       setTimeout(() => { navigate("/room") }, 3000);
       setTimeout(() => { setOpenModal(false) }, 3000);
@@ -180,7 +178,10 @@ const NewRoom = () => {
 
   useEffect(() => {
     setTitle("New Room");
-  }, []);
+    if(editRoomSelected) {
+      setRoom(editRoomSelected.room)
+    }
+  }, [editRoomSelected, setTitle]);
 
     
 
@@ -207,7 +208,7 @@ const NewRoom = () => {
             onChange={handleChange}
             name="room_type"
             defaultValue={
-              editRoomSelected ? editRoomSelected.room.offer_price : null
+              editRoomSelected ? editRoomSelected.room.room_type : null
             }
           >
             <option value=""></option>
@@ -247,7 +248,7 @@ const NewRoom = () => {
             onChange={handleChange}
             name="offer"
             defaultValue={
-              editRoomSelected ? editRoomSelected.room.offer_price : null
+              editRoomSelected ? editRoomSelected.room.offer : null
             }
           >
             <option value=""></option>
@@ -269,7 +270,9 @@ const NewRoom = () => {
         <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Discount</StyledLabel>
-          <StyledInput onChange={handleChange} type="number" name="discount" />
+          <StyledInput onChange={handleChange} type="number" name="discount" defaultValue={
+              editRoomSelected ? editRoomSelected.room.discount : null
+            }/>
         </StyledInputContainer>
         <StyledInputContainer>
           <StyledLabel htmlFor="">Cancellation</StyledLabel>
@@ -281,6 +284,21 @@ const NewRoom = () => {
               editRoomSelected ? editRoomSelected.room.cancellation : null
             }
           />
+        </StyledInputContainer>
+        <StyledInputContainer>
+          {" "}
+          <StyledLabel htmlFor="">Status</StyledLabel>
+          <StyledSelect
+            onChange={handleChange}
+            name="status"
+            defaultValue={
+              editRoomSelected ? editRoomSelected.room.status : null
+            }
+          >
+            <option value=""></option>
+            <option value="Avaliable">Avaliable</option>
+            <option value="Booked">Booked</option>
+          </StyledSelect>
         </StyledInputContainer>
         <StyledInputContainer>
           <StyledLabel htmlFor="">Amenities</StyledLabel>

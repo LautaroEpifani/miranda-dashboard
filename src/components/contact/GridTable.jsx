@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { reservationsData } from "../../mockData/Reservations";
+import { messagesList } from '../../mockData/Messages'
 
 const ContainerTable = styled.div`
   margin: 40px;
@@ -96,9 +97,8 @@ const ShowingData = styled.h6`
 `;
 
 const GridTable = () => {
-  const [reservations, setReservations] = useState(
-    reservationsData.slice(0, 47)
-  );
+  const [messages, setMessages] = useState(messagesList)
+  const [archived, setArchived] = useState([])
   const pages = [1, 2, 3, 4, 5];
   const [color, setColor] = useState("#E23428");
   const [status, setStatus] = useState("Archive");
@@ -161,18 +161,23 @@ const GridTable = () => {
             </tr>
           </thead>
           <tbody>
-            {reservations.slice(firstElement, lastElement).map((reserv) => (
-              <tr key={reserv.id}>
-                <StyledTd>{reserv.order_date}</StyledTd>
-
-                <StyledTd>
-                  <StyledDate>{reserv.guest}</StyledDate>
-                </StyledTd>
+            {messages.slice(firstElement, lastElement).map((message) => (
+              <tr key={message.id}>
                 <StyledTd>
                   <CheckContainer>
-                    <h1>{reserv.check_in}</h1>
-                    <Styledh6>hour</Styledh6>
+                    <h1>{message.date}</h1>
+                    <Styledh6>{message.hour}</Styledh6>
                   </CheckContainer>
+                  </StyledTd>
+                <StyledTd>
+                  <div>
+                    <h1>{message.name}</h1>
+                    <h1>{message.email}</h1>
+                    <h1>{message.phone}</h1>
+                  </div>
+                </StyledTd>
+                <StyledTd>
+                  <h1>{message.subject}</h1>
                 </StyledTd>
                 <StyledTd>
                   <StyledButtonStatus color={color}>
@@ -185,7 +190,7 @@ const GridTable = () => {
         </StyledTable>
       </ContainerTable>
       <ShowingData>
-        Showing {reservations.length} of {reservations.length} Data
+        Showing {messages.length} of {messages.length} Data
       </ShowingData>
       <PaginationContainer>
         <DirectionButton onClick={() => movePaginationLeft()}>

@@ -11,48 +11,55 @@ import NewRoom from "../pages/NewRoom";
 import Contact from "../pages/Contact";
 import { Users } from "../pages/Users";
 import NewUser from "../pages/NewUser";
+import NewBooking from "../pages/NewBooking";
 
 const user = await getItem("loginUser");
 
 export const router = createBrowserRouter([
-  { path: "/",
-    element: <Layout />,
-    children: [
   {
     path: "/",
-    element: <Dashboard />,
-  },
-  {
-    path: "/room",
-    element: <Room />,
-  },
-  {
-    path: "/newRoom",
-    element: <NewRoom/>,
-  },
-  {
-    path: "/bookings",
-    element: <Bookings />,
-  },
-  {
-    path: "/bookings/:id",
-    element: <BookingsDetail />,
-  },
-  {
-    path: "/contact",
-    element: <Contact />,
-  },
-  {
-    path: "/users",
-    element: <Users/>,
-  },
-   {
-    path: "/newUser",
-    element: <NewUser/>,
+    element: user.userState ? <Layout/> : <Login/>,
+    children: [
+      {
+        path: "/",
+        element: <Dashboard/>,
+      },
+      {
+        path: "/room",
+        element: <Room/>,
+      },
+      {
+        path: "/newRoom",
+        element: <NewRoom/>,
+      },
+      {
+        path: "/bookings",
+        element: <Bookings/>,
+      },
+      {
+        path: "/newBooking",
+        element: <NewBooking/>,
+      },
+      {
+        path: "/bookings/:id",
+        element: <BookingsDetail/>,
+      },
+      {
+        path: "/contact",
+        element: <Contact/>,
+      },
+      {
+        path: "/users",
+        element: <Users/>,
+      },
+      {
+        path: "/newUser",
+        element: <NewUser/>,
+      },
+    ],
   },
   {
     path: "/login",
-    element: <Login />,
+    element: <Login/>,
   },
-]}
 ]);

@@ -64,15 +64,6 @@ const ContainerStatus = styled.div`
   position: relative;
 `;
 
-const CheckContainer = styled.div``;
-
-const Styledh6 = styled.h6`
-  font-weight: 300;
-  font-size: 10px;
-  padding: 0;
-  margin: 0;
-`;
-
 const PaginationContainer = styled.div`
   padding-top: 5px;
   display: flex;

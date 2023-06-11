@@ -8,6 +8,8 @@ import { IoExitOutline } from "react-icons/io5";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { NavTitle } from "../styledComponents/styled";
+import { useContext } from "react";
+import AuthContext from "../context/AuthContext";
 
 const NavContainer = styled.div`
   padding-top: 20px;
@@ -70,6 +72,8 @@ export const NavBar = ({ openSideBar, setOpenSideBar, title }) => {
   const [emails, setEmails] = useState(2);
   const [notifications, setNotifications] = useState(87);
 
+  const { dispatch } = useContext(AuthContext);
+
   return (
     <NavContainer>
       <SectionContainer>
@@ -96,7 +100,7 @@ export const NavBar = ({ openSideBar, setOpenSideBar, title }) => {
             <MdOutlineNotifications />
             <Notifications>{notifications}</Notifications>
           </NotifContainer>
-          <Link  to="/login">
+          <Link to={"/login"}  onClick={() => dispatch({ type: "logout"})}>
           <IoExitOutline style={{ color: "#135846" }}/>
           </Link>
         </Icons>

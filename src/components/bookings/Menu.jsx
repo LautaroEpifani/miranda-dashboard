@@ -3,7 +3,12 @@ import { ContainerBetween } from "../../styledComponents/styled";
 import styled from "styled-components";
 import { StyledInput } from "../../components/login/Login";
 import { TiArrowSortedDown } from "react-icons/ti";
-
+import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  sortBookings,
+} from "../../features/bookings/bookingsSlice";
+import { useEffect, useState } from "react";
 
 const ContainerMenu = styled.div`
   width: 90%;
@@ -17,20 +22,24 @@ const SubContainer = styled(ContainerBetween)`
 `;
 
 const Bar = styled.div`
-  width: 45%;
-  margin-left: 20px;
+  width: 25%;
+  margin-left: ${(props) => (props.margin)};
   margin-top: 5px;
   height: 2px;
-  background: -moz-linear-gradient(left, #135846 75%, #d4d4d4 25%);
-  background: -webkit-linear-gradient(left, #135846 75%, #d4d4d4 25%);
-  background: linear-gradient(to right, #135846 25%, #d4d4d4 25%);
+  background-color: #135846;
 `;
 
-const StyledA = styled.a`
-  text-decoration: none;
+const ContainerBar = styled.div`
+    background-color: #E9E9E9;
+    width: 45%;
+    margin-left: 15px;
+`;
+
+const StyledA = styled.button`
   color: #6e6e6e;
   font-size: 12px;
   font-weight: 500;
+  cursor: pointer;
 `;
 
 const ContainerSections = styled.div`
@@ -70,50 +79,108 @@ const StyledSelect = styled.select`
   border-radius: 8px;
   padding: 8px;
   padding-left: 12px;
+  padding-right: 20px;
   color: #135846;
   font-weight: 600;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 `;
 
-const StyledOption = styled.option`
-`;
+const StyledOption = styled.option``;
 
 const StyledArrow = styled(TiArrowSortedDown)`
   position: absolute;
-  right: 5px;
+  right: 3px;
   top: 50%;
   transform: translate(0, -50%);
   color: #135846;
 `;
 
-const Menu = () => {
+const StyledButton = styled.button`
+  background-color: #135846;
+  color: #fff;
+  padding: 12px;
+  padding-left: 40px;
+  padding-right: 40px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: "Poppins", sans-serif;
+  margin-right: 20px;
+`;
+
+const Menu = ({ setSearchBooking }) => {
+  const dispatch = useDispatch();
+  const bookings = useSelector((state) => state.bookings.bookingsState);
+  const [search, setSearch] = useState("");
+  const [margin, setMargin] = useState("0%")
+
+  const handleChange = (e) => {
+    dispatch(sortBookings(e.target.value));
+  };
+
+  const onSearch = (e) => {
+    setSearch(e.target.value);
+  };
+
+  const allBookings = () => {
+    setSearchBooking(bookings)
+  }
+
+  const checkInBookings = () => {
+    setSearchBooking(bookings.filter(booking => booking.status === "Check In"))
+  }
+
+  const checkOutBookings = () => {
+    setSearchBooking(bookings.filter(booking => booking.status === "Check Out"))
+  }
+
+  const inProgressBookings = () => {
+    setSearchBooking(bookings.filter(booking => booking.status === "In Progress"))
+  }
+
+  const changeMargin = (percentaje) => {
+    setMargin(percentaje)
+  }
+
+  useEffect(() => {
+    const filteredBookings = bookings.filter((booking) =>
+      booking.guest.toLowerCase().includes(search?.toLocaleLowerCase())
+    );
+    setSearchBooking(filteredBookings);
+  }, [search, bookings, setSearchBooking]);
 
   return (
     <ContainerMenu>
-        <SubContainer>
-          <ContainerSections>
-            <StyledA href="">All Bookings</StyledA>
-            <StyledA href="">Cheking In</StyledA>
-            <StyledA href="">Cheking Out</StyledA>
-            <StyledA href="">In Progress</StyledA>
-          </ContainerSections>
-          <ContainerInput>
-            <StyledSearch type="text" name="search" />
-            <Icon />
-          </ContainerInput>
-          <SelectContainer>
-            <StyledSelect name="" id="">
-              <StyledOption value="">Guest</StyledOption>
-              <StyledOption value="">Order Date</StyledOption>
-              <StyledOption value="">Check In</StyledOption>
-              <StyledOption value="">Check Out</StyledOption>
-            </StyledSelect>
-            <StyledArrow />
-          </SelectContainer>
-        </SubContainer>
-        <Bar></Bar>
-      </ContainerMenu>
-  )
-}
+      <SubContainer>
+        <ContainerSections>
+          <StyledA  onClick={() => { allBookings(); changeMargin("0%")}} >All Bookings</StyledA>
+          <StyledA  onClick={() => {checkInBookings(); changeMargin("25%")}}>Cheking In</StyledA>
+          <StyledA onClick={() => {checkOutBookings(); changeMargin("50%")}}>Cheking Out</StyledA>
+          <StyledA onClick={() => {inProgressBookings(); changeMargin("75%")}}>In Progress</StyledA>
+        </ContainerSections>
+        <ContainerInput>
+          <StyledSearch
+            type="text"
+            name="search"
+            onChange={onSearch}
+          />
+          <Icon />
+        </ContainerInput>
+        <SelectContainer>
+          <Link to="/newBooking">
+            <StyledButton>+ New Booking</StyledButton>
+          </Link>
+          <StyledSelect name="" id="" onChange={handleChange}>
+            <StyledOption value="order_date">Order Date</StyledOption>
+            <StyledOption value="guest">Guest</StyledOption>
+            <StyledOption value="check_in">Check In</StyledOption>
+            <StyledOption value="check_out">Check Out</StyledOption>
+          </StyledSelect>
+          <StyledArrow />
+        </SelectContainer>
+      </SubContainer>
+      <ContainerBar><Bar margin={margin}></Bar></ContainerBar>
+    </ContainerMenu>
+  );
+};
 
-export default Menu
+export default Menu;

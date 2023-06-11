@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { ContainerBetween } from "../../styledComponents/styled.jsx";
-import { useSelector } from "react-redux";
-import guest from "../../assets/guest.jpg";
-
+import { useDispatch, useSelector } from "react-redux";
+import { getUsers } from "../../features/users/usersApi.js";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import Options from "./Options.jsx";
+import ModalDelete from "./ModalDelete.jsx";
+import { sortUsers } from "../../features/users/usersSlice.js";
 
 const ContainerTable = styled.div`
   margin: 40px;
@@ -43,19 +46,21 @@ const StyledDate = styled.h6`
 `;
 
 const StyledButtonStatus = styled.button`
-  padding: 30px;
   padding-top: 14px;
   padding-bottom: 14px;
   border-radius: 7px;
   border: none;
   background-color: ${(props) => props.bgColor};
-  color: ${(props) => props.color};
+  color: #fff;
+  width: 100px;
+  text-align: center;
 `;
 
 const ContainerStatus = styled.div`
   display: flex;
   gap: 10px;
   align-items: center;
+  position: relative;
 `;
 
 const CheckContainer = styled.div``;
@@ -116,18 +121,30 @@ const ContainerTd = styled(ContainerBetween)`
   gap: 20px;
 `;
 
-const StyledAmenities = styled.div`
+const StyledContainerGuest = styled.div`
   display: flex;
-  gap: 5px;
+  gap: 10px;
+  align-items: center;
 `;
 
-const GridTable = () => {
-  const usersState = useSelector((state) => state.users.usersState);
-  const [users, setUsers] = useState(usersState);
+const StyledH1 = styled.h1`
+  color: #222222;
+`;
+
+const StyledImage = styled.img`
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+`;
+
+const GridTable = ({ searchUser }) => {
+  const users = useSelector((state) => state.users.usersState);
+  const loading = useSelector((state) => state.users.loading);
+  const dispatch = useDispatch();
   const pages = [1, 2, 3, 4, 5];
-  const [color, setColor] = useState("#FFF");
-  const [bgColor, setBgColor] = useState("#5AD07A");
-  const [status, setStatus] = useState("Avaliable");
+  const [options, setOptions] = useState(new Array(users.length).fill(false));
+  const [userId, setUserId] = useState(null);
+  const [modalDelete, setModalDelete] = useState(false);
   const [activeButton, setActiveButton] = useState([
     true,
     false,
@@ -170,10 +187,20 @@ const GridTable = () => {
     setActiveButton(newArray);
   };
 
+  const setOptionsFunc = (index) => {
+    const newArray = [...options];
+    newArray[index] = !newArray[index];
+    setOptions(newArray);
+  };
+
   useEffect(() => {
     colorButton(indexPagination - 1);
-  }, [indexPagination]);
-
+    if (loading === "idle") {
+      dispatch(getUsers());
+      console.log(options);
+    }
+    dispatch(sortUsers("start_date"));
+  }, [indexPagination, dispatch, loading]);
 
   return (
     <>
@@ -181,9 +208,7 @@ const GridTable = () => {
         <StyledTable>
           <thead>
             <tr>
-              <StyledTh scope="col">Employee</StyledTh>
               <StyledTh scope="col">Name</StyledTh>
-              <StyledTh scope="col">ID Employee</StyledTh>
               <StyledTh scope="col">Email</StyledTh>
               <StyledTh scope="col">Start Date</StyledTh>
               <StyledTh scope="col">Description</StyledTh>
@@ -192,26 +217,116 @@ const GridTable = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
+            {searchUser ? 
+
+              searchUser.slice(firstElement, lastElement).map((user, index) => (
               <tr key={user.id}>
                 <StyledTd>
-                  <ContainerTd>
-                    <StyledImg src={guest} alt="" />
-                  </ContainerTd>
+                  {" "}
+                  <StyledContainerGuest>
+                    <StyledImage
+                      src={user.image.images0 ? user.image.images0 : user.image}
+                      alt=""
+                    />
+                    <div>
+                      <StyledH1>{user.employee_name}</StyledH1>
+                      <Styledh6>{user.id}</Styledh6>
+                    </div>
+                  </StyledContainerGuest>
                 </StyledTd>
-                <StyledTd>{user.employee_name}</StyledTd>
                 <StyledTd>
-                  <StyledDate>{user.id}</StyledDate>
+                  <h1>{user.email}</h1>
                 </StyledTd>
-                <StyledTd>ads@asd.com</StyledTd>
-                <StyledTd>10/10/2022</StyledTd>
-                <StyledTd>Client attention</StyledTd>
-                <StyledTd>726 28 28 28</StyledTd>
                 <StyledTd>
-                  <StyledButtonStatus color={color} bgColor={bgColor}>
-                    Active
-                  </StyledButtonStatus>
+                  <StyledDate>{user.start_date}</StyledDate>
                 </StyledTd>
+                <StyledTd>{user.description}</StyledTd>
+                <StyledTd>{user.contact}</StyledTd>
+                <StyledTd>
+                  <ContainerStatus>
+                    <StyledButtonStatus
+                      bgColor={user.status === "Active" ? "#5AD07A" : "#E23428"}
+                    >
+                      {user.status}
+                    </StyledButtonStatus>
+                    {!options[index] ? (
+                      <BsThreeDotsVertical
+                        onClick={() => {
+                          setOptionsFunc(index);
+                        }}
+                      />
+                    ) : (
+                      <Options
+                        setModalDelete={setModalDelete}
+                        user={user}
+                        setOptions={setOptionsFunc}
+                        index={index}
+                        setUserId={setUserId}
+                      />
+                    )}
+                  </ContainerStatus>
+                </StyledTd>
+                {modalDelete ? (
+                  <ModalDelete setModalDelete={setModalDelete} id={userId} />
+                ) : (
+                  <></>
+                )}
+              </tr>
+            ))
+
+             : 
+            users.slice(firstElement, lastElement).map((user, index) => (
+              <tr key={user.id}>
+                <StyledTd>
+                  {" "}
+                  <StyledContainerGuest>
+                    <StyledImage
+                      src={user.image.images0 ? user.image.images0 : user.image}
+                      alt=""
+                    />
+                    <div>
+                      <StyledH1>{user.employee_name}</StyledH1>
+                      <Styledh6>{user.id}</Styledh6>
+                    </div>
+                  </StyledContainerGuest>
+                </StyledTd>
+                <StyledTd>
+                  <h1>{user.email}</h1>
+                </StyledTd>
+                <StyledTd>
+                  <StyledDate>{user.start_date}</StyledDate>
+                </StyledTd>
+                <StyledTd>{user.description}</StyledTd>
+                <StyledTd>{user.contact}</StyledTd>
+                <StyledTd>
+                  <ContainerStatus>
+                    <StyledButtonStatus
+                      bgColor={user.status === "Active" ? "#5AD07A" : "#E23428"}
+                    >
+                      {user.status}
+                    </StyledButtonStatus>
+                    {!options[index] ? (
+                      <BsThreeDotsVertical
+                        onClick={() => {
+                          setOptionsFunc(index);
+                        }}
+                      />
+                    ) : (
+                      <Options
+                        setModalDelete={setModalDelete}
+                        user={user}
+                        setOptions={setOptionsFunc}
+                        index={index}
+                        setUserId={setUserId}
+                      />
+                    )}
+                  </ContainerStatus>
+                </StyledTd>
+                {modalDelete ? (
+                  <ModalDelete setModalDelete={setModalDelete} id={userId} />
+                ) : (
+                  <></>
+                )}
               </tr>
             ))}
           </tbody>

@@ -4,6 +4,8 @@ import styled from "styled-components";
 import { LogoContainer } from "../../styledComponents/styled";
 import logo from "../../assets/logo.png";
 import { getItem, setItem } from "../../utils/localStorage";
+import { useContext } from "react";
+import AuthContext from "../../context/AuthContext";
 
 const FormContainer = styled.form`
   width: 40%;
@@ -38,40 +40,67 @@ const StyledButton = styled.button`
   border: none;
 `;
 
-const Login = () => {
-  const [userName, setUserName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const StyledImage = styled.img`
+  width: 200px;
+  height: 50px;
+  margin-right: 20px;
+`;
 
-  const [login, setLogin] = useState();
-  const loginUser = getItem("loginUser");
+const StyledEdit = styled.a`
+  text-decoration: underline;
+  margin-left: 50px;
+  cursor: pointer;
+`;
+
+const Login = () => {
+  const [login, setLogin] = useState([]);
+  const [activeUpdate, setActiveUpdate] = useState(false);
+
+  const { dispatch, userState } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  const handleChange = ({ target: { name, value } }) => {
+    setLogin({ ...login, [name]: value });
+  };
 
   const submitLogin = (event) => {
     event.preventDefault();
-    setLogin({
-      email,
-      password,
-    });
-    navigate("/");
+    if (!activeUpdate) {
+      dispatch({ type: "login", payload: login });
+    } else {
+      setActiveUpdate(false);
+      console.log(login);
+      dispatch({ type: "updateUser", payload: login });
+    }
+    navigate("/")
+    window.location.reload()
   };
 
+  console.log(userState);
+
   useEffect(() => {
-    if (login && !getItem("loginUser")) {
-      setItem("loginUser", login);
+    if (activeUpdate) {
+      setLogin(getItem("loginUser"));
     }
-  }, [login]);
+    if (userState) {
+      setItem("loginUser", userState);
+    }
+  }, [activeUpdate, userState]);
 
   return (
     <FormContainer onSubmit={submitLogin}>
       <LogoContainer>
-        <img src={logo} alt="" style={{ width: "200px", height: "50px" }} />
+        <StyledImage src={logo} alt="" />
+        <StyledEdit onClick={() => setActiveUpdate(false)}>Log In</StyledEdit>
+        <StyledEdit onClick={() => setActiveUpdate(true)}>Edit User</StyledEdit>
       </LogoContainer>
       <InputContainer>
         <StyledLabel htmlFor="userName">Username</StyledLabel>
         <StyledInput
           type="text"
-          onSubmit={(e) => setUserName(e.target.value)}
+          name="userName"
+          onChange={handleChange}
+          defaultValue={activeUpdate ? login.userName : null}
         />
       </InputContainer>
       <InputContainer>
@@ -79,18 +108,19 @@ const Login = () => {
         <StyledInput
           type="email"
           name="email"
-          onSubmit={(e) => setEmail(e.target.value)}
+          onChange={handleChange}
+          defaultValue={activeUpdate ? login.email : null}
         />
       </InputContainer>
       <InputContainer>
         <StyledLabel htmlFor="password">Password</StyledLabel>
-        <StyledInput
-          type="password"
-          name="password"
-          onSubmit={(e) => setPassword(e.target.value)}
-        />
+        <StyledInput type="password" name="password" onChange={handleChange} />
       </InputContainer>
-      <StyledButton type="submit">Log In</StyledButton>
+      {activeUpdate ? (
+        <StyledButton type="submit">Update User</StyledButton>
+      ) : (
+        <StyledButton type="submit">Log In</StyledButton>
+      )}
     </FormContainer>
   );
 };

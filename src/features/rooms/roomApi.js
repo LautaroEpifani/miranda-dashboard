@@ -15,7 +15,6 @@ export const getRooms = createAsyncThunk(
 export const postRoom = createAsyncThunk(
   "type/postRoom",
   async (payload) => {
-    console.log("entra")
       const response = await new Promise((res) =>  setTimeout(() => {
        res(payload)
      }, 1000))  

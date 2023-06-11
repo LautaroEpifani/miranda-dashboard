@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { reservationsData } from "../../mockData/Reservations";
+import { bookings } from "../../mockData/Bookings";
 import { Link } from "react-router-dom";
+import Options from "./Options";
+import ModalDelete from "./ModalDelete";
+import { getBookings } from "../../features/bookings/bookingsApi";
+import { useDispatch, useSelector } from "react-redux";
+import { sortBookings } from "../../features/bookings/bookingsSlice";
 
 const ContainerTable = styled.div`
   margin: 40px;
@@ -31,14 +36,15 @@ const StyledTh = styled.th`
 const StyledTd = styled.td`
   padding: 20px;
   font-size: 12px;
-  padding-left: 50px;
-  padding-right: 30px;
+  padding-left: 30px;
+  padding-right: 10px;
   color: #393939;
   font-weight: 600;
 `;
 
 const StyledButtonView = styled.button`
-  padding: 30px;
+  width: 120px;
+  padding: 20px;
   padding-top: 14px;
   padding-bottom: 14px;
   border-radius: 7px;
@@ -52,12 +58,13 @@ const StyledDate = styled.h6`
 `;
 
 const StyledButtonStatus = styled.button`
+  width: 130px;
   padding: 30px;
   padding-top: 14px;
   padding-bottom: 14px;
   border-radius: 7px;
   border: none;
-  background-color: ${(props) => props.bgColor};
+  background-color: ${(props) => props.bgrColor};
   color: ${(props) => props.color};
 `;
 
@@ -65,12 +72,16 @@ const ContainerStatus = styled.div`
   display: flex;
   gap: 10px;
   align-items: center;
+  position: relative;
 `;
 
 const CheckContainer = styled.div``;
 
 const Styledh6 = styled.h6`
   font-weight: 300;
+  font-size: 10px;
+  margin-top: 5px;
+  color: #222222;
 `;
 
 const PaginationContainer = styled.div`
@@ -111,14 +122,32 @@ const ShowingData = styled.h6`
   font-size: 10px;
 `;
 
-const GridTable = () => {
-  const [reservations, setReservations] = useState(
-    reservationsData.slice(0, 47)
-  );
+const StyledContainerGuest = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+`;
+
+const StyledH1 = styled.h1`
+  color: #222222;
+`;
+
+const StyledImage = styled.img`
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+`;
+
+const GridTable = ({ searchBooking }) => {
+  const bookings = useSelector((state) => state.bookings.bookingsState);
+  const loading = useSelector((state) => state.bookings.loading);
+  const dispatch = useDispatch();
   const pages = [1, 2, 3, 4, 5];
-  const [color, setColor] = useState("");
-  const [bgColor, setBgColor] = useState("");
-  const [status, setStatus] = useState(reservations.map(r => r.status))
+  const [bookingId, setBookingId] = useState(null);
+  const [options, setOptions] = useState(
+    new Array(bookings.length).fill(false)
+  );
+  const [modalDelete, setModalDelete] = useState(false);
   const [activeButton, setActiveButton] = useState([
     true,
     false,
@@ -161,28 +190,19 @@ const GridTable = () => {
     setActiveButton(newArray);
   };
 
-  const setStatusColor = () => {
-    let i;
-    for(i = 0 ; i < status.length ; i++) {
-      if(status[i] === "Check In") {
-      setBgColor("#E8FFEE")
-      setColor("#5AD07A")
-      }
-      if(status[i] === "Check Out") {
-      setBgColor("#FFEDEC")
-      setColor("#E23428A")
-      }
-      else {
-      setBgColor("#d8b795")
-      setColor("#FF9C3A")
-      }
-    }
-  }
+  const setOptionsFunc = (index) => {
+    const newArray = [...options];
+    newArray[index] = !newArray[index];
+    setOptions(newArray);
+  };
 
   useEffect(() => {
     colorButton(indexPagination - 1);
-    setStatusColor()
-  }, [indexPagination]);
+    if (loading === "idle") {
+      dispatch(getBookings());
+    }
+    dispatch(sortBookings("order_date"));
+  }, [indexPagination, loading, dispatch]);
 
   return (
     <>
@@ -200,47 +220,176 @@ const GridTable = () => {
             </tr>
           </thead>
           <tbody>
-            {reservations.slice(firstElement, lastElement).map((reserv) => (
-              <tr key={reserv.id}>
-                  <Link style={{ textDecoration: "none" }} to={`/bookings/${reserv.id}`} state={{ reservations: reserv }}>    
-                  <StyledTd>{reserv.guest}</StyledTd>
-                    </Link>
-                <StyledTd>
-                  <StyledDate>{reserv.order_date}</StyledDate>
-                </StyledTd>
-                <StyledTd>
-                  <CheckContainer>
-                    <h1>{reserv.check_in}</h1>
-                    <Styledh6>hour</Styledh6>
-                  </CheckContainer>
-                </StyledTd>
-                <StyledTd>
-                  <CheckContainer>
-                    <h1>{reserv.checkout}</h1>
-                    <Styledh6>hour</Styledh6>
-                  </CheckContainer>
-                </StyledTd>
-                <StyledTd>
-                  <StyledButtonView>View Notes</StyledButtonView>
-                </StyledTd>
-                <StyledTd>{reserv.room_type}</StyledTd>
-                <StyledTd>
-                  <ContainerStatus>
-                    <StyledButtonStatus color={color} bgColor={bgColor}>
-                      {status}
-                    </StyledButtonStatus>
-                    <BsThreeDotsVertical />
-                  </ContainerStatus>
-                </StyledTd>
-             
-              </tr>
-                  
-            ))}
+            {searchBooking
+              ? searchBooking
+                  .slice(firstElement, lastElement)
+                  .map((booking, index) => (
+                    <tr key={booking.id}>
+                      <StyledTd>
+                        {" "}
+                        <Link
+                          style={{ textDecoration: "none" }}
+                          to={`/bookings/${booking.id}`}
+                          state={{ booking: booking }}
+                        >
+                          <StyledContainerGuest>
+                            <StyledImage
+                              src={
+                                booking.image.images0
+                                  ? booking.image.images0
+                                  : booking.image
+                              }
+                              alt=""
+                            />
+                            <div>
+                              <StyledH1>{booking.guest}</StyledH1>
+                              <Styledh6>{booking.id}</Styledh6>
+                            </div>
+                          </StyledContainerGuest>
+                        </Link>
+                      </StyledTd>
+
+                      <StyledTd>
+                        <StyledDate>{booking.order_date}</StyledDate>
+                      </StyledTd>
+                      <StyledTd>
+                        <CheckContainer>
+                          <h1>{booking.check_in}</h1>
+                          <Styledh6>hour</Styledh6>
+                        </CheckContainer>
+                      </StyledTd>
+                      <StyledTd>
+                        <CheckContainer>
+                          <h1>{booking.check_out}</h1>
+                          <Styledh6>hour</Styledh6>
+                        </CheckContainer>
+                      </StyledTd>
+                      <StyledTd>
+                        <StyledButtonView>View Notes</StyledButtonView>
+                      </StyledTd>
+                      <StyledTd>{booking.room_type}</StyledTd>
+                      <StyledTd>
+                        <ContainerStatus>
+                          <StyledButtonStatus
+                            color={booking.color}
+                            bgrColor={booking.bgrColor}
+                          >
+                            {booking.status}
+                          </StyledButtonStatus>
+                          {!options[index] ? (
+                            <BsThreeDotsVertical
+                              onClick={() => {
+                                setOptionsFunc(index);
+                              }}
+                            />
+                          ) : (
+                            <Options
+                              setModalDelete={setModalDelete}
+                              booking={booking}
+                              setOptions={setOptionsFunc}
+                              index={index}
+                              setBookingId={setBookingId}
+                            />
+                          )}
+                        </ContainerStatus>
+                      </StyledTd>
+                      {modalDelete ? (
+                        <ModalDelete
+                          setModalDelete={setModalDelete}
+                          id={bookingId}
+                        />
+                      ) : (
+                        <></>
+                      )}
+                    </tr>
+                  ))
+              : bookings
+                  .slice(firstElement, lastElement)
+                  .map((booking, index) => (
+                    <tr key={booking.id}>
+                      <StyledTd>
+                        {" "}
+                        <Link
+                          style={{ textDecoration: "none" }}
+                          to={`/bookings/${booking.id}`}
+                          state={{ booking: booking }}
+                        >
+                          <StyledContainerGuest>
+                            <StyledImage
+                              src={
+                                booking.image.images0
+                                  ? booking.image.images0
+                                  : booking.image
+                              }
+                              alt=""
+                            />
+                            <div>
+                              <StyledH1>{booking.guest}</StyledH1>
+                              <Styledh6>{booking.id}</Styledh6>
+                            </div>
+                          </StyledContainerGuest>
+                        </Link>
+                      </StyledTd>
+
+                      <StyledTd>
+                        <StyledDate>{booking.order_date}</StyledDate>
+                      </StyledTd>
+                      <StyledTd>
+                        <CheckContainer>
+                          <h1>{booking.check_in}</h1>
+                          <Styledh6>hour</Styledh6>
+                        </CheckContainer>
+                      </StyledTd>
+                      <StyledTd>
+                        <CheckContainer>
+                          <h1>{booking.check_out}</h1>
+                          <Styledh6>hour</Styledh6>
+                        </CheckContainer>
+                      </StyledTd>
+                      <StyledTd>
+                        <StyledButtonView>View Notes</StyledButtonView>
+                      </StyledTd>
+                      <StyledTd>{booking.room_type}</StyledTd>
+                      <StyledTd>
+                        <ContainerStatus>
+                          <StyledButtonStatus
+                            color={booking.color}
+                            bgrColor={booking.bgrColor}
+                          >
+                            {booking.status}
+                          </StyledButtonStatus>
+                          {!options[index] ? (
+                            <BsThreeDotsVertical
+                              onClick={() => {
+                                setOptionsFunc(index);
+                              }}
+                            />
+                          ) : (
+                            <Options
+                              setModalDelete={setModalDelete}
+                              booking={booking}
+                              setOptions={setOptionsFunc}
+                              index={index}
+                              setBookingId={setBookingId}
+                            />
+                          )}
+                        </ContainerStatus>
+                      </StyledTd>
+                      {modalDelete ? (
+                        <ModalDelete
+                          setModalDelete={setModalDelete}
+                          id={bookingId}
+                        />
+                      ) : (
+                        <></>
+                      )}
+                    </tr>
+                  ))}
           </tbody>
         </StyledTable>
       </ContainerTable>
       <ShowingData>
-        Showing {reservations.length} of {reservations.length} Data
+        Showing {bookings.length} of {bookings.length} Data
       </ShowingData>
       <PaginationContainer>
         <DirectionButton onClick={() => movePaginationLeft()}>
@@ -248,7 +397,7 @@ const GridTable = () => {
         </DirectionButton>
         {pages.map((page, index) => (
           <PageButton
-            key={page}
+            key={index}
             activeButton={activeButton[page - 1]}
             onClick={() => {
               setIndexPagination(page);

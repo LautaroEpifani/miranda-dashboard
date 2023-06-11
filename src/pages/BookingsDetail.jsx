@@ -7,9 +7,15 @@ import Room1front from "../assets/room1front.jpg";
 import guestImage from "../assets/guest.jpg";
 import { SliderButtons } from "../components/dashboard/Messages";
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
-import { useEffect, useState } from "react";
-import { Amenities, AmenitiesLittle } from "../components/Amenities";
+import { useCallback, useEffect, useState } from "react";
+import {
+  Amenities,
+  AmenitiesIcon,
+  AmenitiesLittle,
+} from "../components/Amenities";
 import { IoBedOutline } from "react-icons/io5";
+import { useDispatch, useSelector } from "react-redux";
+import { getRooms } from "../features/rooms/roomApi";
 
 const DetailContainer = styled(ContainerBetween)`
   font-family: "Poppins", sans-serif;
@@ -21,8 +27,8 @@ const DetailContainer = styled(ContainerBetween)`
 const Details = styled(ContainerBetween)`
   display: block;
   width: 50%;
- padding-top: 20px;
- padding-left: 40px;
+  padding-top: 20px;
+  padding-left: 40px;
 `;
 
 const SliderContainer = styled(ContainerBetween)`
@@ -64,7 +70,7 @@ const CheckContainer = styled(ContainerBetween)`
 
 const RoomContainer = styled(ContainerBetween)`
   margin-bottom: 30px;
-   padding-right: 190px;
+  padding-right: 190px;
 `;
 
 const StyledH1 = styled.h1`
@@ -201,13 +207,23 @@ const StyledBar = styled.div`
   margin-bottom: 30px;
 `;
 
+const StyledAmenities = styled.div`
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+`;
+
 const BookingsDetail = () => {
   const { state } = useLocation();
-  const { guest, id, check_in, check_out, room_type, special_request } =
-    state.reservations;
+  const { image, guest, id, check_in, check_out, room_type, special_request } =
+    state.booking;
   const roomImgs = [Room1, Room1front];
+  const [room, setRoom] = useState({})
+  const rooms = useSelector((state) => state.rooms.roomsState);
+  const loading = useSelector((state) => state.rooms.loading);
+  const dispatch = useDispatch();
   const [slideIndex, setSlideIndex] = useState(0);
-  const setTitle = useOutletContext()
+  const setTitle = useOutletContext();
 
   const moveSlideRight = () => {
     console.log(slideIndex);
@@ -227,17 +243,27 @@ const BookingsDetail = () => {
     }
   };
 
-  
+  const roomType = useCallback(() => {
+    const room = rooms.filter((r) => (r.room_type === room_type));
+    setRoom(room)
+  }, [room_type, rooms]);
+
+  console.log(room)
+
   useEffect(() => {
-    setTitle("Room Details")
-  }, [])
+    setTitle("Room Details");
+    roomType();
+     if (loading === "idle") {
+      dispatch(getRooms());
+    }
+  }, [setTitle, roomType, dispatch, loading]);
 
   return (
     <DetailContainer>
       <Details>
         <GuestContainer>
           <ContainerImage>
-            <StyledImage src={guestImage} alt="" />
+            <StyledImage src={image.images0 ? image.images0 : image} alt="" />
             <div>
               <h1>{guest}</h1>
               <IdGuest>ID: {id}</IdGuest>
@@ -272,32 +298,11 @@ const BookingsDetail = () => {
         <ContainerAmenities>
           <StyledH1Amenities>Amenities</StyledH1Amenities>
           <ContainerBetween>
-            <Amenities
-              icon={<IoBedOutline />}
-              title={"3 Bed Space"}
-            ></Amenities>
-            <Amenities
-              icon={<IoBedOutline />}
-              title={"3 Bed Space"}
-            ></Amenities>
-            <Amenities
-              icon={<IoBedOutline />}
-              title={"3 Bed Space"}
-            ></Amenities>
-          </ContainerBetween>
-          <ContainerBetween>
-            <AmenitiesLittle
-              icon={<IoBedOutline />}
-              title={"3 Bed Space"}
-            ></AmenitiesLittle>
-            <AmenitiesLittle
-              icon={<IoBedOutline />}
-              title={"3 Bed Space"}
-            ></AmenitiesLittle>
-            <AmenitiesLittle
-              icon={<IoBedOutline />}
-              title={"3 Bed Space"}
-            ></AmenitiesLittle>
+            <StyledAmenities>
+              {room[0]?.amenities.map((amenitie, index) => (
+                        <AmenitiesIcon key={index} icon={amenitie.icon} />
+                      ))}
+            </StyledAmenities>
           </ContainerBetween>
         </ContainerAmenities>
       </Details>
@@ -305,7 +310,7 @@ const BookingsDetail = () => {
         <StyledRibbon>
           <StyledRibbonSpan>In Progress</StyledRibbonSpan>
         </StyledRibbon>
-        <StyledImg src={roomImgs[slideIndex]} alt="" />
+        <StyledImg src={room[0].image} alt="" />
         <SliderDetails>
           <ButtonLeft onClick={() => moveSlideLeft()}>
             <AiOutlineArrowLeft />

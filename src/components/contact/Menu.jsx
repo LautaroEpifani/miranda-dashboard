@@ -39,22 +39,6 @@ const ContainerSections = styled.div`
   gap: 60px;
 `;
 
-const ContainerInput = styled.div`
-  margin-left: 20px;
-  position: relative;
-`;
-
-const StyledSearch = styled(StyledInput)`
-  width: 100%;
-`;
-
-const Icon = styled(BiSearchAlt)`
-  position: absolute;
-  right: 5px;
-  top: 5px;
-  color: #838383;
-`;
-
 const SelectContainer = styled.div`
   position: relative;
 `;
@@ -97,8 +81,8 @@ const Menu = () => {
           </ContainerSections>
           <SelectContainer>
             <StyledSelect name="" id="">
-              <StyledOption value="">Date</StyledOption>
-              <StyledOption value="">Customer</StyledOption>
+              <StyledOption value="date">Date</StyledOption>
+              <StyledOption value="name">Customer</StyledOption>
             </StyledSelect>
             <StyledArrow />
           </SelectContainer>

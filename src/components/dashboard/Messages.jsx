@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import mock from "../../mockData/Messages.json";
+import { messagesList } from '../../mockData/Messages'
 import { BsCheck2Circle } from "react-icons/bs";
 import { RxCrossCircled } from "react-icons/rx";
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
@@ -124,7 +124,7 @@ const ButtonRight = styled(SliderButtons)`
 
 
 const Messages = () => {
-  const [messages, setMessages] = useState(mock.slice(0, 5));
+  const [messages, setMessages] = useState(messagesList);
   const initialPopup = messages.map((m) => (m.popup = false));
   const [popup, setPopup] = useState(initialPopup);
   const [slideIndex, setSlideIndex] = useState(0)
@@ -188,7 +188,7 @@ const Messages = () => {
               <div>
                 <StyledH2>{message.subject}</StyledH2>
                 <Text onClick={() => displayPopup(index)}>
-                  {message.message.slice(0, 400)}
+                  {message.comment.slice(0, 400)}
                 </Text>
               </div>
               <StyledH2>{message.name}</StyledH2>
@@ -205,11 +205,6 @@ const Messages = () => {
                   </div>
                   <Pending
                     onClick={() => closePopup(index)}
-                    style={{
-                      width: "50%",
-                      color: "#4e4e4e",
-                      cursor: "pointer",
-                    }}
                   />
                   </PopupContainer>
                 </Popup>

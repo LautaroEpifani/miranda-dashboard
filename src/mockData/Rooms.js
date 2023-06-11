@@ -23,6 +23,8 @@ export const roomsList = [
       {a_name: "shower", icon: "shower"},
     ],
     price: 245,
+    discount: 10,
+    offer: "yes",
     offer_price: 145,
     description: "Beautiful and cozy room ",
     cancellation: "Any cancellation or reschedule made less than 10 days will result in a cancellation fee. The amount of the fee will be equal to 20% of the reserved services or $100, whichever is more.",
@@ -46,6 +48,8 @@ export const roomsList = [
       {a_name: "shower", icon: "shower"},
     ],
     price: 345,
+    discount: 10,
+    offer: "yes",
     offer_price: 245,
     description: "Beautiful and cozy room ",
     cancellation: "Any cancellation or reschedule made less than 10 days will result in a cancellation fee. The amount of the fee will be equal to 20% of the reserved services or $100, whichever is more.",
@@ -69,6 +73,8 @@ export const roomsList = [
       {a_name: "shower", icon: "shower"},
     ],
     price: 345,
+    discount: 10,
+    offer: "yes",
     offer_price: 300,
     description: "Beautiful and cozy room ",
     cancellation: "Any cancellation or reschedule made less than 10 days will result in a cancellation fee. The amount of the fee will be equal to 20% of the reserved services or $100, whichever is more.",
@@ -92,10 +98,13 @@ export const roomsList = [
       {a_name: "shower", icon: "shower"},
     ],
     price: 345,
+    discount: 10,
+    offer: "yes",
     offer_price: 300,
     description: "Beautiful and cozy room ",
     cancellation: "Any cancellation or reschedule made less than 10 days will result in a cancellation fee. The amount of the fee will be equal to 20% of the reserved services or $100, whichever is more.",
-    status: "Avaliable"
+    status: "Avaliable",
+    
   },
    {
     id: uuid(),
@@ -115,9 +124,11 @@ export const roomsList = [
       {a_name: "shower", icon: "shower"},
     ],
     price: 245,
+    offer: "yes",
     offer_price: 145,
     cancellation: "Any cancellation or reschedule made less than 10 days will result in a cancellation fee. The amount of the fee will be equal to 20% of the reserved services or $100, whichever is more.",
     status: "Booked",
+    description: "Beautiful and Cozy Room",
   },
   
   

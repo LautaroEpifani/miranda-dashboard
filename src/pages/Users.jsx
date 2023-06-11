@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import styled from 'styled-components';
 import Menu from '../components/users/Menu';
@@ -11,13 +11,14 @@ const StyledContainer = styled.div`
 
 export const Users = () => {
     const setTitle = useOutletContext()
+    const [searchUser, setSearchUser] = useState();
   useEffect(() => {
     setTitle("Users")
   }, [])
   return (
     <StyledContainer>
-          <Menu/>
-          <GridTable/>
+          <Menu searchUser={searchUser} setSearchUser={setSearchUser}/>
+          <GridTable searchUser={searchUser} />
     </StyledContainer>
   )
 }

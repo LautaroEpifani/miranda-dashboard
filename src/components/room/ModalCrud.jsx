@@ -55,7 +55,7 @@ const ModalCrud = ({ title, button, setOpenModal }) => {
       {button ? (
         <StyledContainerButtons>
           <Link to="/room">
-            <StyledButton>Go to Room Page</StyledButton>
+            <StyledButton>Go to room Page</StyledButton>
           </Link>
           <StyledButton onClick={() => setOpenModal(false)}>
             {button}

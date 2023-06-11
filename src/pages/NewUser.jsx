@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
 import { setItem } from "../utils/localStorage";
-import { addRoom } from "../features/rooms/roomsSlice";
 import uuid from "react-uuid";
 import { AiOutlineWifi } from "react-icons/ai";
-import { addUser } from "../features/users/usersSlice";
+import { editUser, postUser } from "../features/users/usersApi";
+import ModalCrud from "../components/users/ModalCrud";
 
 const StyledContainer = styled.div`
   margin: 40px;
@@ -39,24 +39,6 @@ const StyledInput = styled.input`
   }
 `;
 
-const StyledCheckBox = styled.div`
-  display: flex;
-  gap: 40px;
-  margin-bottom: 10px;
-  width: 500px;
-`;
-
-const StyledInputBox = styled.input`
-  width: 5%;
-  padding: 8px;
-  border-radius: 10px;
-  border: 1px #aaa3a3 solid;
-  &:focus {
-    border: 1px #135846 solid;
-    outline: none;
-    box-shadow: 0 0 10px #719ece;
-  }
-`;
 
 const StyledSelect = styled.select`
   -webkit-appearance: none;
@@ -68,6 +50,7 @@ const StyledSelect = styled.select`
   border: 1px #aaa3a3 solid;
   border-radius: 5px;
   width: 20%;
+  padding-left: 5px;
   &:focus {
     border: 1px #135846 solid;
     outline: none;
@@ -84,9 +67,11 @@ const StyledButton = styled.button`
 
 const NewUser = () => {
   const [user, setUser] = useState({});
-  const [images, setImages] = useState([]);
+  const [image, setImage] = useState({});
+  const [openModal, setOpenModal] = useState(false)
+  const { state } = useLocation();
+  const editUserSelected = state;
   const setTitle = useOutletContext();
-  const users = useSelector((state) => state.users.usersState);
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
@@ -105,24 +90,34 @@ const NewUser = () => {
       body: formData,
     })
       .then((res) => res.json())
-      .then((data) => setImages(data.files));
+      .then((data) => setImage(data.files));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    user.image = images;
-    user.id = uuid();
-    setUser(user);
-    dispatch(addUser(user));
-   
-    navigate("/users");
+    if (!editUserSelected) {
+      user.image = image;
+      user.id = uuid();
+      setUser(user);
+      dispatch(postUser(user));
+      setOpenModal(true)
+    } else {
+      setOpenModal(true)
+      dispatch(editUser(user))
+      setTimeout(() => { navigate("/users") }, 3000);
+      setTimeout(() => { setOpenModal(false) }, 3000);
+    }
+     window.scrollTo(0, 0)
   };
 
-   console.log(users)
+  console.log(editUserSelected)
 
   useEffect(() => {
     setTitle("New User");
-  }, [users]);
+    if(editUserSelected) {
+      setUser(editUserSelected.user)
+    }
+  }, [setTitle, editUserSelected]);
 
   return (
     <StyledContainer>
@@ -146,44 +141,59 @@ const NewUser = () => {
             onChange={handleChange}
             type="text"
             name="employee_name"
+            defaultValue={
+              editUserSelected ? editUserSelected.user.employee_name : null
+            }
           />
         </StyledInputContainer>
         <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Position</StyledLabel>
-          <StyledSelect onChange={handleChange} name="position">
+          <StyledSelect onChange={handleChange} name="position" defaultValue={
+              editUserSelected ? editUserSelected.user.position : null
+            }>
             <option value=""></option>
-            <option value="manager">Manager</option>
-            <option value="reception">Reception</option>
-            <option value="roomService">Room Service</option>
+            <option value="Manager">Manager</option>
+            <option value="Reception">Reception</option>
+            <option value="Room Service">Room Service</option>
           </StyledSelect>
         </StyledInputContainer>
 
         <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Email</StyledLabel>
-          <StyledInput onChange={handleChange} type="text" name="email" />
+          <StyledInput onChange={handleChange} type="email" name="email" defaultValue={
+              editUserSelected ? editUserSelected.user.email : null
+            }/>
         </StyledInputContainer>
         <StyledInputContainer>
           {" "}
-          <StyledLabel htmlFor="">Phone</StyledLabel>
-          <StyledInput onChange={handleChange} type="text" name="phone" />
+          <StyledLabel htmlFor="">Contact</StyledLabel>
+          <StyledInput onChange={handleChange} type="text" name="contact" defaultValue={
+              editUserSelected ? editUserSelected.user.contact : null
+            }/>
         </StyledInputContainer>
         <StyledInputContainer>
           <StyledLabel htmlFor="">Entry Date</StyledLabel>
-          <StyledInput onChange={handleChange} type="date" name="entry_date" />
+          <StyledInput onChange={handleChange} type="date" name="start_date" defaultValue={
+              editUserSelected ? editUserSelected.user.start_date : null
+            }/>
         </StyledInputContainer>
         <StyledInputContainer>
           <StyledLabel htmlFor="">Description</StyledLabel>
-          <StyledInput onChange={handleChange} type="text" name="description" />
+          <StyledInput onChange={handleChange} type="text" name="description" defaultValue={
+              editUserSelected ? editUserSelected.user.description : null
+            } />
         </StyledInputContainer>
         <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Status</StyledLabel>
-          <StyledSelect onChange={handleChange} name="status">
+          <StyledSelect onChange={handleChange} name="status" defaultValue={
+              editUserSelected ? editUserSelected.user.status : null
+            }>
             <option value=""></option>
-            <option value="manager">Active</option>
-            <option value="reception">Inactive</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
           </StyledSelect>
         </StyledInputContainer>
         <StyledInputContainer>
@@ -192,10 +202,27 @@ const NewUser = () => {
             onChange={handleChange}
             type="password"
             name="password"
+            defaultValue={
+              editUserSelected ? editUserSelected.user.password : null
+            }
           />
         </StyledInputContainer>
-        <StyledButton type="submit">Add new user</StyledButton>
+        {!editUserSelected ? (
+          <StyledButton type="submit">Add new user</StyledButton>
+        ) : (
+          <StyledButton type="submit">Edit user</StyledButton>
+        )}
       </form>
+       {
+        openModal ? (
+        !editUserSelected ? 
+        <ModalCrud title={"Added"} button={"Add another user"} setOpenModal={setOpenModal}/>
+        :
+        <ModalCrud title={"Updated"}/>
+        )
+        :
+        <></>
+       }
     </StyledContainer>
   );
 };
