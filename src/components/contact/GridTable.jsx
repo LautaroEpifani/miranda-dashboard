@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { reservationsData } from "../../mockData/Reservations";
 import { messagesList } from '../../mockData/Messages'
+import { useDispatch, useSelector } from "react-redux";
+import { archiveMessage, getArchivedMessages, getMessages, postArchiveMessage } from "../../features/contact/messagesApi";
 
 const ContainerTable = styled.div`
   margin: 40px;
@@ -49,7 +51,8 @@ const StyledButtonStatus = styled.button`
   border-radius: 7px;
   border: none;
   background-color: #fff;
-  color: ${(props) => props.color};
+  color: #E23428;
+  cursor: pointer;
 `;
 
 const CheckContainer = styled.div``;
@@ -96,12 +99,16 @@ const ShowingData = styled.h6`
   font-size: 10px;
 `;
 
-const GridTable = () => {
-  const [messages, setMessages] = useState(messagesList)
-  const [archived, setArchived] = useState([])
+const StyledH1 = styled.h1`
+  margin-bottom: 10px;
+`;
+
+const GridTable = ({ activeTable }) => {
+  const messages = useSelector((state) => state.messages.messagesState)
+  const loading = useSelector((state) => state.messages.loading);
+  const archived = useSelector((state) => state.messages.archivedState)
+  const dispatch = useDispatch()
   const pages = [1, 2, 3, 4, 5];
-  const [color, setColor] = useState("#E23428");
-  const [status, setStatus] = useState("Archive");
   const [activeButton, setActiveButton] = useState([
     true,
     false,
@@ -109,6 +116,8 @@ const GridTable = () => {
     false,
     false,
   ]);
+
+  
 
   const [indexPagination, setIndexPagination] = useState(1);
   let firstElement = indexPagination * 10 - 10;
@@ -144,9 +153,18 @@ const GridTable = () => {
     setActiveButton(newArray);
   };
 
+  const archiveMessageFunc = (message) => {
+      dispatch(archiveMessage(message.id))
+      dispatch(postArchiveMessage(message))
+  }
+
   useEffect(() => {
     colorButton(indexPagination - 1);
-  }, [indexPagination]);
+    if (loading === "idle") {
+      dispatch(getMessages());
+      dispatch(getArchivedMessages());
+    }
+  }, [indexPagination, loading, dispatch]);
 
   return (
     <>
@@ -161,7 +179,35 @@ const GridTable = () => {
             </tr>
           </thead>
           <tbody>
-            {messages.slice(firstElement, lastElement).map((message) => (
+            {
+              !activeTable ?
+              messages.slice(firstElement, lastElement).map((message) => (
+              <tr key={message.id}>
+                <StyledTd>
+                  <CheckContainer>
+                    <h1>{message.date}</h1>
+                    <Styledh6>{message.hour}</Styledh6>
+                  </CheckContainer>
+                  </StyledTd>
+                <StyledTd>
+                  <div>
+                    <StyledH1>{message.name}</StyledH1>
+                    <StyledH1>{message.email}</StyledH1>
+                    <StyledH1>{message.phone}</StyledH1>
+                  </div>
+                </StyledTd>
+                <StyledTd>
+                  <h1>{message.subject}</h1>
+                </StyledTd>
+                <StyledTd>
+                  <StyledButtonStatus onClick={() => archiveMessageFunc(message)} >
+                    Archive
+                  </StyledButtonStatus>
+                </StyledTd>
+              </tr>
+            ))
+            :
+            archived.slice(firstElement, lastElement).map((message) => (
               <tr key={message.id}>
                 <StyledTd>
                   <CheckContainer>
@@ -180,12 +226,13 @@ const GridTable = () => {
                   <h1>{message.subject}</h1>
                 </StyledTd>
                 <StyledTd>
-                  <StyledButtonStatus color={color}>
-                    {status}
+                  <StyledButtonStatus>
+                    Archive
                   </StyledButtonStatus>
                 </StyledTd>
               </tr>
-            ))}
+            ))
+            }
           </tbody>
         </StyledTable>
       </ContainerTable>

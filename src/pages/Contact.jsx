@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import styled from 'styled-components';
 import Messages from '../components/dashboard/Messages';
@@ -12,14 +12,15 @@ const StyledContainer = styled.div`
 
 const Contact = () => {
     const setTitle = useOutletContext()
+     const [activeTable, setActiveTable] = useState(false)
   useEffect(() => {
     setTitle("Contact")
-  }, [])
+  }, [setTitle])
   return (
     <StyledContainer>
             <Messages/>
-            <Menu/>
-            <GridTable/>
+            <Menu setActiveTable={setActiveTable}/>
+            <GridTable activeTable={activeTable}/>
     </StyledContainer>
   )
 }

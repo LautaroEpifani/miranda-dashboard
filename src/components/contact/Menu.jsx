@@ -3,6 +3,9 @@ import { ContainerBetween } from "../../styledComponents/styled";
 import styled from "styled-components";
 import { StyledInput } from "../../components/login/Login";
 import { TiArrowSortedDown } from "react-icons/ti";
+import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import { sortMessages } from "../../features/contact/messagesSlice";
 
 
 const ContainerMenu = styled.div`
@@ -16,21 +19,12 @@ const SubContainer = styled(ContainerBetween)`
   gap: 10px;
 `;
 
-const Bar = styled.div`
-  width: 25%;
-  margin-left: 20px;
-  margin-top: 5px;
-  height: 2px;
-  background: -moz-linear-gradient(left, #135846 75%, #d4d4d4 25%);
-  background: -webkit-linear-gradient(left, #135846 75%, #d4d4d4 25%);
-  background: linear-gradient(to right, #135846 50%, #d4d4d4 25%);
-`;
-
 const StyledA = styled.a`
   text-decoration: none;
   color: #6e6e6e;
   font-size: 12px;
   font-weight: 500;
+  cursor: pointer;
 `;
 
 const ContainerSections = styled.div`
@@ -70,24 +64,57 @@ const StyledArrow = styled(TiArrowSortedDown)`
   color: #135846;
 `;
 
-const Menu = () => {
+const Bar = styled.div`
+  width: 50%;
+  margin-left: ${(props) => (props.margin)};
+  margin-top: 5px;
+  height: 2px;
+  background-color: #135846;
+`;
+
+const ContainerBar = styled.div`
+    background-color: #E9E9E9;
+    width: 25%;
+    margin-left: 15px;
+`;
+
+const Menu = ({setActiveTable}) => {
+
+  const dispatch = useDispatch();
+  const [margin, setMargin] = useState("0%")
+
+  const handleChange = (e) => {
+    dispatch(sortMessages(e.target.value));
+  };
+
+  const allContacts = () => {
+    setActiveTable(false)
+  }
+
+  const archived = () => {
+    setActiveTable(true)
+  }
+
+  const changeMargin = (percentaje) => {
+    setMargin(percentaje)
+  }
 
   return (
     <ContainerMenu>
         <SubContainer>
           <ContainerSections>
-            <StyledA href="">All Contacts</StyledA>
-            <StyledA href="">Archived</StyledA>
+            <StyledA onClick={() => { allContacts(); changeMargin("0%")}}>All Contacts</StyledA>
+            <StyledA onClick={() => { archived(); changeMargin("50%")}}>Archived</StyledA>
           </ContainerSections>
           <SelectContainer>
-            <StyledSelect name="" id="">
+            <StyledSelect name="" id="" onChange={handleChange}>
               <StyledOption value="date">Date</StyledOption>
               <StyledOption value="name">Customer</StyledOption>
             </StyledSelect>
             <StyledArrow />
           </SelectContainer>
         </SubContainer>
-        <Bar></Bar>
+        <ContainerBar><Bar margin={margin}></Bar></ContainerBar>
       </ContainerMenu>
   )
 }

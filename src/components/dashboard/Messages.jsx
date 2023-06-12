@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { messagesList } from '../../mockData/Messages'
+import { messagesList } from "../../mockData/Messages";
 import { BsCheck2Circle } from "react-icons/bs";
 import { RxCrossCircled } from "react-icons/rx";
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
 import { ContainerBetween } from "../../styledComponents/styled";
+import { useDispatch, useSelector } from "react-redux";
+import { archiveMessage, getArchivedMessages, getMessages, postArchiveMessage } from "../../features/contact/messagesApi";
 
 const Container = styled.div`
   padding: 20px;
@@ -12,7 +14,7 @@ const Container = styled.div`
   background-color: #fff;
   border-radius: 5px;
   margin: 20px;
-    margin-top: 40px;
+  margin-top: 40px;
 `;
 
 const MessagesContainer = styled.div`
@@ -90,11 +92,11 @@ const Popup = styled.div`
 `;
 
 const PopupContainer = styled.div`
-    background-color: #FFF;
-    padding: 20px;
-    line-height: 20px;
-    display: flex;
-    border-radius: 10px;
+  background-color: #fff;
+  padding: 20px;
+  line-height: 20px;
+  display: flex;
+  border-radius: 10px;
 `;
 
 export const SliderButtons = styled.button`
@@ -122,31 +124,31 @@ const ButtonRight = styled(SliderButtons)`
   right: 0;
 `;
 
-
 const Messages = () => {
-  const [messages, setMessages] = useState(messagesList);
-  const initialPopup = messages.map((m) => (m.popup = false));
+  const messages = useSelector((state) => state.messages.messagesState);
+  const loading = useSelector((state) => state.messages.loading);
+  const archived = useSelector((state) => state.messages.archivedState);
+  const dispatch = useDispatch()
+  const initialPopup = new Array(messages.length).fill(false);
   const [popup, setPopup] = useState(initialPopup);
-  const [slideIndex, setSlideIndex] = useState(0)
+  const [slideIndex, setSlideIndex] = useState(0);
 
   const moveSlideRight = () => {
-    
-    if(slideIndex === messages.length - 1) {
-        setSlideIndex(messages.length - 1)
+    if (slideIndex === messages.length - 1) {
+      setSlideIndex(messages.length - 1);
     } else {
-        setSlideIndex(slideIndex + 1)
+      setSlideIndex(slideIndex + 1);
     }
-    console.log(slideIndex)
-  }
+    console.log(slideIndex);
+  };
 
   const moveSlideLeft = () => {
-    
-    if(slideIndex === 0) {
-        setSlideIndex(0)
+    if (slideIndex === 0) {
+      setSlideIndex(0);
     } else {
-        setSlideIndex(slideIndex - 1)
+      setSlideIndex(slideIndex - 1);
     }
-  }
+  };
 
   const displayPopup = (index) => {
     let newArray = [...popup];
@@ -165,47 +167,45 @@ const Messages = () => {
     setPopup(newArray);
   };
 
-  const addStatus = () => {
-    const newArray = [...messages];
-    let i = 0;
-    for (i = 0; i < newArray.length; i++) {
-      newArray[i].status = false;
-    }
-    setMessages(newArray);
-  };
+  const archiveMessageFunc = (message) => {
+      dispatch(archiveMessage(message.id))
+      dispatch(postArchiveMessage(message))
+  }
+
 
   useEffect(() => {
-    addStatus();
-  }, []);
+    if (loading === "idle") {
+      dispatch(getMessages());
+      dispatch(getArchivedMessages());
+    }
+  }, [loading, dispatch]);
 
   return (
     <Container>
       <h1 style={{ color: "#393939" }}>New Messages</h1>
-      <MessagesContainer >
+      <MessagesContainer>
         <MessagesSubContainer>
           {messages.slice(slideIndex, messages.length).map((message, index) => (
-            <Message  key={message.id}>
+            <Message key={message.id}>
               <div>
                 <StyledH2>{message.subject}</StyledH2>
                 <Text onClick={() => displayPopup(index)}>
-                  {message.comment.slice(0, 400)}
+                  {message.comment.slice(0, 200)}
                 </Text>
               </div>
               <StyledH2>{message.name}</StyledH2>
               <ContainerBetween>
                 <StyledH6>{message.email}</StyledH6>
                 <StyledH6>{message.phone}</StyledH6>
-                <div>{message.status ? <Closed /> : <Pending />}</div>
+                <div onClick={() => archiveMessageFunc(message)}> <Pending/></div>
               </ContainerBetween>
               {popup[index] ? (
                 <Popup popup={popup}>
                   <PopupContainer>
-                  <div style={{ whiteSpace: "normal" }}>
-                    {message.message.slice(0, 500)}
-                  </div>
-                  <Pending
-                    onClick={() => closePopup(index)}
-                  />
+                    <div style={{ whiteSpace: "normal" }}>
+                      {message.comment.slice(0, 500)}
+                    </div>
+                    <Pending onClick={() => closePopup(index)} />
                   </PopupContainer>
                 </Popup>
               ) : (
