@@ -18,7 +18,7 @@ const user = await getItem("loginUser");
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: user.userState ? <Layout/> : <Login/>,
+    element: user ? <Layout/> : <Login/>,
     children: [
       {
         path: "/",

@@ -11,16 +11,10 @@ export const AuthContextProvider = ({ children }) => {
     console.log(action);
     switch (action.type) {
       case "login":
-        return {
-          ...state,
-          userState: action.payload
-        }
+        return action.payload
       case "logout":
         setItem("loginUser", null);
-        return {
-          ...state,
-          userState: null,
-        };
+        return null;
       case "updateUser":
         return;
       default:

@@ -8,6 +8,7 @@ import ModalDelete from "./ModalDelete";
 import { getBookings } from "../../features/bookings/bookingsApi";
 import { useDispatch, useSelector } from "react-redux";
 import { sortBookings } from "../../features/bookings/bookingsSlice";
+import { StyledComponentButton } from "./StyledComponentButton"
 
 const ContainerTable = styled.div`
   margin: 40px;
@@ -55,17 +56,6 @@ const StyledButtonView = styled.button`
 
 const StyledDate = styled.h6`
   font-weight: 400;
-`;
-
-const StyledButtonStatus = styled.button`
-  width: 130px;
-  padding: 30px;
-  padding-top: 14px;
-  padding-bottom: 14px;
-  border-radius: 7px;
-  border: none;
-  background-color: ${(props) => props.bgrColor};
-  color: ${(props) => props.color};
 `;
 
 const ContainerStatus = styled.div`
@@ -270,12 +260,12 @@ const GridTable = ({ searchBooking }) => {
                       <StyledTd>{booking.room_type}</StyledTd>
                       <StyledTd>
                         <ContainerStatus>
-                          <StyledButtonStatus
+                          <StyledComponentButton
                             color={booking.color}
                             bgrColor={booking.bgrColor}
                           >
                             {booking.status}
-                          </StyledButtonStatus>
+                          </StyledComponentButton>
                           {!options[index] ? (
                             <BsThreeDotsVertical
                               onClick={() => {
@@ -352,12 +342,12 @@ const GridTable = ({ searchBooking }) => {
                       <StyledTd>{booking.room_type}</StyledTd>
                       <StyledTd>
                         <ContainerStatus>
-                          <StyledButtonStatus
+                          <StyledComponentButton
                             color={booking.color}
                             bgrColor={booking.bgrColor}
                           >
                             {booking.status}
-                          </StyledButtonStatus>
+                          </StyledComponentButton>
                           {!options[index] ? (
                             <BsThreeDotsVertical
                               onClick={() => {

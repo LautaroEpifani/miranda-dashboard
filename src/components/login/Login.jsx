@@ -75,17 +75,22 @@ const Login = () => {
     navigate("/")
     window.location.reload()
   };
-
-  console.log(userState);
-
+  
+  const user =  getItem("loginUser");
+ 
   useEffect(() => {
+    
     if (activeUpdate) {
       setLogin(getItem("loginUser"));
     }
     if (userState) {
       setItem("loginUser", userState);
     }
-  }, [activeUpdate, userState]);
+    if(!user) {
+        navigate("/login")
+    }
+  
+  }, [activeUpdate, userState, navigate, user]);
 
   return (
     <FormContainer onSubmit={submitLogin}>

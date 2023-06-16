@@ -33,7 +33,6 @@ export const messagesSlice = createSlice({
       state.loading = "pending"
     })
     builder.addCase(getArchivedMessages.fulfilled, (state, action) => {
-      console.log(action.payload)
       state.archivedState = action.payload
       state.loading = "fulfilled"
     })
@@ -42,7 +41,6 @@ export const messagesSlice = createSlice({
       state.loading = "rejected"
     })
     builder.addCase(postArchiveMessage.fulfilled, (state, action) => { 
-      console.log(action.payload)
       state.archivedState.push(action.payload)
     })
     builder.addCase(archiveMessage.fulfilled, (state, action) => { 
