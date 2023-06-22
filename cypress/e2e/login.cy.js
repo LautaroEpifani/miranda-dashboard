@@ -1,48 +1,24 @@
-
 describe("testing login funcionality", () => {
-  it("if user don´t exist redirect to /login", () => {
-    const userState = null;
-    cy.clearLocalStorage().then(() => {
-      window.localStorage.setItem("loginUser",  JSON.stringify(userState));
-    });
-    cy.visit("http://localhost:3000").then(() => {
-      const user = JSON.parse(window.localStorage.getItem("loginUser"));
-      expect(user).to.deep.equal(userState);
-    });
-    cy.url().should('include', '/login')
+  beforeEach(() => {
+    cy.visit("http://localhost:3000/")
+  })
+  it("if try go to / redirect to /login", () => {
+    cy.url().should('eq', 'http://localhost:3000/login')
   });
-  it("if user exist redirect to /", () => {
-    const userState = { 
-      userName: "Juan",
-      email: "Juan@gmail.com",
-      password: "juan123", 
-    };
-    cy.clearLocalStorage().then(() => {
-      window.localStorage.setItem("loginUser",  JSON.stringify(userState));
-    });
-    cy.visit("http://localhost:3000").then(() => {
-      const user = JSON.parse(window.localStorage.getItem("loginUser"));
-      expect(user).to.deep.equal(userState);
-    });
-    cy.url().should('include', '/')
+
+  it("if wrong user stay in /login", () => {
+    cy.get('[data-cy="email"]').type("asd@asd.com")
+    cy.get('[data-cy="password"]').type("asd")
+    cy.get('[data-cy="login"]').click()
+    cy.get('[data-cy="login"]').click()
+    cy.url().should('eq', 'http://localhost:3000/login')
   });
-  it("when click button logout user", () => {
-    const userState = {   
-      userName: "Juan",
-      email: "Juan@gmail.com",
-      password: "juan123", 
-    };
-    
-    cy.clearLocalStorage().then(() => {
-      window.localStorage.setItem("loginUser",  JSON.stringify(userState));
-    });
-    cy.visit("http://localhost:3000").then(() => {
-      cy.get('[data-cy="logout"]').click({userState: null})
-      window.localStorage.setItem("loginUser",  JSON.stringify(userState));
-      const user = JSON.parse(window.localStorage.getItem("loginUser"));
-      expect(user).to.deep.equal(userState);
-    });
-    
-   
+
+   it("if correct user  redirect to /", () => {
+    cy.get('[data-cy="email"]').type("asd@asd.com")
+    cy.get('[data-cy="password"]').type("asdasd")
+    cy.get('[data-cy="login"]').click()
+    cy.get('[data-cy="login"]').click()
+    cy.url().should('eq', 'http://localhost:3000/')
   });
 });
