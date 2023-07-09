@@ -7,7 +7,7 @@ import { editUser, postUser } from "../features/users/usersApi";
 import ModalCrud from "../components/users/ModalCrud";
 import { AppDispatch } from "../app/store";
 import React from "react";
-import { User, image } from "../interfaces/interfaces";
+import { User } from "../interfaces/interfaces";
 
 const StyledContainer = styled.div`
   margin: 40px;
@@ -72,7 +72,7 @@ interface HTMLInputEvent extends React.ChangeEvent {
 
 const NewUser = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [image, setImage] = useState<image>({ images0: ""});
+  const [image, setImage] = useState<string>("");
   const [openModal, setOpenModal] = useState(false)
   const { state } = useLocation();
   const editUserSelected = state;
@@ -120,8 +120,6 @@ const NewUser = () => {
     }
      window.scrollTo(0, 0)
   };
-
-  console.log(editUserSelected)
 
   useEffect(() => {
     setTitle("New User");

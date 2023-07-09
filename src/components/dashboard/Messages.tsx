@@ -20,7 +20,7 @@ const Container = styled.div`
 
 const MessagesContainer = styled.div<{popup: boolean[]}>`
   position: relative;
-  opacity: ${(props) => (props.popup ? "0.5" : "1")};
+  opacity: ${(props) => (props.popup ? "1" : "1")}; //VER
 `;
 
 const MessagesSubContainer = styled.div`
@@ -28,7 +28,7 @@ const MessagesSubContainer = styled.div`
   gap: 20px;
   font-size: 10px;
   padding-top: 10px;
-  padding-bottom: 10px;
+  padding-bottom: 60px;
   overflow: hidden;
   width: 90%;
   white-space: nowrap;
@@ -37,11 +37,14 @@ const MessagesSubContainer = styled.div`
 `;
 
 const StyledMessage = styled.div`
+position: relative;
   box-shadow: 0px 2px 2px #b3c0c6;
-  width: 30%;
-  padding: 20px;
+  width: 28%;
+  padding-left: 20px;
+  padding-right: 20px;
   border-radius: 10px;
-  padding-top: 40px;
+  padding-top: 60px;
+  padding-bottom: 40px;
 `;
 
 const Text = styled.p`
@@ -72,15 +75,15 @@ const Pending = styled(RxCrossCircled)`
   height: 20px;
 `;
 
-
 const Popup = styled.div<{popup: boolean[]}>`
   display: ${(props) => (props.popup ? "flex" : "none")};
+ 
   position: absolute;
   z-index: 2;
   width: 30%;
   padding: 20px;
-  top: -70px;
-  left: 50%;
+  top: 0;
+  left: 20%;
   transform: translate(-50%, 0);
   background-color: #f5f5f5;
   border-radius: 10px;
@@ -93,6 +96,13 @@ const PopupContainer = styled.div`
   line-height: 20px;
   display: flex;
   border-radius: 10px;
+  gap: 10px;
+  align-items: start;
+`;
+
+const StyledCross = styled(RxCrossCircled)`
+    width: 200px;
+    height: 20px;
 `;
 
 export const SliderButtons = styled.button`
@@ -134,7 +144,6 @@ const Messages = () => {
     } else {
       setSlideIndex(slideIndex + 1);
     }
-    console.log(slideIndex);
   };
 
   const moveSlideLeft = () => {
@@ -156,7 +165,6 @@ const Messages = () => {
   };
 
   const closePopup = (index: number) => {
-    console.log(index);
     let newArray = [...popup];
     newArray[index] = !newArray[index];
     setPopup(newArray);
@@ -199,8 +207,10 @@ const Messages = () => {
                   <PopupContainer>
                     <div style={{ whiteSpace: "normal" }}>
                       {message.comment.slice(0, 500)}
+                      
                     </div>
-                    <Pending onClick={() => closePopup(index)} />
+            
+                    <StyledCross onClick={() => closePopup(index)} />
                   </PopupContainer>
                 </Popup>
               ) : (

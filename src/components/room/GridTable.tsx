@@ -144,7 +144,6 @@ const GridTable = () => {
   let lastElement = indexPagination * 10;
 
   const movePaginationRight = () => {
-    console.log(indexPagination);
     if (indexPagination === pages.length) {
       setIndexPagination(pages.length);
     } else {
@@ -153,7 +152,6 @@ const GridTable = () => {
   };
 
   const movePaginationLeft = () => {
-    console.log(indexPagination);
     if (indexPagination === 1) {
       setIndexPagination(1);
     } else {
@@ -207,10 +205,11 @@ const GridTable = () => {
             {rooms.length ? (
               rooms.slice(firstElement, lastElement).map((room, index) => (
                 <tr key={room.id}>
+                 
                   <StyledTd>
                     <ContainerTd>
                       <StyledImg
-                        src={room.image ? room.image : room.images.images0}
+                        src={room.images[0]}
                         alt=""
                       />
                     </ContainerTd>

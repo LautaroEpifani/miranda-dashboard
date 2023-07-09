@@ -40,7 +40,6 @@ export const usersSlice = createSlice({
       state.usersState.push(action.payload);
     });
     builder.addCase(editUser.fulfilled, (state, action) => {
-      console.log(action.payload);
       const user = state.usersState.find(
         (user) => user.id === action.payload.id
       );

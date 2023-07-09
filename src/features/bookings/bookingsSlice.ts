@@ -1,10 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import {
-  getBookings,
-  postBooking,
-  editBooking,
-  deleteBooking,
-} from "./bookingsApi";
+import { getBookings, postBooking, editBooking, deleteBooking } from "./bookingsApi";
 import { Booking } from "../../interfaces/interfaces";
 
 interface InitialState {
@@ -14,7 +9,7 @@ interface InitialState {
 
 const initialState: InitialState = {
   bookingsState: [],
-  loading: 'idle',
+  loading: "idle",
 };
 
 export const bookingsSlice = createSlice({
@@ -43,19 +38,9 @@ export const bookingsSlice = createSlice({
       state.bookingsState.push(action.payload);
     });
     builder.addCase(editBooking.fulfilled, (state, action) => {
-      const booking: Booking | undefined = state.bookingsState.find(
-        (booking) => booking.id === action.payload.id
-      );
-      const {
-        guest,
-        room_type,
-        room_number,
-        special_request,
-        order_date,
-        check_in,
-        check_out,
-        status,
-      } = action.payload;
+      const booking: Booking | undefined = state.bookingsState.find((booking) => booking.id === action.payload.id);
+      const { guest, room_type, room_number, special_request, order_date, check_in, check_out, status } =
+        action.payload;
       if (booking) {
         booking.room_type = room_type;
         booking.room_number = room_number;
@@ -65,14 +50,12 @@ export const bookingsSlice = createSlice({
         booking.check_in = check_in;
         booking.check_out = check_out;
         booking.status = status;
-      } 
+      }
     });
     builder.addCase(deleteBooking.fulfilled, (state, action) => {
       return {
         ...state,
-        bookingsState: state.bookingsState.filter(
-          (booking: Booking) => booking.id !== action.payload
-        ),
+        bookingsState: state.bookingsState.filter((booking: Booking) => booking.id !== action.payload),
       };
     });
   },

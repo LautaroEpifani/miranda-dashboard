@@ -30,7 +30,6 @@ export const messagesSlice = createSlice({
       state.loading = "pending"
     })
     builder.addCase(getMessages.fulfilled, (state, action) => {
-      console.log(action.payload)
       state.messagesState = action.payload
       state.loading = "fulfilled"
     })

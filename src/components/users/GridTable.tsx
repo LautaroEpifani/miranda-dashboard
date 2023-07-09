@@ -152,7 +152,6 @@ const GridTable = ({ searchUser }: Props) => {
   let lastElement = indexPagination * 10;
 
   const movePaginationRight = () => {
-    console.log(indexPagination);
     if (indexPagination === pages.length) {
       setIndexPagination(pages.length);
     } else {
@@ -161,7 +160,6 @@ const GridTable = ({ searchUser }: Props) => {
   };
 
   const movePaginationLeft = () => {
-    console.log(indexPagination);
     if (indexPagination === 1) {
       setIndexPagination(1);
     } else {
@@ -191,7 +189,6 @@ const GridTable = ({ searchUser }: Props) => {
     colorButton(indexPagination - 1);
     if (loading === "idle") {
       dispatch(getUsers());
-      console.log(options);
     }
     dispatch(sortUsers("start_date"));
   }, [indexPagination, dispatch, loading]);
@@ -219,8 +216,7 @@ const GridTable = ({ searchUser }: Props) => {
                   {" "}
                   <StyledContainerGuest>
                     <StyledImage
-                      src={user.image.images0
-                        //  ? user.image.images0 : user.image
+                      src={user.image
                       }
                       alt=""
                     />
@@ -277,8 +273,7 @@ const GridTable = ({ searchUser }: Props) => {
                   {" "}
                   <StyledContainerGuest>
                     <StyledImage
-                      src={user.image.images0
-                        //  ? user.image.images0 : user.image
+                      src={user.image
                         }
                       alt=""
                     />

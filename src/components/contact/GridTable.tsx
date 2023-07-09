@@ -125,7 +125,6 @@ const GridTable = ({ activeTable }: Props) => {
   let lastElement = indexPagination * 10;
 
   const movePaginationRight = () => {
-    console.log(indexPagination);
     if (indexPagination === pages.length) {
       setIndexPagination(pages.length);
     } else {
@@ -134,7 +133,6 @@ const GridTable = ({ activeTable }: Props) => {
   };
 
   const movePaginationLeft = () => {
-    console.log(indexPagination);
     if (indexPagination === 1) {
       setIndexPagination(1);
     } else {

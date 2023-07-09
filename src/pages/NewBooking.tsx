@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
 import uuid from "react-uuid";
-import ModalCrud from '../components/bookings/ModalCrud'
+import ModalCrud from "../components/bookings/ModalCrud";
 import { editBooking, postBooking } from "../features/bookings/bookingsApi";
 import React from "react";
 import { AppDispatch } from "../app/store";
@@ -30,10 +30,9 @@ const StyledInputContainer = styled.div`
   margin-bottom: 20px;
 `;
 
-const StyledForm = styled.form<{openModal: boolean}>`
+const StyledForm = styled.form<{ openModal: boolean }>`
   opacity: ${(props) => (props.openModal ? "0.2" : "1")};
 `;
-
 
 const StyledLabel = styled.label`
   width: 30%;
@@ -76,14 +75,25 @@ const StyledButton = styled.button`
   color: #fff;
 `;
 
-interface HTMLInputEvent extends React.ChangeEvent {
-    target: HTMLInputElement & EventTarget;
-}
+// interface HTMLInputEvent extends React.ChangeEvent {
+//     target: HTMLInputElement & EventTarget;
+// }
 
 const NewBooking = () => {
-  const [booking, setBooking] = useState<Booking | null>(null);
-  const [image, setImage] = useState({ images0: ""});
-  const [openModal, setOpenModal] = useState(false)
+  const [booking, setBooking] = useState<Booking>({
+    id: "",
+    guest: "",
+    room_type: "",
+    room_number: 0,
+    special_request: "",
+    order_date: new Date(""),
+    check_in: new Date(""),
+    check_out: new Date(""),
+    status: "",
+    color: "",
+    bgrColor: ""
+  });
+  const [openModal, setOpenModal] = useState(false);
   const { state } = useLocation();
   const editBookingSelected = state;
   const setTitle: (arg0: string) => void = useOutletContext();
@@ -91,29 +101,28 @@ const NewBooking = () => {
   const navigate = useNavigate();
 
   const handleChange = ({ target: { name, value } }: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    if(booking) {
-        setBooking({ ...booking, [name]: value });
-    }
-  
+
+    setBooking({ ...booking, [name]: value });
+
   };
 
-  const handleImages = (e: HTMLInputEvent) => {
-    if (!e.target.files) return;
-    const formData = new FormData();
-    for (let i = 0; i < e.target.files.length; i++) {
-      formData.append(`images${i}`, e.target.files[i]);
-    }
-    fetch("https://httpbin.org/post", {
-      method: "POST",
-      body: formData,
-    })
-      .then((res) => res.json())
-      .then((data) => setImage(data.files));
-  };
+  // const handleImages = (e: HTMLInputEvent) => {
+  //   if (!e.target.files) return;
+  //   const formData = new FormData();
+  //   for (let i = 0; i < e.target.files.length; i++) {
+  //     formData.append(`images${i}`, e.target.files[i]);
+  //   }
+  //   fetch("https://httpbin.org/post", {
+  //     method: "POST",
+  //     body: formData,
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => setImage(data.files));
+  // };
 
   const setStatusColor = () => {
-    if(booking) {
-         if (booking.status === "Check In") {
+    if (booking) {
+      if (booking.status === "Check In") {
         booking.color = "#5AD07A";
         booking.bgrColor = "#E8FFEE";
       }
@@ -121,39 +130,40 @@ const NewBooking = () => {
         booking.color = "#E23428";
         booking.bgrColor = "#FFEDEC";
       }
-       if(booking.status === "In Progress") {
+      if (booking.status === "In Progress") {
         booking.color = "#FF9C3A";
-        booking.bgrColor = "#ffd7ae";
+        booking.bgrColor = "#fff3e7";
       }
-  }
     }
-     
-  
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if(booking) {
-       if (!editBookingSelected) {
-       setStatusColor()
-      booking.image = image;
-      booking.id = uuid();
-      setBooking(booking);
-      dispatch(postBooking(booking));
-      setOpenModal(true)
-    } else {
-      setOpenModal(true)
-      dispatch(editBooking(booking))
-      setTimeout(() => { navigate("/bookings") }, 3000);
-      setTimeout(() => { setOpenModal(false) }, 3000);
+    if (booking) {
+      if (!editBookingSelected) {
+        setStatusColor();
+        booking.id = uuid();
+        setBooking(booking);
+        dispatch(postBooking(booking));
+        setOpenModal(true);
+      } else {
+        setOpenModal(true);
+        dispatch(editBooking(booking));
+        setTimeout(() => {
+          navigate("/bookings");
+        }, 3000);
+        setTimeout(() => {
+          setOpenModal(false);
+        }, 3000);
+      }
     }
-   
-    }
-   
-     window.scrollTo(0, 0)
+
+    window.scrollTo(0, 0);
   };
   useEffect(() => {
     setTitle("New Booking");
-    if(editBookingSelected) {
-      setBooking(editBookingSelected.booking)
+    if (editBookingSelected) {
+      setBooking(editBookingSelected.booking);
     }
   }, [setTitle, editBookingSelected]);
 
@@ -167,12 +177,10 @@ const NewBooking = () => {
             onChange={handleChange}
             type="text"
             name="guest"
-            defaultValue={
-              editBookingSelected ? editBookingSelected.booking.guest : null
-            }
+            defaultValue={editBookingSelected ? editBookingSelected.booking.guest : null}
           />
         </StyledInputContainer>
-        <StyledInputContainer>
+        {/* <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Image</StyledLabel>
           <StyledInput
@@ -183,16 +191,14 @@ const NewBooking = () => {
             id=""
             onChange={handleImages}
           />
-        </StyledInputContainer>
+        </StyledInputContainer> */}
         <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Room Type</StyledLabel>
           <StyledSelect
             onChange={handleChange}
             name="room_type"
-            defaultValue={
-              editBookingSelected ? editBookingSelected.booking.room_type : null
-            }
+            defaultValue={editBookingSelected ? editBookingSelected.booking.room_type : null}
           >
             <option value=""></option>
             <option value="Single Bed">Single Bed</option>
@@ -207,9 +213,7 @@ const NewBooking = () => {
             onChange={handleChange}
             type="number"
             name="room_number"
-            defaultValue={
-              editBookingSelected ? editBookingSelected.booking.room_number : null
-            }
+            defaultValue={editBookingSelected ? editBookingSelected.booking.room_number : null}
           />
         </StyledInputContainer>
         <StyledInputContainer>
@@ -219,9 +223,7 @@ const NewBooking = () => {
             onChange={handleChange}
             type="text"
             name="special_request"
-            defaultValue={
-              editBookingSelected ? editBookingSelected.booking.special_request : null
-            }
+            defaultValue={editBookingSelected ? editBookingSelected.booking.special_request : null}
           />
         </StyledInputContainer>
         <StyledInputContainer>
@@ -231,9 +233,7 @@ const NewBooking = () => {
             onChange={handleChange}
             type="date"
             name="order_date"
-            defaultValue={
-              editBookingSelected ? editBookingSelected.booking.order_date : null
-            }
+            defaultValue={editBookingSelected ? editBookingSelected.booking.order_date : null}
           />
         </StyledInputContainer>
         <StyledInputContainer>
@@ -243,21 +243,17 @@ const NewBooking = () => {
             onChange={handleChange}
             type="date"
             name="check_in"
-            defaultValue={
-              editBookingSelected ? editBookingSelected.booking.check_in : null
-            }
+            defaultValue={editBookingSelected ? editBookingSelected.booking.check_in : null}
           />
         </StyledInputContainer>
-         <StyledInputContainer>
+        <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Check Out</StyledLabel>
           <StyledInput
             onChange={handleChange}
             type="date"
             name="check_out"
-            defaultValue={
-              editBookingSelected ? editBookingSelected.booking.check_out : null
-            }
+            defaultValue={editBookingSelected ? editBookingSelected.booking.check_out : null}
           />
         </StyledInputContainer>
         <StyledInputContainer>
@@ -266,9 +262,7 @@ const NewBooking = () => {
           <StyledSelect
             onChange={handleChange}
             name="status"
-            defaultValue={
-              editBookingSelected ? editBookingSelected.booking.status : null
-            }
+            defaultValue={editBookingSelected ? editBookingSelected.booking.status : null}
           >
             <option value=""></option>
             <option value="Check In">Check In</option>
@@ -282,16 +276,15 @@ const NewBooking = () => {
           <StyledButton type="submit">Edit booking</StyledButton>
         )}
       </StyledForm>
-       {
-        openModal ? (
-        !editBookingSelected ? 
-        <ModalCrud title={"Added"} button={"Add another booking"} setOpenModal={setOpenModal}/>
-        :
-        <ModalCrud title={"Updated"} button={""} setOpenModal={setOpenModal}/>
+      {openModal ? (
+        !editBookingSelected ? (
+          <ModalCrud title={"Added"} button={"Add another booking"} setOpenModal={setOpenModal} />
+        ) : (
+          <ModalCrud title={"Updated"} button={""} setOpenModal={setOpenModal} />
         )
-        :
+      ) : (
         <></>
-       }
+      )}
     </StyledContainer>
   );
 };

@@ -90,7 +90,6 @@ const Menu = () => {
   const dispatch = useDispatch()
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log(e.target.value)
     dispatch(sortBy(e.target.value))
   }
 

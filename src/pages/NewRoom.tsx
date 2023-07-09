@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
 import uuid from "react-uuid";
 import ModalCrud from "../components/room/ModalCrud";
 import { editRequestRoom, postRoom } from "../features/rooms/roomApi";
 import React from "react";
-import { AppDispatch, RootState } from "../app/store";
-import { Amenities, Room, image } from "../interfaces/interfaces";
+import { AppDispatch } from "../app/store";
+import { Amenities, Room } from "../interfaces/interfaces";
 
 const StyledContainer = styled.div`
   background-color: #fff;
@@ -105,44 +105,47 @@ interface HTMLInputEvent extends React.ChangeEvent {
   target: HTMLInputElement & EventTarget;
 }
 
+const initialState = {
+  id: "",
+  title: "",
+  room_type: "",
+  room_number: 0,
+  amenities: [],
+  price: 0,
+  discount: 0,
+  offer: "",
+  offer_price: 0,
+  description: "",
+  cancellation: "",
+  status: "",
+  images: [],
+};
+
 const NewRoom = () => {
-  const [room, setRoom] = useState<Room | null>(null);
+  const [room, setRoom] = useState<Room>(initialState);
   const [amenities, setAmenities] = useState<Amenities[] | []>([]);
-  const [images, setImages] = useState<image>({ images0: ""});
-  const [isChecked, setIsChecked] = useState([
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-  ]);
+  const [images, setImages] = useState<string[]>([]);
+  const imageString: string[] = [];
+  const [isChecked, setIsChecked] = useState(new Array(11).fill(false));
   const [openModal, setOpenModal] = useState(false);
   const { state } = useLocation();
   const editRoomSelected = state;
   const setTitle: (arg0: string) => void = useOutletContext();
-  const rooms = useSelector((state: RootState) => state.rooms.roomsState);
   const dispatch = useDispatch<AppDispatch>();
 
   const navigate = useNavigate();
 
-  const handleChange = ({
-    target: { name, value },
-  }: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    if(room) {
-        setRoom({ ...room, [name]: value });
-    }
+  //handleChange to set some properties
+  const handleChange = ({ target: { name, value } }: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setRoom({ ...room, [name]: value });
   };
 
+  //HandleChange for Images
   const handleImages = (e: HTMLInputEvent) => {
     if (!e.target.files) return;
     const formData = new FormData();
     for (let i = 0; i < e.target.files.length; i++) {
-      formData.append(`images${i}`, e.target.files[i]);
+      formData.append(`${i}`, e.target.files[i]);
     }
     fetch("https://httpbin.org/post", {
       method: "POST",
@@ -152,12 +155,14 @@ const NewRoom = () => {
       .then((data) => setImages(data.files));
   };
 
-  const handleCheckbox = ({
-    target: { name, checked },
-  }: React.ChangeEvent<HTMLInputElement>) => {
-    // setIsChecked(!isChecked);
-    if (checked) {
-      setAmenities([...amenities, { a_name: name, icon: name }]);
+  //HandleChange for Amenities
+  const handleCheckbox = (index: number, { target: { name } }: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(name);
+    isChecked[index] = !isChecked[index];
+    setIsChecked(isChecked);
+    if (isChecked[index]) {
+      setAmenities([...amenities, { a_name: name, icon: name, isChecked: isChecked[index] }]);
+      setRoom({ ...room, amenities: amenities });
     } else {
       const filtered = amenities.filter((ame) => ame.a_name !== name);
       setAmenities(filtered);
@@ -166,21 +171,21 @@ const NewRoom = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    let objectSize = Object.keys(images).length;
+    for (let i = 0; i < objectSize; i++) {
+      imageString[i] = images[i];
+    }
     if (!editRoomSelected) {
-      if (room) {
-        room.images = images;
-        room.amenities = amenities;
-        room.offer_price = parseInt((
-          room.price -
-          (room.price * room.discount) / 100
-        ).toFixed(2));
-        room.id = uuid();
-      }
-      setRoom(room);
+      room.id = uuid();
+      room.room_number = Number(room.room_number);
+      room.price = Number(room.price);
+      room.discount = Number(room.discount);
+      room.offer_price = parseInt((room.price - (room.price * room.discount) / 100).toFixed(2));
+      room.amenities = amenities;
+      room.images = imageString;
       dispatch(postRoom(room));
       setOpenModal(true);
     } else {
-      console.log(room);
       setOpenModal(true);
       dispatch(editRequestRoom(room));
       setTimeout(() => {
@@ -190,7 +195,6 @@ const NewRoom = () => {
         setOpenModal(false);
       }, 3000);
     }
-    console.log(rooms);
     window.scrollTo(0, 0);
   };
 
@@ -198,6 +202,8 @@ const NewRoom = () => {
     setTitle("New Room");
     if (editRoomSelected) {
       setRoom(editRoomSelected.room);
+      // const checkedArray = editRoomSelected.room.amenities.map((amenitie: Amenities) => amenitie.isChecked);
+      // setIsChecked(checkedArray)
     }
   }, [editRoomSelected, setTitle]);
 
@@ -207,14 +213,7 @@ const NewRoom = () => {
         <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Image</StyledLabel>
-          <StyledInput
-            multiple
-            className=""
-            type="file"
-            name="image"
-            id=""
-            onChange={handleImages}
-          />
+          <StyledInput multiple className="" type="file" name="image" id="" onChange={handleImages} />
         </StyledInputContainer>
         <StyledInputContainer>
           {" "}
@@ -222,9 +221,7 @@ const NewRoom = () => {
           <StyledSelect
             onChange={handleChange}
             name="room_type"
-            defaultValue={
-              editRoomSelected ? editRoomSelected.room.room_type : null
-            }
+            defaultValue={editRoomSelected ? editRoomSelected.room.room_type : null}
           >
             <option value=""></option>
             <option value="Single Bed">Single Bed</option>
@@ -239,9 +236,7 @@ const NewRoom = () => {
             onChange={handleChange}
             type="number"
             name="room_number"
-            defaultValue={
-              editRoomSelected ? editRoomSelected.room.room_number : null
-            }
+            defaultValue={editRoomSelected ? editRoomSelected.room.room_number : null}
           />
         </StyledInputContainer>
         <StyledInputContainer>
@@ -251,9 +246,7 @@ const NewRoom = () => {
             onChange={handleChange}
             type="text"
             name="description"
-            defaultValue={
-              editRoomSelected ? editRoomSelected.room.description : null
-            }
+            defaultValue={editRoomSelected ? editRoomSelected.room.description : null}
           />
         </StyledInputContainer>
         <StyledInputContainer>
@@ -287,9 +280,7 @@ const NewRoom = () => {
             onChange={handleChange}
             type="number"
             name="discount"
-            defaultValue={
-              editRoomSelected ? editRoomSelected.room.discount : null
-            }
+            defaultValue={editRoomSelected ? editRoomSelected.room.discount : null}
           />
         </StyledInputContainer>
         <StyledInputContainer>
@@ -298,9 +289,7 @@ const NewRoom = () => {
             onChange={handleChange}
             type="text"
             name="cancellation"
-            defaultValue={
-              editRoomSelected ? editRoomSelected.room.cancellation : null
-            }
+            defaultValue={editRoomSelected ? editRoomSelected.room.cancellation : null}
           />
         </StyledInputContainer>
         <StyledInputContainer>
@@ -309,9 +298,7 @@ const NewRoom = () => {
           <StyledSelect
             onChange={handleChange}
             name="status"
-            defaultValue={
-              editRoomSelected ? editRoomSelected.room.status : null
-            }
+            defaultValue={editRoomSelected ? editRoomSelected.room.status : null}
           >
             <option value=""></option>
             <option value="Avaliable">Avaliable</option>
@@ -323,22 +310,18 @@ const NewRoom = () => {
           <StyledCheckContainer>
             <div>
               <StyledCheckBox>
-                <StyledLabelCheckBox htmlFor="">
-                  High speed wifi
-                </StyledLabelCheckBox>
+                <StyledLabelCheckBox htmlFor="">High speed wifi</StyledLabelCheckBox>
                 <StyledInputBox
-                  onChange={handleCheckbox}
+                  onChange={(e) => handleCheckbox(0, e)}
                   type="checkbox"
                   name="wifi"
                   checked={isChecked[0]}
                 />
               </StyledCheckBox>
               <StyledCheckBox>
-                <StyledLabelCheckBox htmlFor="">
-                  Air conditioner
-                </StyledLabelCheckBox>
+                <StyledLabelCheckBox htmlFor="">Air conditioner</StyledLabelCheckBox>
                 <StyledInputBox
-                  onChange={handleCheckbox}
+                  onChange={(e) => handleCheckbox(1, e)}
                   type="checkbox"
                   name="air_conditioner"
                   checked={isChecked[1]}
@@ -347,7 +330,7 @@ const NewRoom = () => {
               <StyledCheckBox>
                 <StyledLabelCheckBox htmlFor="">BreakFast</StyledLabelCheckBox>
                 <StyledInputBox
-                  onChange={handleCheckbox}
+                  onChange={(e) => handleCheckbox(2, e)}
                   type="checkbox"
                   name="breakfast"
                   checked={isChecked[2]}
@@ -357,7 +340,7 @@ const NewRoom = () => {
               <StyledCheckBox>
                 <StyledLabelCheckBox htmlFor="">Kitchen</StyledLabelCheckBox>
                 <StyledInputBox
-                  onChange={handleCheckbox}
+                  onChange={(e) => handleCheckbox(3, e)}
                   type="checkbox"
                   name="kitchen"
                   checked={isChecked[3]}
@@ -366,7 +349,7 @@ const NewRoom = () => {
               <StyledCheckBox>
                 <StyledLabelCheckBox htmlFor="">Cleaning</StyledLabelCheckBox>
                 <StyledInputBox
-                  onChange={handleCheckbox}
+                  onChange={(e) => handleCheckbox(4, e)}
                   type="checkbox"
                   name="cleaning"
                   checked={isChecked[4]}
@@ -378,7 +361,7 @@ const NewRoom = () => {
                 {" "}
                 <StyledLabelCheckBox htmlFor="">Shower</StyledLabelCheckBox>
                 <StyledInputBox
-                  onChange={handleCheckbox}
+                  onChange={(e) => handleCheckbox(5, e)}
                   type="checkbox"
                   name="shower"
                   checked={isChecked[5]}
@@ -387,7 +370,7 @@ const NewRoom = () => {
               <StyledCheckBox>
                 <StyledLabelCheckBox htmlFor="">Grocery</StyledLabelCheckBox>
                 <StyledInputBox
-                  onChange={handleCheckbox}
+                  onChange={(e) => handleCheckbox(6, e)}
                   type="checkbox"
                   name="grocery"
                   checked={isChecked[6]}
@@ -396,7 +379,7 @@ const NewRoom = () => {
               <StyledCheckBox>
                 <StyledLabelCheckBox htmlFor="">Single Bed</StyledLabelCheckBox>
                 <StyledInputBox
-                  onChange={handleCheckbox}
+                  onChange={(e) => handleCheckbox(7, e)}
                   type="checkbox"
                   name="single_bed"
                   checked={isChecked[7]}
@@ -405,7 +388,7 @@ const NewRoom = () => {
               <StyledCheckBox>
                 <StyledLabelCheckBox htmlFor="">Double Bed</StyledLabelCheckBox>
                 <StyledInputBox
-                  onChange={handleCheckbox}
+                  onChange={(e) => handleCheckbox(8, e)}
                   type="checkbox"
                   name="double_bed"
                   checked={isChecked[8]}
@@ -414,7 +397,7 @@ const NewRoom = () => {
               <StyledCheckBox>
                 <StyledLabelCheckBox htmlFor="">Shop near</StyledLabelCheckBox>
                 <StyledInputBox
-                  onChange={handleCheckbox}
+                  onChange={(e) => handleCheckbox(9, e)}
                   type="checkbox"
                   name="shop_near"
                   checked={isChecked[9]}
@@ -424,7 +407,7 @@ const NewRoom = () => {
                 {" "}
                 <StyledLabelCheckBox htmlFor="">Towels</StyledLabelCheckBox>
                 <StyledInputBox
-                  onChange={handleCheckbox}
+                  onChange={(e) => handleCheckbox(10, e)}
                   type="checkbox"
                   name="towels"
                   checked={isChecked[10]}
@@ -441,17 +424,9 @@ const NewRoom = () => {
       </StyledForm>
       {openModal ? (
         !editRoomSelected ? (
-          <ModalCrud
-            title={"Added"}
-            button={"Add another room"}
-            setOpenModal={setOpenModal}
-          />
+          <ModalCrud title={"Added"} button={"Add another room"} setOpenModal={setOpenModal} />
         ) : (
-          <ModalCrud
-            title={"Updated"}
-            button={""}
-            setOpenModal={setOpenModal}
-          />
+          <ModalCrud title={"Updated"} button={""} setOpenModal={setOpenModal} />
         )
       ) : (
         <></>

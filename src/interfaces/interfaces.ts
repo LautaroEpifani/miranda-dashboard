@@ -1,6 +1,5 @@
 export interface Booking {
   id: string;
-  image: image;
   guest: string; 
   room_type: string;
   room_number: number;
@@ -11,10 +10,6 @@ export interface Booking {
   status: string;
   color: string;
   bgrColor: string;
-}
-
-export type image = {
-  images0: string
 }
 
 
@@ -32,9 +27,8 @@ export interface Message {
 export interface Room {
     id: string;
     title: string;
-    image: string;
     room_type: string;
-    room_number: 10,
+    room_number: number,
     amenities: Amenities[],
     price: number;
     discount: number;
@@ -43,22 +37,30 @@ export interface Room {
     description: string;
     cancellation: string;
     status: string;
-    images: image;
+    images: string[];
   }
 
 export interface Amenities {
   a_name: string;
-  icon: string
+  icon: string;
+  isChecked: boolean;
 }
 
 export interface User {
       employee_name: string;
       id: string;
-      image: image;
+      image: string;
       email: string;
       start_date: Date;
       description: string;
       contact: string;
       status: string;
       position: string;
+  }  
+
+
+  export interface LoginUser {
+    userName: string;
+    email: string;
+    password: string;
   }  

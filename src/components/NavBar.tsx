@@ -106,7 +106,7 @@ export const NavBar = ({ openSideBar, setOpenSideBar, title }: Props) => {
             <MdOutlineNotifications />
             <Notifications>{notifications}</Notifications>
           </NotifContainer>
-          <Link to={"/login"}  onClick={() => dispatch({ type: "logout", payload: undefined})}>
+          <Link to={"/login"}  onClick={() => dispatch({ type: "logout", payload: { userName: "", email: "", password: ""}})}>
           <IoExitOutline style={{ color: "#135846" }}/>
           </Link>
         </Icons>

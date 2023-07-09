@@ -53,7 +53,7 @@ const StyledEdit = styled.a`
 `;
 
 const Login = () => {
-  const [login, setLogin] = useState({ userName: "", email: "", password: "" });
+  const [login, setLogin] = useState({ userName: "asdasd", email: "", password: "" });
   const [activeUpdate, setActiveUpdate] = useState(false);
 
   const { dispatch, userState } = useContext(AuthContext);
@@ -79,6 +79,7 @@ const Login = () => {
       navigate("/login")
     }
   };
+
 
   useEffect(() => {
     if (activeUpdate) {

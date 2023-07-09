@@ -66,7 +66,6 @@ export const roomsSlice = createSlice({
       state.loading = " ";
     });
     builder.addCase(getRooms.fulfilled, (state, action) => {
-      console.log(action.payload);
       state.roomsState = action.payload;
       state.loading = "fulfilled";
     });
@@ -75,21 +74,21 @@ export const roomsSlice = createSlice({
       state.loading = "rejected";
     });
     builder.addCase(postRoom.fulfilled, (state, action) => {
-      console.log(action.payload);
+      console.log(action.payload)
       state.roomsState.push(action.payload);
     });
     builder.addCase(editRequestRoom.fulfilled, (state, action) => {
-      console.log(action);
       const room: Room | undefined = state.roomsState.find(
         (room) => room.id === action.payload.id
       );
-      const { room_type, room_number, price, offer_price, amenities } =
+      const { room_type, room_number, price, amenities, discount } =
         action.payload;
       if (room) {
         room.room_type = room_type;
         room.room_number = room_number;
         room.price = price;
-        room.offer_price = offer_price;
+        room.discount = discount;
+        room.offer_price = parseInt((room.price - (room.price * room.discount) / 100).toFixed(2));
         room.amenities = amenities;
       }
     });

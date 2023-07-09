@@ -6,9 +6,7 @@ import Room1front from "../assets/room1front.jpg";
 import { SliderButtons } from "../components/dashboard/Messages";
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
 import { useCallback, useEffect, useState } from "react";
-import {
-  AmenitiesIcon,
-} from "../components/Amenities";
+import { AmenitiesIcon } from "../components/Amenities";
 import { useDispatch, useSelector } from "react-redux";
 import { getRooms } from "../features/rooms/roomApi";
 import React from "react";
@@ -102,13 +100,13 @@ const SpecialRequest = styled.h1`
   margin-bottom: 30px;
 `;
 
-const StyledImg = styled.img`
-  width: 100%;
-  height: 500px;
-  border-radius: 10px;
-  border-top-left-radius: 0px;
-  border-bottom-left-radius: 0px;
-`;
+// const StyledImg = styled.img`
+//   width: 100%;
+//   height: 500px;
+//   border-radius: 10px;
+//   border-top-left-radius: 0px;
+//   border-bottom-left-radius: 0px;
+// `;
 
 const SliderDetails = styled.div`
   position: absolute;
@@ -213,8 +211,7 @@ const StyledAmenities = styled.div`
 
 const BookingsDetail = () => {
   const { state } = useLocation();
-  const { image, guest, id, check_in, check_out, room_type, special_request } =
-    state.booking;
+  const { image, guest, id, check_in, check_out, room_type, special_request } = state.booking;
   const roomImgs = [Room1, Room1front];
   const [room, setRoom] = useState<Room[] | []>([]);
   const rooms = useSelector((state: RootState) => state.rooms.roomsState);
@@ -224,7 +221,6 @@ const BookingsDetail = () => {
   const setTitle: (arg0: string) => void = useOutletContext();
 
   const moveSlideRight = () => {
-    console.log(slideIndex);
     if (slideIndex === roomImgs.length - 1) {
       setSlideIndex(0);
     } else {
@@ -233,7 +229,6 @@ const BookingsDetail = () => {
   };
 
   const moveSlideLeft = () => {
-    console.log(slideIndex);
     if (slideIndex === 0) {
       setSlideIndex(1);
     } else {
@@ -242,14 +237,14 @@ const BookingsDetail = () => {
   };
 
   const roomType = useCallback(() => {
-    const room = rooms.filter((r) => (r.room_type === room_type));
-    setRoom(room)
+    const room = rooms.filter((r) => r.room_type === room_type);
+    setRoom(room);
   }, [room_type, rooms]);
 
   useEffect(() => {
     setTitle("Room Details");
     roomType();
-     if (loading === "idle") {
+    if (loading === "idle") {
       dispatch(getRooms());
     }
   }, [setTitle, roomType, dispatch, loading]);
@@ -296,8 +291,8 @@ const BookingsDetail = () => {
           <ContainerBetween>
             <StyledAmenities>
               {room[0]?.amenities.map((amenitie, index: number) => (
-                        <AmenitiesIcon key={index} icon={amenitie.icon} title={""}/>
-                      ))}
+                <AmenitiesIcon key={index} icon={amenitie.icon} title={""} />
+              ))}
             </StyledAmenities>
           </ContainerBetween>
         </ContainerAmenities>
@@ -306,7 +301,7 @@ const BookingsDetail = () => {
         <StyledRibbon>
           <StyledRibbonSpan>In Progress</StyledRibbonSpan>
         </StyledRibbon>
-        <StyledImg src={room[0].image} alt="" />
+        {/* <StyledImg src={room[0].image} alt="" /> */}
         <SliderDetails>
           <ButtonLeft onClick={() => moveSlideLeft()}>
             <AiOutlineArrowLeft />
@@ -316,11 +311,9 @@ const BookingsDetail = () => {
           </ButtonRight>
           <h1>Queen Bed A-10294</h1>
           <RoomDescription>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi
-            quam, necessitatibus nesciunt optio error aspernatur doloribus rem
-            fugiat dolorum quibusdam minima consequuntur nam nulla obcaecati
-            assumenda natus tenetur? Magnam ex quis omnis autem, unde quibusdam
-            blanditiis mollitia nemo repellendus aliquid.
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi quam, necessitatibus nesciunt optio error
+            aspernatur doloribus rem fugiat dolorum quibusdam minima consequuntur nam nulla obcaecati assumenda natus
+            tenetur? Magnam ex quis omnis autem, unde quibusdam blanditiis mollitia nemo repellendus aliquid.
           </RoomDescription>
         </SliderDetails>
       </SliderContainer>

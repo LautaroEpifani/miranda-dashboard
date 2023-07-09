@@ -1,4 +1,4 @@
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { Link } from "react-router-dom";
@@ -7,10 +7,11 @@ import ModalDelete from "./ModalDelete";
 import { getBookings } from "../../features/bookings/bookingsApi";
 import { useDispatch, useSelector } from "react-redux";
 import { sortBookings } from "../../features/bookings/bookingsSlice";
-import { StyledComponentButton } from "./StyledComponentButton"
+import { StyledComponentButton } from "./StyledComponentButton";
 import React from "react";
 import { Booking } from "../../interfaces/interfaces";
 import { AppDispatch, RootState } from "../../app/store";
+import { RxCrossCircled } from "react-icons/rx";
 
 const ContainerTable = styled.div`
   margin: 40px;
@@ -43,6 +44,7 @@ const StyledTd = styled.td`
   padding-right: 10px;
   color: #393939;
   font-weight: 600;
+  position: relative;
 `;
 
 const StyledButtonView = styled.button`
@@ -89,8 +91,7 @@ const PaginationContainer = styled.div`
 const PageButton = styled.button<{ activeButton: boolean }>`
   border: none;
   color: ${(props) => (props.activeButton ? "#FFF" : "#393939")};
-  background-color: ${(props) =>
-    props.activeButton ? "#135846" : "transparent"};
+  background-color: ${(props) => (props.activeButton ? "#135846" : "transparent")};
   padding: 10px;
   border-radius: 6px;
   padding-right: 15px;
@@ -124,10 +125,24 @@ const StyledH1 = styled.h1`
   color: #222222;
 `;
 
-const StyledImage = styled.img`
-  width: 40px;
-  height: 40px;
-  border-radius: 5px;
+const PopupContainer = styled.div`
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 10px;
+  width: 430px;
+  background-color: #fff;
+  padding: 20px;
+  line-height: 12px;
+  font-size: 10px;
+  font-weight: 400;
+  display: flex;
+  border-radius: 10px;
+`;
+
+const StyledCross = styled(RxCrossCircled)`
+    width: 200px;
+    height: 20px;
 `;
 
 export interface Props {
@@ -140,24 +155,16 @@ const GridTable = ({ searchBooking }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
   const pages = [1, 2, 3, 4, 5];
   const [bookingId, setBookingId] = useState<string>("");
-  const [options, setOptions] = useState<boolean[]>(
-    new Array(bookings.length).fill(false)
-  );  
+  const [options, setOptions] = useState<boolean[]>(new Array(bookings.length).fill(false));
   const [modalDelete, setModalDelete] = useState<boolean>(false);
-  const [activeButton, setActiveButton] = useState<boolean[]>([
-    true,
-    false,
-    false,
-    false,
-    false,
-  ]);
+  const [activeButton, setActiveButton] = useState<boolean[]>([true, false, false, false, false]);
+  const [notes, setNotes] = useState<boolean[]>(new Array(bookings.length).fill(false));
 
   const [indexPagination, setIndexPagination] = useState(1);
   let firstElement = indexPagination * 10 - 10;
   let lastElement = indexPagination * 10;
 
   const movePaginationRight = () => {
-    console.log(indexPagination);
     if (indexPagination === pages.length) {
       setIndexPagination(pages.length);
     } else {
@@ -166,7 +173,6 @@ const GridTable = ({ searchBooking }: Props) => {
   };
 
   const movePaginationLeft = () => {
-    console.log(indexPagination);
     if (indexPagination === 1) {
       setIndexPagination(1);
     } else {
@@ -187,10 +193,17 @@ const GridTable = ({ searchBooking }: Props) => {
   };
 
   const setOptionsFunc = (index: number) => {
-    const newArray = [...options];
-    newArray[index] = !newArray[index];
-    setOptions(newArray);
+    const optionsArray = [...options];
+    optionsArray[index] = !optionsArray[index];
+    setOptions(optionsArray);
   };
+
+  const openNotes = (index: number) => {
+    const notesArray = [...notes];
+    notesArray[index] = !notesArray[index];
+    setNotes(notesArray);
+  }
+
 
   useEffect(() => {
     colorButton(indexPagination - 1);
@@ -199,6 +212,7 @@ const GridTable = ({ searchBooking }: Props) => {
     }
     dispatch(sortBookings("order_date"));
   }, [indexPagination, loading, dispatch]);
+
 
   return (
     <>
@@ -217,170 +231,151 @@ const GridTable = ({ searchBooking }: Props) => {
           </thead>
           <tbody>
             {searchBooking
-              ? searchBooking
-                  .slice(firstElement, lastElement)
-                  .map((booking: Booking, index: number) => (
-                    <tr key={booking.id}>
-                      <StyledTd>
-                        {" "}
-                        <Link
-                          style={{ textDecoration: "none" }}
-                          to={`/bookings/${booking.id}`}
-                          state={{ booking: booking }}
-                        >
-                          <StyledContainerGuest>
-                            <StyledImage
+              ? searchBooking.slice(firstElement, lastElement).map((booking: Booking, index: number) => (
+                  <tr key={booking.id}>
+                    <StyledTd>
+                      {" "}
+                      <Link
+                        style={{ textDecoration: "none" }}
+                        to={`/bookings/${booking.id}`}
+                        state={{ booking: booking }}
+                      >
+                        <StyledContainerGuest>
+                          {/* <StyledImage
                               src={
-                                booking.image.images0
-                                  // ? booking.image.images0
-                                  // : booking.image
+                               booking.image
                               }
                               alt=""
-                            />
-                            <div>
-                              <StyledH1>{booking.guest}</StyledH1>
-                              <Styledh6>{booking.id}</Styledh6>
-                            </div>
-                          </StyledContainerGuest>
-                        </Link>
-                      </StyledTd>
+                            /> */}
+                          <div>
+                            <StyledH1>{booking.guest}</StyledH1>
+                            <Styledh6>{booking.id}</Styledh6>
+                          </div>
+                        </StyledContainerGuest>
+                      </Link>
+                    </StyledTd>
 
-                      <StyledTd>
-                        <StyledDate>{booking.order_date.toString()}</StyledDate>
-                      </StyledTd>
-                      <StyledTd>
-                        <CheckContainer>
-                          <h1>{booking.check_in.toString()}</h1>
-                          <Styledh6>hour</Styledh6>
-                        </CheckContainer>
-                      </StyledTd>
-                      <StyledTd>
-                        <CheckContainer>
-                          <h1>{booking.check_out.toString()}</h1>
-                          <Styledh6>hour</Styledh6>
-                        </CheckContainer>
-                      </StyledTd>
-                      <StyledTd>
-                        <StyledButtonView>View Notes</StyledButtonView>
-                      </StyledTd>
-                      <StyledTd>{booking.room_type}</StyledTd>
-                      <StyledTd>
-                        <ContainerStatus>
-                          <StyledComponentButton
-                            color={booking.color}
-                            bgrColor={booking.bgrColor}
-                          >
-                            {booking.status}
-                          </StyledComponentButton>
-                          {!options[index] ? (
-                            <BsThreeDotsVertical
-                              onClick={() => {
-                                setOptionsFunc(index);
-                              }}
-                            />
-                          ) : (
-                            <Options
-                              setModalDelete={setModalDelete}
-                              booking={booking}
-                              setOptionsFunc={setOptionsFunc}
-                              index={index}
-                              setBookingId={setBookingId}
-                            />
-                          )}
-                        </ContainerStatus>
-                      </StyledTd>
-                      {modalDelete ? (
-                        <ModalDelete
-                          setModalDelete={setModalDelete}
-                          id={bookingId}
-                        />
-                      ) : (
-                        <></>
-                      )}
-                    </tr>
-                  ))
-              : bookings
-                  .slice(firstElement, lastElement)
-                  .map((booking, index) => (
-                    <tr key={booking.id}>
-                      <StyledTd>
-                        {" "}
-                        <Link
-                          style={{ textDecoration: "none" }}
-                          to={`/bookings/${booking.id}`}
-                          state={{ booking: booking }}
-                        >
-                          <StyledContainerGuest>
-                            <StyledImage
-                              src={
-                                booking.image.images0
-                                  // ? booking.image.images0
-                                  // : booking.image
-                              }
-                              alt=""
-                            />
-                            <div>
-                              <StyledH1>{booking.guest}</StyledH1>
-                              <Styledh6>{booking.id}</Styledh6>
-                            </div>
-                          </StyledContainerGuest>
-                        </Link>
-                      </StyledTd>
+                    <StyledTd>
+                      <StyledDate>{booking.order_date.toString()}</StyledDate>
+                    </StyledTd>
+                    <StyledTd>
+                      <CheckContainer>
+                        <h1>{booking.check_in.toString()}</h1>
+                        <Styledh6>hour</Styledh6>
+                      </CheckContainer>
+                    </StyledTd>
+                    <StyledTd>
+                      <CheckContainer>
+                        <h1>{booking.check_out.toString()}</h1>
+                        <Styledh6>hour</Styledh6>
+                      </CheckContainer>
+                    </StyledTd>
+                    <StyledTd>
+                      {
+                        notes[index] ?
+                        <PopupContainer>
+                        <div>
+                          {booking.special_request.slice(0, 500)}
+                          
+                        </div>
+                
+                        <StyledCross onClick={() => openNotes(index)} />
+                      </PopupContainer>
+                        :
+                       
+                         
+                     <StyledButtonView onClick={() => openNotes(index)}>View Notes</StyledButtonView>
+                      }
+                      
+                    </StyledTd>
+                    <StyledTd>{booking.room_type}</StyledTd>
+                    <StyledTd>
+                      <ContainerStatus>
+                        <StyledComponentButton color={booking.color} bgrColor={booking.bgrColor}>
+                          {booking.status}
+                        </StyledComponentButton>
+                        {!options[index] ? (
+                          <BsThreeDotsVertical
+                            onClick={() => {
+                              setOptionsFunc(index);
+                            }}
+                          />
+                        ) : (
+                          <Options
+                            setModalDelete={setModalDelete}
+                            booking={booking}
+                            setOptionsFunc={setOptionsFunc}
+                            index={index}
+                            setBookingId={setBookingId}
+                          />
+                        )}
+                      </ContainerStatus>
+                    </StyledTd>
+                    {modalDelete ? <ModalDelete setModalDelete={setModalDelete} id={bookingId} /> : <></>}
+                  </tr>
+                ))
+              : bookings.slice(firstElement, lastElement).map((booking, index) => (
+                  <tr key={booking.id}>
+                    <StyledTd>
+                      {" "}
+                      <Link
+                        style={{ textDecoration: "none" }}
+                        to={`/bookings/${booking.id}`}
+                        state={{ booking: booking }}
+                      >
+                        <StyledContainerGuest>
+                          <div>
+                            <StyledH1>{booking.guest}</StyledH1>
+                            <Styledh6>{booking.id}</Styledh6>
+                          </div>
+                        </StyledContainerGuest>
+                      </Link>
+                    </StyledTd>
 
-                      <StyledTd>
-                        <StyledDate>{booking.order_date.toString()}</StyledDate>
-                      </StyledTd>
-                      <StyledTd>
-                        <CheckContainer>
-                          <h1>{booking.check_in.toString()}</h1>
-                          <Styledh6>hour</Styledh6>
-                        </CheckContainer>
-                      </StyledTd>
-                      <StyledTd>
-                        <CheckContainer>
-                          <h1>{booking.check_out.toString()}</h1>
-                          <Styledh6>hour</Styledh6>
-                        </CheckContainer>
-                      </StyledTd>
-                      <StyledTd>
-                        <StyledButtonView>View Notes</StyledButtonView>
-                      </StyledTd>
-                      <StyledTd>{booking.room_type}</StyledTd>
-                      <StyledTd>
-                        <ContainerStatus>
-                          <StyledComponentButton
-                            color={booking.color}
-                            bgrColor={booking.bgrColor}
-                          >
-                            {booking.status}
-                          </StyledComponentButton>
-                          {!options[index] ? (
-                            <BsThreeDotsVertical
-                              onClick={() => {
-                                setOptionsFunc(index);
-                              }}
-                            />
-                          ) : (
-                            <Options
-                              setModalDelete={setModalDelete}
-                              booking={booking}
-                              setOptionsFunc={setOptionsFunc}
-                              index={index}
-                              setBookingId={setBookingId}
-                            />
-                          )}
-                        </ContainerStatus>
-                      </StyledTd>
-                      {modalDelete ? (
-                        <ModalDelete
-                          setModalDelete={setModalDelete}
-                          id={bookingId}
-                        />
-                      ) : (
-                        <></>
-                      )}
-                    </tr>
-                  ))}
+                    <StyledTd>
+                      <StyledDate>{booking.order_date.toString()}</StyledDate>
+                    </StyledTd>
+                    <StyledTd>
+                      <CheckContainer>
+                        <h1>{booking.check_in.toString()}</h1>
+                        <Styledh6>hour</Styledh6>
+                      </CheckContainer>
+                    </StyledTd>
+                    <StyledTd>
+                      <CheckContainer>
+                        <h1>{booking.check_out.toString()}</h1>
+                        <Styledh6>hour</Styledh6>
+                      </CheckContainer>
+                    </StyledTd>
+                    <StyledTd>
+                      <StyledButtonView>View Notes</StyledButtonView>
+                    </StyledTd>
+                    <StyledTd>{booking.room_type}</StyledTd>
+                    <StyledTd>
+                      <ContainerStatus>
+                        <StyledComponentButton color={booking.color} bgrColor={booking.bgrColor}>
+                          {booking.status}
+                        </StyledComponentButton>
+                        {!options[index] ? (
+                          <BsThreeDotsVertical
+                            onClick={() => {
+                              setOptionsFunc(index);
+                            }}
+                          />
+                        ) : (
+                          <Options
+                            setModalDelete={setModalDelete}
+                            booking={booking}
+                            setOptionsFunc={setOptionsFunc}
+                            index={index}
+                            setBookingId={setBookingId}
+                          />
+                        )}
+                      </ContainerStatus>
+                    </StyledTd>
+                    {modalDelete ? <ModalDelete setModalDelete={setModalDelete} id={bookingId} /> : <></>}
+                  </tr>
+                ))}
           </tbody>
         </StyledTable>
       </ContainerTable>
@@ -388,9 +383,7 @@ const GridTable = ({ searchBooking }: Props) => {
         Showing {bookings.length} of {bookings.length} Data
       </ShowingData>
       <PaginationContainer>
-        <DirectionButton onClick={() => movePaginationLeft()}>
-          Prev
-        </DirectionButton>
+        <DirectionButton onClick={() => movePaginationLeft()}>Prev</DirectionButton>
         {pages.map((page, index) => (
           <PageButton
             key={index}
@@ -403,9 +396,7 @@ const GridTable = ({ searchBooking }: Props) => {
             {page}
           </PageButton>
         ))}
-        <DirectionButton onClick={() => movePaginationRight()}>
-          Next
-        </DirectionButton>
+        <DirectionButton onClick={() => movePaginationRight()}>Next</DirectionButton>
       </PaginationContainer>
     </>
   );
