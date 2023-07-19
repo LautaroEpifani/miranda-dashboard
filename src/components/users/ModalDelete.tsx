@@ -53,7 +53,7 @@ const StyledButton = styled.button`
 
 interface Props {
   setModalDelete: React.Dispatch<SetStateAction<boolean>>;
-  id: string;
+  id: string | undefined;
 }
 
 const ModalDelete = ({ setModalDelete, id }: Props) => {

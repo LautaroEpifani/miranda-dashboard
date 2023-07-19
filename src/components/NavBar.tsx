@@ -11,6 +11,8 @@ import { NavTitle } from "../styledComponents/styled";
 import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import React from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../app/store";
 
 const NavContainer = styled.div`
   padding-top: 20px;
@@ -75,7 +77,7 @@ interface Props {
 }
 
 export const NavBar = ({ openSideBar, setOpenSideBar, title }: Props) => {
-  const [emails, setEmails] = useState(2);
+  const messages = useSelector((state: RootState) => state.messages.messagesState);
   const [notifications, setNotifications] = useState(87);
 
   const { dispatch } = useContext(AuthContext);
@@ -100,7 +102,7 @@ export const NavBar = ({ openSideBar, setOpenSideBar, title }: Props) => {
         <Icons>
           <NotifContainer>
             <HiOutlineMail />
-            <Notifications>{emails}</Notifications>
+            <Notifications>{messages.length}</Notifications>
           </NotifContainer>
           <NotifContainer>
             <MdOutlineNotifications />

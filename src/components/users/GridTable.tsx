@@ -137,7 +137,7 @@ const GridTable = ({ searchUser }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
   const pages = [1, 2, 3, 4, 5];
   const [options, setOptions] = useState(new Array(users.length).fill(false));
-  const [userId, setUserId] = useState("");
+  const [userId, setUserId] = useState<string | undefined>();
   const [modalDelete, setModalDelete] = useState(false);
   const [activeButton, setActiveButton] = useState([
     true,
@@ -211,7 +211,7 @@ const GridTable = ({ searchUser }: Props) => {
             {searchUser ? 
 
               searchUser.slice(firstElement, lastElement).map((user, index) => (
-              <tr key={user.id}>
+              <tr key={user._id}>
                 <StyledTd>
                   {" "}
                   <StyledContainerGuest>
@@ -268,7 +268,7 @@ const GridTable = ({ searchUser }: Props) => {
 
              : 
             users.slice(firstElement, lastElement).map((user, index) => (
-              <tr key={user.id}>
+              <tr key={user._id}>
                 <StyledTd>
                   {" "}
                   <StyledContainerGuest>

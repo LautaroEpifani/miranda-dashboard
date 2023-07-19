@@ -12,6 +12,8 @@ import React from "react";
 import { Booking } from "../../interfaces/interfaces";
 import { AppDispatch, RootState } from "../../app/store";
 import { RxCrossCircled } from "react-icons/rx";
+import { formatDate } from "../../utils/dateFormat";
+import { Types } from "mongoose";
 
 const ContainerTable = styled.div`
   margin: 40px;
@@ -141,8 +143,8 @@ const PopupContainer = styled.div`
 `;
 
 const StyledCross = styled(RxCrossCircled)`
-    width: 200px;
-    height: 20px;
+  width: 200px;
+  height: 20px;
 `;
 
 export interface Props {
@@ -154,7 +156,7 @@ const GridTable = ({ searchBooking }: Props) => {
   const loading = useSelector((state: RootState) => state.bookings.loading);
   const dispatch = useDispatch<AppDispatch>();
   const pages = [1, 2, 3, 4, 5];
-  const [bookingId, setBookingId] = useState<string>("");
+  const [bookingId, setBookingId] = useState<string | undefined>();
   const [options, setOptions] = useState<boolean[]>(new Array(bookings.length).fill(false));
   const [modalDelete, setModalDelete] = useState<boolean>(false);
   const [activeButton, setActiveButton] = useState<boolean[]>([true, false, false, false, false]);
@@ -202,8 +204,7 @@ const GridTable = ({ searchBooking }: Props) => {
     const notesArray = [...notes];
     notesArray[index] = !notesArray[index];
     setNotes(notesArray);
-  }
-
+  };
 
   useEffect(() => {
     colorButton(indexPagination - 1);
@@ -212,7 +213,6 @@ const GridTable = ({ searchBooking }: Props) => {
     }
     dispatch(sortBookings("order_date"));
   }, [indexPagination, loading, dispatch]);
-
 
   return (
     <>
@@ -225,7 +225,6 @@ const GridTable = ({ searchBooking }: Props) => {
               <StyledTh scope="col">Check In</StyledTh>
               <StyledTh scope="col">Check Out</StyledTh>
               <StyledTh scope="col">Special Request</StyledTh>
-              <StyledTh scope="col">Room Type</StyledTh>
               <StyledTh scope="col">Status</StyledTh>
             </tr>
           </thead>
@@ -237,7 +236,7 @@ const GridTable = ({ searchBooking }: Props) => {
                       {" "}
                       <Link
                         style={{ textDecoration: "none" }}
-                        to={`/bookings/${booking.id}`}
+                        to={`/bookings/${booking._id}`}
                         state={{ booking: booking }}
                       >
                         <StyledContainerGuest>
@@ -249,49 +248,39 @@ const GridTable = ({ searchBooking }: Props) => {
                             /> */}
                           <div>
                             <StyledH1>{booking.guest}</StyledH1>
-                            <Styledh6>{booking.id}</Styledh6>
+                            <Styledh6>{booking._id}</Styledh6>
                           </div>
                         </StyledContainerGuest>
                       </Link>
                     </StyledTd>
 
                     <StyledTd>
-                      <StyledDate>{booking.order_date.toString()}</StyledDate>
+                      <StyledDate>{formatDate(booking.order_date)}</StyledDate>
                     </StyledTd>
                     <StyledTd>
                       <CheckContainer>
-                        <h1>{booking.check_in.toString()}</h1>
-                        <Styledh6>hour</Styledh6>
+                        <h1>{formatDate(booking.check_in)}</h1>
                       </CheckContainer>
                     </StyledTd>
                     <StyledTd>
                       <CheckContainer>
-                        <h1>{booking.check_out.toString()}</h1>
-                        <Styledh6>hour</Styledh6>
+                        <h1>{formatDate(booking.check_out)}</h1>
                       </CheckContainer>
                     </StyledTd>
                     <StyledTd>
-                      {
-                        notes[index] ?
+                      {notes[index] ? (
                         <PopupContainer>
-                        <div>
-                          {booking.special_request.slice(0, 500)}
-                          
-                        </div>
-                
-                        <StyledCross onClick={() => openNotes(index)} />
-                      </PopupContainer>
-                        :
-                       
-                         
-                     <StyledButtonView onClick={() => openNotes(index)}>View Notes</StyledButtonView>
-                      }
-                      
+                          <div>{booking.special_request.slice(0, 500)}</div>
+
+                          <StyledCross onClick={() => openNotes(index)} />
+                        </PopupContainer>
+                      ) : (
+                        <StyledButtonView onClick={() => openNotes(index)}>View Notes</StyledButtonView>
+                      )}
                     </StyledTd>
-                    <StyledTd>{booking.room_type}</StyledTd>
                     <StyledTd>
                       <ContainerStatus>
-                        <StyledComponentButton color={booking.color} bgrColor={booking.bgrColor}>
+                        <StyledComponentButton color={booking.color} bgrColor={booking.bgr_color}>
                           {booking.status}
                         </StyledComponentButton>
                         {!options[index] ? (
@@ -320,13 +309,13 @@ const GridTable = ({ searchBooking }: Props) => {
                       {" "}
                       <Link
                         style={{ textDecoration: "none" }}
-                        to={`/bookings/${booking.id}`}
+                        to={`/bookings/${booking._id}`}
                         state={{ booking: booking }}
                       >
                         <StyledContainerGuest>
                           <div>
                             <StyledH1>{booking.guest}</StyledH1>
-                            <Styledh6>{booking.id}</Styledh6>
+                            <Styledh6>{booking._id}</Styledh6>
                           </div>
                         </StyledContainerGuest>
                       </Link>
@@ -338,22 +327,19 @@ const GridTable = ({ searchBooking }: Props) => {
                     <StyledTd>
                       <CheckContainer>
                         <h1>{booking.check_in.toString()}</h1>
-                        <Styledh6>hour</Styledh6>
                       </CheckContainer>
                     </StyledTd>
                     <StyledTd>
                       <CheckContainer>
                         <h1>{booking.check_out.toString()}</h1>
-                        <Styledh6>hour</Styledh6>
                       </CheckContainer>
                     </StyledTd>
                     <StyledTd>
                       <StyledButtonView>View Notes</StyledButtonView>
                     </StyledTd>
-                    <StyledTd>{booking.room_type}</StyledTd>
                     <StyledTd>
                       <ContainerStatus>
-                        <StyledComponentButton color={booking.color} bgrColor={booking.bgrColor}>
+                        <StyledComponentButton color={booking.color} bgrColor={booking.bgr_color}>
                           {booking.status}
                         </StyledComponentButton>
                         {!options[index] ? (

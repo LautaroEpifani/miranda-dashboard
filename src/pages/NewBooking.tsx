@@ -75,64 +75,46 @@ const StyledButton = styled.button`
   color: #fff;
 `;
 
-// interface HTMLInputEvent extends React.ChangeEvent {
-//     target: HTMLInputElement & EventTarget;
-// }
+const initialState = {
+  id: "",
+  guest: "",
+  room_number: 0,
+  special_request: "",
+  order_date: new Date(""),
+  check_in: new Date(""),
+  check_out: new Date(""),
+  status: "",
+  color: "",
+  bgr_color: "",
+};
 
 const NewBooking = () => {
-  const [booking, setBooking] = useState<Booking>({
-    id: "",
-    guest: "",
-    room_type: "",
-    room_number: 0,
-    special_request: "",
-    order_date: new Date(""),
-    check_in: new Date(""),
-    check_out: new Date(""),
-    status: "",
-    color: "",
-    bgrColor: ""
-  });
+  const [booking, setBooking] = useState<Booking>(initialState);
   const [openModal, setOpenModal] = useState(false);
   const { state } = useLocation();
-  const editBookingSelected = state;
+  // const [editBookingSelected, setEditBookingSelected] = useState<any>();
+  const  editBookingSelected  = state;
   const setTitle: (arg0: string) => void = useOutletContext();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const handleChange = ({ target: { name, value } }: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-
     setBooking({ ...booking, [name]: value });
-
   };
-
-  // const handleImages = (e: HTMLInputEvent) => {
-  //   if (!e.target.files) return;
-  //   const formData = new FormData();
-  //   for (let i = 0; i < e.target.files.length; i++) {
-  //     formData.append(`images${i}`, e.target.files[i]);
-  //   }
-  //   fetch("https://httpbin.org/post", {
-  //     method: "POST",
-  //     body: formData,
-  //   })
-  //     .then((res) => res.json())
-  //     .then((data) => setImage(data.files));
-  // };
 
   const setStatusColor = () => {
     if (booking) {
       if (booking.status === "Check In") {
         booking.color = "#5AD07A";
-        booking.bgrColor = "#E8FFEE";
+        booking.bgr_color = "#E8FFEE";
       }
       if (booking.status === "Check Out") {
         booking.color = "#E23428";
-        booking.bgrColor = "#FFEDEC";
+        booking.bgr_color = "#FFEDEC";
       }
       if (booking.status === "In Progress") {
         booking.color = "#FF9C3A";
-        booking.bgrColor = "#fff3e7";
+        booking.bgr_color = "#fff3e7";
       }
     }
   };
@@ -140,15 +122,41 @@ const NewBooking = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (booking) {
+      setStatusColor();
       if (!editBookingSelected) {
-        setStatusColor();
         booking.id = uuid();
         setBooking(booking);
         dispatch(postBooking(booking));
         setOpenModal(true);
       } else {
+        const {
+          _id,
+          id,
+          guest,
+          room_number,
+          special_request,
+          order_date,
+          check_in,
+          check_out,
+          status,
+          color,
+          bgr_color,
+        } = booking;
+        const editedBooking = {
+          _id,
+          id,
+          guest,
+          room_number,
+          special_request,
+          order_date,
+          check_in,
+          check_out,
+          status,
+          color,
+          bgr_color,
+        };
         setOpenModal(true);
-        dispatch(editBooking(booking));
+        dispatch(editBooking(editedBooking));
         setTimeout(() => {
           navigate("/bookings");
         }, 3000);
@@ -157,7 +165,6 @@ const NewBooking = () => {
         }, 3000);
       }
     }
-
     window.scrollTo(0, 0);
   };
   useEffect(() => {
@@ -165,7 +172,9 @@ const NewBooking = () => {
     if (editBookingSelected) {
       setBooking(editBookingSelected.booking);
     }
-  }, [setTitle, editBookingSelected]);
+  }, [setTitle, editBookingSelected, navigate, state]);
+
+
 
   return (
     <StyledContainer>
@@ -180,41 +189,27 @@ const NewBooking = () => {
             defaultValue={editBookingSelected ? editBookingSelected.booking.guest : null}
           />
         </StyledInputContainer>
-        {/* <StyledInputContainer>
-          {" "}
-          <StyledLabel htmlFor="">Image</StyledLabel>
-          <StyledInput
-            multiple
-            className=""
-            type="file"
-            name="image"
-            id=""
-            onChange={handleImages}
-          />
-        </StyledInputContainer> */}
         <StyledInputContainer>
           {" "}
-          <StyledLabel htmlFor="">Room Type</StyledLabel>
+          <StyledLabel htmlFor="">Room Number</StyledLabel>
           <StyledSelect
             onChange={handleChange}
-            name="room_type"
-            defaultValue={editBookingSelected ? editBookingSelected.booking.room_type : null}
-          >
-            <option value=""></option>
-            <option value="Single Bed">Single Bed</option>
-            <option value="Double Bed">Double Bed</option>
-            <option value="Double Superior">Double Superior</option>
-            <option value="Suite">Suite</option>
-          </StyledSelect>
-        </StyledInputContainer>
-        <StyledInputContainer>
-          <StyledLabel htmlFor="">Room Number</StyledLabel>
-          <StyledInput
-            onChange={handleChange}
-            type="number"
             name="room_number"
             defaultValue={editBookingSelected ? editBookingSelected.booking.room_number : null}
-          />
+          >
+            <option value=""></option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+
+          </StyledSelect>
         </StyledInputContainer>
         <StyledInputContainer>
           {" "}

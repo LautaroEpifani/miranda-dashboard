@@ -17,7 +17,7 @@ export const usersSlice = createSlice({
   initialState,
   reducers: {
     sortUsers: (state, action: PayloadAction<string>) => {
-      state.usersState.sort((a, b) =>
+      state.usersState.sort((a: any, b: any) =>
         a[action.payload as keyof User] > b[action.payload as keyof User]
           ? 1
           : -1
@@ -41,7 +41,7 @@ export const usersSlice = createSlice({
     });
     builder.addCase(editUser.fulfilled, (state, action) => {
       const user = state.usersState.find(
-        (user) => user.id === action.payload.id
+        (user) => user._id === action.payload._id
       );
       const {
         contact,
@@ -68,7 +68,7 @@ export const usersSlice = createSlice({
       return {
         ...state,
         usersState: state.usersState.filter(
-          (user) => user.id !== action.payload
+          (user) => user._id !== action.payload
         ),
       };
     });

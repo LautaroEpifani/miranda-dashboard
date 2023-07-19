@@ -107,7 +107,6 @@ interface HTMLInputEvent extends React.ChangeEvent {
 
 const initialState = {
   id: "",
-  title: "",
   room_type: "",
   room_number: 0,
   amenities: [],
@@ -186,8 +185,38 @@ const NewRoom = () => {
       dispatch(postRoom(room));
       setOpenModal(true);
     } else {
+      const {
+        _id,
+        id,
+        room_type,
+        room_number,
+        amenities,
+        price,
+        discount,
+        offer,
+        offer_price,
+        description,
+        cancellation,
+        status,
+        images,
+      } = room;
+      const editedRoom = {
+        _id,
+        id,
+        room_type,
+        room_number,
+        amenities,
+        price,
+        discount,
+        offer,
+        offer_price,
+        description,
+        cancellation,
+        status,
+        images,
+      };
       setOpenModal(true);
-      dispatch(editRequestRoom(room));
+      dispatch(editRequestRoom(editedRoom));
       setTimeout(() => {
         navigate("/room");
       }, 3000);
@@ -202,8 +231,6 @@ const NewRoom = () => {
     setTitle("New Room");
     if (editRoomSelected) {
       setRoom(editRoomSelected.room);
-      // const checkedArray = editRoomSelected.room.amenities.map((amenitie: Amenities) => amenitie.isChecked);
-      // setIsChecked(checkedArray)
     }
   }, [editRoomSelected, setTitle]);
 
@@ -301,7 +328,7 @@ const NewRoom = () => {
             defaultValue={editRoomSelected ? editRoomSelected.room.status : null}
           >
             <option value=""></option>
-            <option value="Avaliable">Avaliable</option>
+            <option value="Available">Available</option>
             <option value="Booked">Booked</option>
           </StyledSelect>
         </StyledInputContainer>

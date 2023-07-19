@@ -1,17 +1,15 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { getMessages, getArchivedMessages, postArchiveMessage, archiveMessage } from "./messagesApi";
+import { getMessages, postArchiveMessage} from "./messagesApi";
 import { Message } from "../../interfaces/interfaces";
 
 interface InitialState {
   messagesState: Message[];
-  archivedState: Message[];
   loading: string;
 }
 
 
 const initialState: InitialState = {
   messagesState: [],
-  archivedState: [],
   loading: 'idle'
 }
 
@@ -20,9 +18,7 @@ export const messagesSlice = createSlice({
   initialState,
   reducers: {
     sortMessages: (state, action) => {
-      
-        state.messagesState.sort((a, b) => a[action.payload as keyof Message] > b[action.payload as keyof Message] ? 1 : -1)
-        state.archivedState.sort((a, b) => a[action.payload as keyof Message] > b[action.payload as keyof Message] ? 1 : -1)
+        state.messagesState.sort((a: any, b: any) => a[action.payload as keyof Message] > b[action.payload as keyof Message] ? 1 : -1)
     },
   },
   extraReducers: (builder) => {
@@ -37,26 +33,29 @@ export const messagesSlice = createSlice({
       state.messagesState = []
       state.loading = "rejected"
     })
-    builder.addCase(getArchivedMessages.pending, (state, action) => {
-      state.loading = "pending"
-    })
-    builder.addCase(getArchivedMessages.fulfilled, (state, action) => {
-      state.archivedState = action.payload
-      state.loading = "fulfilled"
-    })
-    builder.addCase(getArchivedMessages.rejected, (state, action) => {
-      state.archivedState = []
-      state.loading = "rejected"
-    })
+    // builder.addCase(getArchivedMessages.pending, (state, action) => {
+    //   state.loading = "pending"
+    // })
+    // builder.addCase(getArchivedMessages.fulfilled, (state, action) => {
+    //   state.archivedState = action.payload
+    //   state.loading = "fulfilled"
+    // })
+    // builder.addCase(getArchivedMessages.rejected, (state, action) => {
+    //   state.archivedState = []
+    //   state.loading = "rejected"
+    // })
     builder.addCase(postArchiveMessage.fulfilled, (state, action) => { 
-      state.archivedState.push(action.payload)
-    })
-    builder.addCase(archiveMessage.fulfilled, (state, action) => { 
-      return {
-        ...state,
-        messagesState:  state.messagesState.filter((message ) => message.id !== action.payload)
+      const message: Message | undefined = state.messagesState.find((message) => message._id === action.payload._id);
+      if(message) {
+        message.archived = true;
       }
     })
+    // builder.addCase(archiveMessage.fulfilled, (state, action) => { 
+    //   return {
+    //     ...state,
+    //     messagesState:  state.messagesState.filter((message ) => message._id !== action.payload)
+    //   }
+    // })
   },
 });
 

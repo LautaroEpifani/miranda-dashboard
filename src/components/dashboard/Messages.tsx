@@ -4,7 +4,7 @@ import { RxCrossCircled } from "react-icons/rx";
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
 import { ContainerBetween } from "../../styledComponents/styled";
 import { useDispatch, useSelector } from "react-redux";
-import { archiveMessage, getArchivedMessages, getMessages, postArchiveMessage } from "../../features/contact/messagesApi";
+import {  getMessages, postArchiveMessage } from "../../features/contact/messagesApi";
 import React from "react";
 import { Message } from "../../interfaces/interfaces";
 import { AppDispatch, RootState } from "../../app/store";
@@ -171,15 +171,13 @@ const Messages = () => {
   };
 
   const archiveMessageFunc = (message: Message) => {
-      dispatch(archiveMessage(message.id))
-      dispatch(postArchiveMessage(message))
+      dispatch(postArchiveMessage(message));
   }
 
 
   useEffect(() => {
     if (loading === "idle") {
       dispatch(getMessages());
-      dispatch(getArchivedMessages());
     }
   }, [loading, dispatch]);
 
@@ -189,7 +187,7 @@ const Messages = () => {
       <MessagesContainer popup={popup}>
         <MessagesSubContainer>
           {messages.slice(slideIndex, messages.length).map((message: Message, index: number) => (
-            <StyledMessage key={message.id}>
+            <StyledMessage key={message._id}>
               <div>
                 <StyledH2>{message.subject}</StyledH2>
                 <Text onClick={() => displayPopup(index)}>
@@ -199,7 +197,7 @@ const Messages = () => {
               <StyledH2>{message.name}</StyledH2>
               <ContainerBetween>
                 <StyledH6>{message.email}</StyledH6>
-                <StyledH6>{message.phone}</StyledH6>
+                {/* <StyledH6>{message.phone}</StyledH6> */}
                 <div onClick={() => archiveMessageFunc(message)}> <Pending/></div>
               </ContainerBetween>
               {popup[index] ? (

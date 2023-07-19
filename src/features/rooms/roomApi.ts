@@ -1,43 +1,45 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { roomsList } from "../../mockData/Rooms";
 import { Room } from "../../interfaces/interfaces";
 
-export const getRooms = createAsyncThunk(
-  'rooms/getRooms',
-  async () => {
-      const response = await new Promise((res) =>  setTimeout(() => {
-       res(roomsList);
-     }, 1000))
-      return response as Room[];
-  }
-);
+const API_URI = process.env.REACT_APP_API_URI;
 
-export const postRoom = createAsyncThunk(
-  "type/postRoom",
-  async (payload: Room | null) => {
-      const response = await new Promise((res) =>  setTimeout(() => {
-       res(payload);
-     }, 1000))  
-      return response as Room;
-  }
-);
+export const getRooms = createAsyncThunk("type/getRooms", async () => {
+  const response = await fetch(`${API_URI}/api/rooms`);
+  const json = await response.json();
+  return json as Room[];
+});
 
-export const editRequestRoom = createAsyncThunk(
-  "type/editRequestRoom",
-  async (payload: Room | null) => {
-      const response = await new Promise((res) =>  setTimeout(() => {
-       res(payload);
-     }, 1000))
-      return response as Room;
-  }
-);
+export const getRoom = createAsyncThunk("type/getRoom", async (payload: string | undefined) => {
+  const response = await fetch(`${API_URI}/api/rooms/` + payload);
+  const json = await response.json();
+  return json as Room;
+});
 
-export const deleteRequestRoom = createAsyncThunk(
-  "type/deleteRoom",
-  async (payload: string) => {
-      const response = await new Promise((res) =>  setTimeout(() => {
-       res(payload)
-     }, 1000))
-      return response as String
-  }
-);
+export const postRoom = createAsyncThunk("type/postRoom", async (payload: Room) => {
+  await fetch(`${API_URI}/api/rooms`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return payload as Room;
+});
+
+export const editRequestRoom = createAsyncThunk("type/editRoom", async (payload: Room) => {
+  await fetch(`${API_URI}/api/rooms/` + payload._id, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return payload as Room;
+});
+
+export const deleteRequestRoom = createAsyncThunk("type/deleteRoom", async (payload: string | undefined) => {
+  await fetch(`${process.env.REACT_APP_API_URI}/api/rooms/` + payload, {
+    method: "DELETE",
+  });
+  return payload as string | undefined;
+});

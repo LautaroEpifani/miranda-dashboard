@@ -10,6 +10,7 @@ import { sortBy } from "../../features/rooms/roomsSlice";
 import ModalDelete from "./ModalDelete";
 import React from "react";
 import { AppDispatch, RootState } from "../../app/store";
+import { Types } from "mongoose";
 
 const ContainerTable = styled.div`
   margin: 40px;
@@ -120,7 +121,7 @@ const StyledAmenities = styled.div`
 `;
 
 const StyledOfferPrice = styled.h6`
-  color: red;
+  color: #e84e2b;
 `;
 
 const GridTable = () => {
@@ -128,7 +129,7 @@ const GridTable = () => {
   const loading = useSelector((state: RootState) => state.rooms.loading);
   const dispatch = useDispatch<AppDispatch>();
   const pages = [1, 2, 3, 4, 5];
-  const [roomId, setRoomId] = useState("");
+  const [roomId, setRoomId] = useState<string | undefined>();
   const [options, setOptions] = useState(new Array(rooms.length).fill(false));
   const [modalDelete, setModalDelete] = useState(false);
   const [activeButton, setActiveButton] = useState([
@@ -216,7 +217,7 @@ const GridTable = () => {
                   </StyledTd>
                   <StyledTd>{room.room_number}</StyledTd>
                   <StyledTd>
-                    <StyledDate>{room.id}</StyledDate>
+                    <StyledDate>{room._id}</StyledDate>
                   </StyledTd>
                   <StyledTd>{room.room_type}</StyledTd>
                   <StyledTd>
@@ -234,7 +235,7 @@ const GridTable = () => {
                     <ContainerStatus>
                       <StyledButtonStatus
                         bgColor={
-                          room.status === "Avaliable" ? "#5AD07A" : "#E23428"
+                          room.status === "Available" ? "#5AD07A" : "#E23428"
                         }
                       >
                         {room.status}

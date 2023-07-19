@@ -55,6 +55,7 @@ const StyledEdit = styled.a`
 const Login = () => {
   const [login, setLogin] = useState({ userName: "asdasd", email: "", password: "" });
   const [activeUpdate, setActiveUpdate] = useState(false);
+  const API_URI = process.env.REACT_APP_API_URI;
 
   const { dispatch, userState } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -65,8 +66,9 @@ const Login = () => {
     setLogin({ ...login, [name]: value });
   };
 
-  const submitLogin = (event: React.FormEvent) => {
+  const submitLogin = async (event: React.FormEvent) => {
     event.preventDefault();
+    const response = await fetch(`${API_URI}/api/login`)
     if (!activeUpdate) {
       dispatch({ type: "login", payload: login });
     } else {
@@ -96,7 +98,7 @@ const Login = () => {
         <StyledEdit onClick={() => setActiveUpdate(false)}>Log In</StyledEdit>
         <StyledEdit onClick={() => setActiveUpdate(true)}>Edit User</StyledEdit>
       </LogoContainer>
-      <InputContainer>
+      {/* <InputContainer>
         <StyledLabel htmlFor="userName">Username</StyledLabel>
         <StyledInput
           type="text"
@@ -105,7 +107,7 @@ const Login = () => {
           defaultValue={activeUpdate ? login.userName : ""}
      
         />
-      </InputContainer>
+      </InputContainer> */}
       <InputContainer>
         <StyledLabel htmlFor="email">Email</StyledLabel>
         <StyledInput

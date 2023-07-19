@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { archiveMessage, getArchivedMessages, getMessages, postArchiveMessage } from "../../features/contact/messagesApi";
+import { getMessages, postArchiveMessage } from "../../features/contact/messagesApi";
 import React from "react";
 import { AppDispatch, RootState } from "../../app/store";
 import { Message } from "../../interfaces/interfaces";
+import { formatDate } from "../../utils/dateFormat";
 
 const ContainerTable = styled.div`
   margin: 40px;
@@ -48,7 +49,7 @@ const StyledButtonStatus = styled.button`
   border-radius: 7px;
   border: none;
   background-color: #fff;
-  color: #E23428;
+  color: #e23428;
   cursor: pointer;
 `;
 
@@ -68,11 +69,10 @@ const PaginationContainer = styled.div`
   font-size: 12px;
 `;
 
-const PageButton = styled.button<{activeButton: boolean}>`
+const PageButton = styled.button<{ activeButton: boolean }>`
   border: none;
   color: ${(props) => (props.activeButton ? "#FFF" : "#393939")};
-  background-color: ${(props) =>
-    props.activeButton ? "#135846" : "transparent"};
+  background-color: ${(props) => (props.activeButton ? "#135846" : "transparent")};
   padding: 10px;
   border-radius: 6px;
   padding-right: 15px;
@@ -104,21 +104,27 @@ interface Props {
   activeTable: boolean;
 }
 
-const GridTable = ({ activeTable }: Props) => {
-  const messages = useSelector((state: RootState) => state.messages.messagesState)
-  const loading = useSelector((state: RootState) => state.messages.loading);
-  const archived = useSelector((state: RootState) => state.messages.archivedState)
-  const dispatch = useDispatch<AppDispatch>()
-  const pages = [1, 2, 3, 4, 5];
-  const [activeButton, setActiveButton] = useState([
-    true,
-    false,
-    false,
-    false,
-    false,
-  ]);
+const initialState = {
+  date: formatDate(new Date()),
+  hour: "",
+  id: "",
+  name: "",
+  email: "",
+  phone: "",
+  subject: "",
+  comment: "",
+  archived: false,
+};
 
-  
+const GridTable = ({ activeTable }: Props) => {
+  const messages = useSelector((state: RootState) => state.messages.messagesState);
+  const loading = useSelector((state: RootState) => state.messages.loading);
+  const archived = messages.filter((messages) => messages.archived === true);
+  const filteredMessages = messages.filter((messages) => messages.archived === false);
+  const [editMessage, setEditMessage] = useState<Message>(initialState);
+  const dispatch = useDispatch<AppDispatch>();
+  const pages = [1, 2, 3, 4, 5];
+  const [activeButton, setActiveButton] = useState([true, false, false, false, false]);
 
   const [indexPagination, setIndexPagination] = useState(1);
   let firstElement = indexPagination * 10 - 10;
@@ -153,15 +159,15 @@ const GridTable = ({ activeTable }: Props) => {
   };
 
   const archiveMessageFunc = (message: Message) => {
-      dispatch(archiveMessage(message.id))
-      dispatch(postArchiveMessage(message))
-  }
+    const { _id, date, hour, id, name, email, phone, subject, comment } = message;
+    const newMessage = { _id, date, hour, id, name, email, phone, subject, comment, archived: true };
+    dispatch(postArchiveMessage(newMessage));
+  };
 
   useEffect(() => {
     colorButton(indexPagination - 1);
     if (loading === "idle") {
       dispatch(getMessages());
-      dispatch(getArchivedMessages());
     }
   }, [indexPagination, loading, dispatch]);
 
@@ -178,60 +184,53 @@ const GridTable = ({ activeTable }: Props) => {
             </tr>
           </thead>
           <tbody>
-            {
-              !activeTable ?
-              messages.slice(firstElement, lastElement).map((message: Message) => (
-              <tr key={message.id}>
-                <StyledTd>
-                  <CheckContainer>
-                    <h1>{message.date}</h1>
-                    <Styledh6>{message.hour}</Styledh6>
-                  </CheckContainer>
-                  </StyledTd>
-                <StyledTd>
-                  <div>
-                    <StyledH1>{message.name}</StyledH1>
-                    <StyledH1>{message.email}</StyledH1>
-                    <StyledH1>{message.phone}</StyledH1>
-                  </div>
-                </StyledTd>
-                <StyledTd>
-                  <h1>{message.subject}</h1>
-                </StyledTd>
-                <StyledTd>
-                  <StyledButtonStatus onClick={() => archiveMessageFunc(message)} >
-                    Archive
-                  </StyledButtonStatus>
-                </StyledTd>
-              </tr>
-            ))
-            :
-            archived.slice(firstElement, lastElement).map((message: Message) => (
-              <tr key={message.id}>
-                <StyledTd>
-                  <CheckContainer>
-                    <h1>{message.date}</h1>
-                    <Styledh6>{message.hour}</Styledh6>
-                  </CheckContainer>
-                  </StyledTd>
-                <StyledTd>
-                  <div>
-                    <h1>{message.name}</h1>
-                    <h1>{message.email}</h1>
-                    <h1>{message.phone}</h1>
-                  </div>
-                </StyledTd>
-                <StyledTd>
-                  <h1>{message.subject}</h1>
-                </StyledTd>
-                <StyledTd>
-                  <StyledButtonStatus>
-                    Archive
-                  </StyledButtonStatus>
-                </StyledTd>
-              </tr>
-            ))
-            }
+            {!activeTable
+              ? filteredMessages.slice(firstElement, lastElement).map((message: Message, index: number) => (
+                  <tr key={message._id}>
+                    <StyledTd>
+                      <CheckContainer>
+                        <h1>{message.date}</h1>
+                        <Styledh6>{message.hour}</Styledh6>
+                      </CheckContainer>
+                    </StyledTd>
+                    <StyledTd>
+                      <div>
+                        <StyledH1>{message.name}</StyledH1>
+                        <StyledH1>{message.email}</StyledH1>
+                        <StyledH1>{message.phone}</StyledH1>
+                      </div>
+                    </StyledTd>
+                    <StyledTd>
+                      <h1>{message.subject}</h1>
+                    </StyledTd>
+                    <StyledTd>
+                      <StyledButtonStatus onClick={() => archiveMessageFunc(message)}>Archive</StyledButtonStatus>
+                    </StyledTd>
+                  </tr>
+                ))
+              : archived.slice(firstElement, lastElement).map((message: Message) => (
+                  <tr key={message._id}>
+                    <StyledTd>
+                      <CheckContainer>
+                        <h1>{message.date}</h1>
+                        <Styledh6>{message.hour}</Styledh6>
+                      </CheckContainer>
+                    </StyledTd>
+                    <StyledTd>
+                      <div>
+                        <h1>{message.name}</h1>
+                        <h1>{message.email}</h1>
+                        <h1>{message.phone}</h1>
+                      </div>
+                    </StyledTd>
+                    <StyledTd>
+                      <h1>{message.subject}</h1>
+                    </StyledTd>
+                    <StyledTd>
+                      <StyledButtonStatus>Archive</StyledButtonStatus>
+                    </StyledTd>
+                  </tr>
+                ))}
           </tbody>
         </StyledTable>
       </ContainerTable>
@@ -239,9 +238,7 @@ const GridTable = ({ activeTable }: Props) => {
         Showing {messages.length} of {messages.length} Data
       </ShowingData>
       <PaginationContainer>
-        <DirectionButton onClick={() => movePaginationLeft()}>
-          Prev
-        </DirectionButton>
+        <DirectionButton onClick={() => movePaginationLeft()}>Prev</DirectionButton>
         {pages.map((page, index) => (
           <PageButton
             key={page}
@@ -254,9 +251,7 @@ const GridTable = ({ activeTable }: Props) => {
             {page}
           </PageButton>
         ))}
-        <DirectionButton onClick={() => movePaginationRight()}>
-          Next
-        </DirectionButton>
+        <DirectionButton onClick={() => movePaginationRight()}>Next</DirectionButton>
       </PaginationContainer>
     </>
   );

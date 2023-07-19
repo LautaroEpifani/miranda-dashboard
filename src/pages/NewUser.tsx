@@ -40,7 +40,6 @@ const StyledInput = styled.input`
   }
 `;
 
-
 const StyledSelect = styled.select`
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -70,10 +69,22 @@ interface HTMLInputEvent extends React.ChangeEvent {
   target: HTMLInputElement & EventTarget;
 }
 
+const initialState = {
+  employee_name: "",
+  id: "",
+  image: "",
+  email: "",
+  start_date: new Date(),
+  description: "",
+  contact: "",
+  status: "",
+  position: "",
+};
+
 const NewUser = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User>(initialState);
   const [image, setImage] = useState<string>("");
-  const [openModal, setOpenModal] = useState(false)
+  const [openModal, setOpenModal] = useState(false);
   const { state } = useLocation();
   const editUserSelected = state;
   const setTitle: (arg0: string) => void = useOutletContext();
@@ -82,8 +93,8 @@ const NewUser = () => {
   const navigate = useNavigate();
 
   const handleChange = ({ target: { name, value } }: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    if(user) {
-         setUser({ ...user, [name]: value });
+    if (user) {
+      setUser({ ...user, [name]: value });
     }
   };
 
@@ -104,27 +115,33 @@ const NewUser = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editUserSelected) {
-      if(user) {
-         user.image = image;
-          user.id = uuid();
+      if (user) {
+        user.image = image;
+        user.id = uuid();
       }
-     
       setUser(user);
       dispatch(postUser(user));
-      setOpenModal(true)
+      setOpenModal(true);
     } else {
-      setOpenModal(true)
-      dispatch(editUser(user))
-      setTimeout(() => { navigate("/users") }, 3000);
-      setTimeout(() => { setOpenModal(false) }, 3000);
+      const { _id, employee_name, id, image, email, start_date, description, contact, status, position } =
+        user;
+      const editedUser = { _id, employee_name, id, image, email, start_date, description, contact, status, position };
+      setOpenModal(true);
+      dispatch(editUser(editedUser));
+      setTimeout(() => {
+        navigate("/users");
+      }, 3000);
+      setTimeout(() => {
+        setOpenModal(false);
+      }, 3000);
     }
-     window.scrollTo(0, 0)
+    window.scrollTo(0, 0);
   };
 
   useEffect(() => {
     setTitle("New User");
-    if(editUserSelected) {
-      setUser(editUserSelected.user)
+    if (editUserSelected) {
+      setUser(editUserSelected.user);
     }
   }, [setTitle, editUserSelected]);
 
@@ -134,14 +151,7 @@ const NewUser = () => {
         <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Image</StyledLabel>
-          <StyledInput
-            multiple
-            className=""
-            type="file"
-            name="image"
-            id=""
-            onChange={handleImages}
-          />
+          <StyledInput multiple className="" type="file" name="image" id="" onChange={handleImages} />
         </StyledInputContainer>
         <StyledInputContainer>
           {" "}
@@ -150,17 +160,17 @@ const NewUser = () => {
             onChange={handleChange}
             type="text"
             name="employee_name"
-            defaultValue={
-              editUserSelected ? editUserSelected.user.employee_name : null
-            }
+            defaultValue={editUserSelected ? editUserSelected.user.employee_name : null}
           />
         </StyledInputContainer>
         <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Position</StyledLabel>
-          <StyledSelect onChange={handleChange} name="position" defaultValue={
-              editUserSelected ? editUserSelected.user.position : null
-            }>
+          <StyledSelect
+            onChange={handleChange}
+            name="position"
+            defaultValue={editUserSelected ? editUserSelected.user.position : null}
+          >
             <option value=""></option>
             <option value="Manager">Manager</option>
             <option value="Reception">Reception</option>
@@ -171,35 +181,49 @@ const NewUser = () => {
         <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Email</StyledLabel>
-          <StyledInput onChange={handleChange} type="email" name="email" defaultValue={
-              editUserSelected ? editUserSelected.user.email : null
-            }/>
+          <StyledInput
+            onChange={handleChange}
+            type="email"
+            name="email"
+            defaultValue={editUserSelected ? editUserSelected.user.email : null}
+          />
         </StyledInputContainer>
         <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Contact</StyledLabel>
-          <StyledInput onChange={handleChange} type="text" name="contact" defaultValue={
-              editUserSelected ? editUserSelected.user.contact : null
-            }/>
+          <StyledInput
+            onChange={handleChange}
+            type="text"
+            name="contact"
+            defaultValue={editUserSelected ? editUserSelected.user.contact : null}
+          />
         </StyledInputContainer>
         <StyledInputContainer>
           <StyledLabel htmlFor="">Entry Date</StyledLabel>
-          <StyledInput onChange={handleChange} type="date" name="start_date" defaultValue={
-              editUserSelected ? editUserSelected.user.start_date : null
-            }/>
+          <StyledInput
+            onChange={handleChange}
+            type="date"
+            name="start_date"
+            defaultValue={editUserSelected ? editUserSelected.user.start_date : null}
+          />
         </StyledInputContainer>
         <StyledInputContainer>
           <StyledLabel htmlFor="">Description</StyledLabel>
-          <StyledInput onChange={handleChange} type="text" name="description" defaultValue={
-              editUserSelected ? editUserSelected.user.description : null
-            } />
+          <StyledInput
+            onChange={handleChange}
+            type="text"
+            name="description"
+            defaultValue={editUserSelected ? editUserSelected.user.description : null}
+          />
         </StyledInputContainer>
         <StyledInputContainer>
           {" "}
           <StyledLabel htmlFor="">Status</StyledLabel>
-          <StyledSelect onChange={handleChange} name="status" defaultValue={
-              editUserSelected ? editUserSelected.user.status : null
-            }>
+          <StyledSelect
+            onChange={handleChange}
+            name="status"
+            defaultValue={editUserSelected ? editUserSelected.user.status : null}
+          >
             <option value=""></option>
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
@@ -211,9 +235,7 @@ const NewUser = () => {
             onChange={handleChange}
             type="password"
             name="password"
-            defaultValue={
-              editUserSelected ? editUserSelected.user.password : null
-            }
+            defaultValue={editUserSelected ? editUserSelected.user.password : null}
           />
         </StyledInputContainer>
         {!editUserSelected ? (
@@ -222,16 +244,15 @@ const NewUser = () => {
           <StyledButton type="submit">Edit user</StyledButton>
         )}
       </form>
-       {
-        openModal ? (
-        !editUserSelected ? 
-        <ModalCrud title={"Added"} button={"Add another user"} setOpenModal={setOpenModal}/>
-        :
-        <ModalCrud title={"Updated"} button={""} setOpenModal={setOpenModal}/>
+      {openModal ? (
+        !editUserSelected ? (
+          <ModalCrud title={"Added"} button={"Add another user"} setOpenModal={setOpenModal} />
+        ) : (
+          <ModalCrud title={"Updated"} button={""} setOpenModal={setOpenModal} />
         )
-        :
+      ) : (
         <></>
-       }
+      )}
     </StyledContainer>
   );
 };

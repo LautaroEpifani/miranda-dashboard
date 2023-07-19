@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { AiOutlineCloseCircle } from 'react-icons/ai'
 import { Link } from 'react-router-dom';
 import { Room } from '../../interfaces/interfaces';
+import { Types } from 'mongoose';
 
 const StyledContainer = styled.div`
     position: absolute;
@@ -45,7 +46,7 @@ interface Props {
   setOptions: (arg0: number) => void;
   index: number;
   setModalDelete: React.Dispatch<SetStateAction<boolean>>;
-  setRoomId: React.Dispatch<SetStateAction<string>>;
+  setRoomId: React.Dispatch<SetStateAction<string | undefined>>;
 }
 
 const Options = ({room , setOptions, index, setModalDelete, setRoomId}: Props) => {
@@ -59,7 +60,7 @@ const Options = ({room , setOptions, index, setModalDelete, setRoomId}: Props) =
                 Edit Room
             </StyledButton>
             </Link>
-            <StyledButton onClick={() => {setModalDelete(true); setOptions(index); setRoomId(room.id)}}>
+            <StyledButton onClick={() => {setModalDelete(true); setOptions(index); setRoomId(room._id)}}>
                 Delete Room
             </StyledButton>
         </StyledContainerButtons>

@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { deleteRequestRoom } from "../../features/rooms/roomApi";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../app/store";
+import { Types } from "mongoose";
 
 const StyledModalDelete = styled.div`
   position: absolute;
@@ -51,7 +52,7 @@ const StyledButton = styled.button`
 
 interface Props {
   setModalDelete: React.Dispatch<SetStateAction<boolean>>;
-  id: string;
+  id: string | undefined;
 }
 
 const ModalDelete = ({ setModalDelete, id }: Props) => {

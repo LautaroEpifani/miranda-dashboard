@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { AiOutlineCloseCircle } from 'react-icons/ai'
 import { Link } from 'react-router-dom';
 import { Booking } from '../../interfaces/interfaces';
+import { Types } from "mongoose"
 
 const StyledContainer = styled.div`
     position: absolute;
@@ -45,7 +46,7 @@ interface Props {
   setOptionsFunc: (arg0: number) => void;
   index: number;
   setModalDelete: React.Dispatch<SetStateAction<boolean>>;
-  setBookingId: React.Dispatch<SetStateAction<string>>;
+  setBookingId: React.Dispatch<SetStateAction<string | undefined>>;
 }
 
 const Options = ({booking, setOptionsFunc, index, setModalDelete, setBookingId}: Props) => {
@@ -59,7 +60,7 @@ const Options = ({booking, setOptionsFunc, index, setModalDelete, setBookingId}:
                 Edit Booking
             </StyledButton>
             </Link>
-            <StyledButton onClick={() => {setModalDelete(true); setOptionsFunc(index); setBookingId(booking.id)}}>
+            <StyledButton onClick={() => {setModalDelete(true); setOptionsFunc(index); setBookingId(booking._id)}}>
                 Delete Booking
             </StyledButton>
         </StyledContainerButtons>

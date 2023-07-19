@@ -45,7 +45,7 @@ interface Props {
   setOptions: (arg0: number) => void;
   index: number;
   setModalDelete: React.Dispatch<SetStateAction<boolean>>;
-  setUserId: React.Dispatch<SetStateAction<string>>;
+  setUserId: React.Dispatch<SetStateAction<string | undefined>>;
 }
 
 
@@ -60,7 +60,7 @@ const Options = ({user, setOptions, index, setModalDelete, setUserId}: Props) =>
                 Edit User
             </StyledButton>
             </Link>
-            <StyledButton onClick={() => {setModalDelete(true); setOptions(index); setUserId(user.id)}}>
+            <StyledButton onClick={() => {setModalDelete(true); setOptions(index); setUserId(user._id)}}>
                 Delete User
             </StyledButton>
         </StyledContainerButtons>

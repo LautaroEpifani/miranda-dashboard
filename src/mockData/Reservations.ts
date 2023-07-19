@@ -8,6 +8,7 @@ export const reservationsData = [{
       image: room1,
       room: "3",
       client: "James Doe",
+      status: "Available Now",
       entry: "1/05/2023",
       departure: "12/08/2023",
     },
@@ -17,6 +18,7 @@ export const reservationsData = [{
       image: room2,
       room: "10",
       client: "Laura Lopez",
+      status: "Available Now",
       entry: "1/05/2023",
       departure: "12/08/2023",
     },
@@ -26,6 +28,7 @@ export const reservationsData = [{
       image: room3,
       room: "2",
       client: "José García",
+      status: "Available Now",
       entry: "1/05/2023",
       departure: "12/08/2023",
     },]

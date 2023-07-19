@@ -46,6 +46,7 @@ const StyledSelect = styled.select`
   border-radius: 8px;
   padding: 8px;
   padding-left: 12px;
+  padding-right: 20px;
   color: #135846;
   font-weight: 600;
   font-family: "Poppins", sans-serif;

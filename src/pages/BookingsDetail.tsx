@@ -8,10 +8,11 @@ import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
 import { useCallback, useEffect, useState } from "react";
 import { AmenitiesIcon } from "../components/Amenities";
 import { useDispatch, useSelector } from "react-redux";
-import { getRooms } from "../features/rooms/roomApi";
+import { getRoom, getRooms } from "../features/rooms/roomApi";
 import React from "react";
 import { AppDispatch, RootState } from "../app/store";
 import { Room } from "../interfaces/interfaces";
+import { formatDate } from "../utils/dateFormat";
 
 const DetailContainer = styled(ContainerBetween)`
   font-family: "Poppins", sans-serif;
@@ -100,13 +101,13 @@ const SpecialRequest = styled.h1`
   margin-bottom: 30px;
 `;
 
-// const StyledImg = styled.img`
-//   width: 100%;
-//   height: 500px;
-//   border-radius: 10px;
-//   border-top-left-radius: 0px;
-//   border-bottom-left-radius: 0px;
-// `;
+const StyledImg = styled.img`
+  width: 100%;
+  height: 500px;
+  border-radius: 10px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+`;
 
 const SliderDetails = styled.div`
   position: absolute;
@@ -211,10 +212,9 @@ const StyledAmenities = styled.div`
 
 const BookingsDetail = () => {
   const { state } = useLocation();
-  const { image, guest, id, check_in, check_out, room_type, special_request } = state.booking;
+  const { guest, _id, room_id, check_in, check_out, room_type, special_request } = state.booking;
   const roomImgs = [Room1, Room1front];
-  const [room, setRoom] = useState<Room[] | []>([]);
-  const rooms = useSelector((state: RootState) => state.rooms.roomsState);
+  const room = useSelector((state: RootState) => state.rooms.roomsState);
   const loading = useSelector((state: RootState) => state.rooms.loading);
   const dispatch = useDispatch<AppDispatch>();
   const [slideIndex, setSlideIndex] = useState(0);
@@ -236,46 +236,50 @@ const BookingsDetail = () => {
     }
   };
 
-  const roomType = useCallback(() => {
-    const room = rooms.filter((r) => r.room_type === room_type);
-    setRoom(room);
-  }, [room_type, rooms]);
+  // const getRoomDetails = useCallback(() => {
+  //   const room = rooms.find((r) => r._id === room_id);
+  //   setRoom(room);
+  //   console.log(room)
+  // }, [room_id, rooms]);
 
   useEffect(() => {
-    setTitle("Room Details");
-    roomType();
+    setTitle("Booking Details");
     if (loading === "idle") {
-      dispatch(getRooms());
+      (async () => {
+        await dispatch(getRoom(room_id));
+      })();
+
     }
-  }, [setTitle, roomType, dispatch, loading]);
+  }, [setTitle, dispatch, loading,  room_id]);
+
+  console.log(room);
 
   return (
     <DetailContainer>
       <Details>
         <GuestContainer>
           <ContainerImage>
-            <StyledImage src={image.images0 ? image.images0 : image} alt="" />
             <div>
               <h1>{guest}</h1>
-              <IdGuest>ID: {id}</IdGuest>
+              <IdGuest>ID: {_id}</IdGuest>
             </div>
           </ContainerImage>
         </GuestContainer>
         <CheckContainer>
           <StyledH1>
             Check In <br></br>
-            <br></br> <StyledSpan>{check_in}</StyledSpan>
+            <br></br> <StyledSpan>{formatDate(check_in)}</StyledSpan>
           </StyledH1>
           <StyledH1>
             Check Out <br></br>
-            <br></br> <StyledSpan>{check_out}</StyledSpan>
+            <br></br> <StyledSpan>{formatDate(check_out)}</StyledSpan>
           </StyledH1>
         </CheckContainer>
         <StyledBar></StyledBar>
         <RoomContainer>
           <StyledH1>
             Room info <br></br>
-            <br></br> <StyledSpan2>{room_type}</StyledSpan2>
+            <br></br> <StyledSpan2>{room[0].room_type}</StyledSpan2>
           </StyledH1>
           <StyledH1>
             Price<br></br>
@@ -290,7 +294,7 @@ const BookingsDetail = () => {
           <StyledH1Amenities>Amenities</StyledH1Amenities>
           <ContainerBetween>
             <StyledAmenities>
-              {room[0]?.amenities.map((amenitie, index: number) => (
+              {room[0].amenities.map((amenitie, index: number) => (
                 <AmenitiesIcon key={index} icon={amenitie.icon} title={""} />
               ))}
             </StyledAmenities>
@@ -301,7 +305,7 @@ const BookingsDetail = () => {
         <StyledRibbon>
           <StyledRibbonSpan>In Progress</StyledRibbonSpan>
         </StyledRibbon>
-        {/* <StyledImg src={room[0].image} alt="" /> */}
+        <StyledImg src={room[0].images[0]} alt="" />
         <SliderDetails>
           <ButtonLeft onClick={() => moveSlideLeft()}>
             <AiOutlineArrowLeft />
@@ -309,11 +313,9 @@ const BookingsDetail = () => {
           <ButtonRight onClick={() => moveSlideRight()}>
             <AiOutlineArrowRight />
           </ButtonRight>
-          <h1>Queen Bed A-10294</h1>
+          <h1>{room[0].room_type} </h1>
           <RoomDescription>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi quam, necessitatibus nesciunt optio error
-            aspernatur doloribus rem fugiat dolorum quibusdam minima consequuntur nam nulla obcaecati assumenda natus
-            tenetur? Magnam ex quis omnis autem, unde quibusdam blanditiis mollitia nemo repellendus aliquid.
+          {room[0].description} 
           </RoomDescription>
         </SliderDetails>
       </SliderContainer>
