@@ -56,7 +56,6 @@ const StyledEdit = styled.a`
 const Login = () => {
   const [login, setLogin] = useState({ userName: "", email: "", password: "" });
   const [activeUpdate, setActiveUpdate] = useState(false);
-  const [token, setToken] = useState("false");
   const API_URI = process.env.REACT_APP_API_URI;
 
   const { dispatch, userState } = useContext(AuthContext);
@@ -89,6 +88,7 @@ const Login = () => {
     } else {
       navigate("/login");
     }
+   
   };
 
   useEffect(() => {

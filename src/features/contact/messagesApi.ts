@@ -4,9 +4,14 @@ import { getItem } from "../../utils/localStorage";
 
 const API_URI = process.env.REACT_APP_API_URI;
 let token = "";
+const tokenRes = async() => {
+  token = await getItem("token");
+  return token;
+}
+
+tokenRes();
 
 export const getMessages = createAsyncThunk("messages/getMessages", async () => {
-  token = await getItem("token")
   const response = await fetch(`${API_URI}/api/messages`, {
     headers: {
       Authorization: `Bearer ${token}`,
