@@ -16,33 +16,16 @@ export const getMessages = createAsyncThunk("messages/getMessages", async () => 
   return json as Message[];
 });
 
-// export const getArchivedMessages = createAsyncThunk(
-//   'messages/getArchivedMessages',
-//   async () => {
-//       const response = await new Promise((res) =>  setTimeout(() => {
-//        res([])
-//      }, 1000))
-//       return response as Message[]
-//   }
-// );
-
 export const postArchiveMessage = createAsyncThunk("type/postArchiveMessage", async (payload: Message) => {
   await fetch(`${API_URI}/api/messages/` + payload._id, {
     method: "PATCH",
     body: JSON.stringify(payload),
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
   return payload as Message;
 });
 
-// export const archiveMessage = createAsyncThunk(
-//   "type/archiveMessage",
-//   async (payload: string | undefined) => {
-//       const response = await new Promise((res) =>  setTimeout(() => {
-//        res(payload)
-//      }, 1000))
-//       return response as string | undefined
-//   }
-// );
+

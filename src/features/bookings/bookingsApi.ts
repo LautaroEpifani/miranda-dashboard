@@ -22,6 +22,7 @@ export const postBooking = createAsyncThunk("type/postBooking", async (payload: 
     body: JSON.stringify(payload),
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
   return payload as Booking;
@@ -33,6 +34,7 @@ export const editBooking = createAsyncThunk("type/editBooking", async (payload: 
     body: JSON.stringify(payload),
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
   return payload as Booking;
@@ -41,6 +43,10 @@ export const editBooking = createAsyncThunk("type/editBooking", async (payload: 
 export const deleteBooking = createAsyncThunk("type/deleteBooking", async (payload: string | undefined) => {
   await fetch(`${API_URI}/api/bookings/` + payload, {
     method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   });
   return payload as string | undefined;
 });

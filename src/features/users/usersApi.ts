@@ -27,6 +27,7 @@ export const postUser = createAsyncThunk(
       body: JSON.stringify(payload),
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     return payload as User;
@@ -41,6 +42,7 @@ export const editUser = createAsyncThunk(
       body: JSON.stringify(payload),
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     return payload as User;
@@ -52,6 +54,10 @@ export const deleteUser = createAsyncThunk(
   async (payload: string | undefined) => {
     await fetch(`${API_URI}/api/users/` + payload, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
     return payload as string | undefined;
   }

@@ -17,7 +17,11 @@ export const getRooms = createAsyncThunk("type/getRooms", async () => {
 });
 
 export const getRoom = createAsyncThunk("type/getRoom", async (payload: string | undefined) => {
-  const response = await fetch(`${API_URI}/api/rooms/` + payload);
+  const response = await fetch(`${API_URI}/api/rooms/` + payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   const json = await response.json();
   return json as Room;
 });
@@ -28,6 +32,7 @@ export const postRoom = createAsyncThunk("type/postRoom", async (payload: Room) 
     body: JSON.stringify(payload),
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
   return payload as Room;
@@ -39,6 +44,7 @@ export const editRequestRoom = createAsyncThunk("type/editRoom", async (payload:
     body: JSON.stringify(payload),
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
   return payload as Room;
@@ -47,6 +53,10 @@ export const editRequestRoom = createAsyncThunk("type/editRoom", async (payload:
 export const deleteRequestRoom = createAsyncThunk("type/deleteRoom", async (payload: string | undefined) => {
   await fetch(`${process.env.REACT_APP_API_URI}/api/rooms/` + payload, {
     method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   });
   return payload as string | undefined;
 });
