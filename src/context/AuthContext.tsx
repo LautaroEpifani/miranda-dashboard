@@ -1,7 +1,7 @@
 import React, { Dispatch,  useReducer } from "react";
 import { createContext } from "react";
 import { LoginUser } from "../interfaces/interfaces";
-import { getItem } from "../utils/localStorage";
+import { getItem, setItem } from "../utils/localStorage";
 
 const INITIAL_STATE = {
     userState: { userName: "", email: "", password: ""},
@@ -32,6 +32,7 @@ export const AuthContextProvider = ({ children }: Props) => {
         return action.payload
       case "logout":
         const newObj =  { userName: "", email: "", password: ""};
+        setItem("token", "");
         return newObj;
       case "updateUser":
         return state;

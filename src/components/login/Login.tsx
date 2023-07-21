@@ -6,6 +6,7 @@ import logo from "../../assets/logo.png";
 import { getItem, setItem } from "../../utils/localStorage";
 import { useContext } from "react";
 import AuthContext from "../../context/AuthContext";
+import fetch from 'cross-fetch'
 
 const FormContainer = styled.form`
   width: 40%;
@@ -53,46 +54,52 @@ const StyledEdit = styled.a`
 `;
 
 const Login = () => {
-  const [login, setLogin] = useState({ userName: "asdasd", email: "", password: "" });
+  const [login, setLogin] = useState({ userName: "", email: "", password: "" });
   const [activeUpdate, setActiveUpdate] = useState(false);
+  const [token, setToken] = useState("false");
   const API_URI = process.env.REACT_APP_API_URI;
 
   const { dispatch, userState } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const handleChange = ({
-    target: { name, value },
-  }: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = ({ target: { name, value } }: React.ChangeEvent<HTMLInputElement>) => {
     setLogin({ ...login, [name]: value });
   };
 
   const submitLogin = async (event: React.FormEvent) => {
     event.preventDefault();
-    const response = await fetch(`${API_URI}/api/login`)
+    const body = JSON.stringify(login)
+    const response = await fetch(`${API_URI}/api/login`, {
+      method: "POST",
+      body: body,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const json = await response.json()
+    setItem("token", json.token);
     if (!activeUpdate) {
       dispatch({ type: "login", payload: login });
     } else {
       setActiveUpdate(false);
       dispatch({ type: "updateUser", payload: login });
     }
-    if(userState.email === "asd@asd.com" && userState.password === "asdasd") {
-      navigate("/")
-    } else{
-      navigate("/login")
+    if (userState.email === login.email && userState.password === login.password) {
+      navigate("/");
+    } else {
+      navigate("/login");
     }
   };
-
 
   useEffect(() => {
     if (activeUpdate) {
       setLogin(getItem("loginUser"));
     }
     setItem("loginUser", userState);
-   
   }, [activeUpdate, userState, navigate]);
 
   return (
-    <FormContainer onSubmit={submitLogin} >
+    <FormContainer onSubmit={submitLogin}>
       <LogoContainer>
         <StyledImage src={logo} alt="" />
         <StyledEdit onClick={() => setActiveUpdate(false)}>Log In</StyledEdit>
@@ -120,20 +127,17 @@ const Login = () => {
       </InputContainer>
       <InputContainer>
         <StyledLabel htmlFor="password">Password</StyledLabel>
-        <StyledInput type="password" name="password" onChange={handleChange}  data-cy="password"/>
+        <StyledInput type="password" name="password" onChange={handleChange} data-cy="password" />
       </InputContainer>
       {activeUpdate ? (
         <StyledButton type="submit">Update User</StyledButton>
       ) : (
-        <StyledButton type="submit" data-cy="login">Log In</StyledButton>
+        <StyledButton type="submit" data-cy="login">
+          Log In
+        </StyledButton>
       )}
     </FormContainer>
   );
 };
 
 export default Login;
-
-
-
-
-

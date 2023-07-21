@@ -8,6 +8,7 @@ import { editBooking, postBooking } from "../features/bookings/bookingsApi";
 import React from "react";
 import { AppDispatch } from "../app/store";
 import { Booking } from "../interfaces/interfaces";
+import { formatDate, inputDateFormat } from "../utils/dateFormat";
 
 const StyledContainer = styled.div`
   background-color: #fff;
@@ -174,7 +175,7 @@ const NewBooking = () => {
     }
   }, [setTitle, editBookingSelected, navigate, state]);
 
-
+console.log(booking.order_date)
 
   return (
     <StyledContainer>
@@ -228,7 +229,7 @@ const NewBooking = () => {
             onChange={handleChange}
             type="date"
             name="order_date"
-            defaultValue={editBookingSelected ? editBookingSelected.booking.order_date : null}
+            defaultValue={editBookingSelected ? inputDateFormat(editBookingSelected.order_date) : ""}
           />
         </StyledInputContainer>
         <StyledInputContainer>
@@ -238,7 +239,7 @@ const NewBooking = () => {
             onChange={handleChange}
             type="date"
             name="check_in"
-            defaultValue={editBookingSelected ? editBookingSelected.booking.check_in : null}
+            defaultValue={editBookingSelected ? inputDateFormat(editBookingSelected.check_in) : ""}
           />
         </StyledInputContainer>
         <StyledInputContainer>
@@ -248,7 +249,7 @@ const NewBooking = () => {
             onChange={handleChange}
             type="date"
             name="check_out"
-            defaultValue={editBookingSelected ? editBookingSelected.booking.check_out : null}
+            defaultValue={editBookingSelected ? inputDateFormat(editBookingSelected.check_out) : ""}
           />
         </StyledInputContainer>
         <StyledInputContainer>

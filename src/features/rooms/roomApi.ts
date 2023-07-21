@@ -1,10 +1,17 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Room } from "../../interfaces/interfaces";
+import { getItem } from "../../utils/localStorage";
 
 const API_URI = process.env.REACT_APP_API_URI;
+let token = "";
 
 export const getRooms = createAsyncThunk("type/getRooms", async () => {
-  const response = await fetch(`${API_URI}/api/rooms`);
+  token = await getItem("token");
+  const response = await fetch(`${API_URI}/api/rooms`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   const json = await response.json();
   return json as Room[];
 });

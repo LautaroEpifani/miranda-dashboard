@@ -1,11 +1,17 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { messagesList } from "../../mockData/Messages";
 import { Message } from "../../interfaces/interfaces";
+import { getItem } from "../../utils/localStorage";
 
 const API_URI = process.env.REACT_APP_API_URI;
+let token = "";
 
 export const getMessages = createAsyncThunk("messages/getMessages", async () => {
-  const response = await fetch(`${API_URI}/api/messages`);
+  token = await getItem("token")
+  const response = await fetch(`${API_URI}/api/messages`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   const json = await response.json();
   return json as Message[];
 });
