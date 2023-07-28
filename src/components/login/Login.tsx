@@ -72,6 +72,10 @@ const Login = () => {
       method: "POST",
       body: body,
       headers: {
+        "Acces-Control-Allow-Headers": '*',
+        "Access-Control-Allow-Origin": '*',
+        "Access-Control-Allow-Methods": '*',
+        "Accept": '*/*',
         "Content-Type": "application/json",
       },
     });

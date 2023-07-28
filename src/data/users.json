@@ -1,0 +1,46 @@
+[
+  {
+    "employee_name": "Gabriela Lopex",
+    "id": 1,
+    "image": "",
+    "email": "gabiLopez@gmail.com",
+    "start_date": "2023-05-13",
+    "description": " Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate rem perferendis nobis deleniti laborum nesciunt a porro laboriosam temporibus sint.",
+    "contact": "651567689",
+    "status": "Active",
+    "position": "Manager"
+  },
+  {
+    "employee_name": "Diego Higa",
+    "id": 2,
+    "image": "",
+    "email": "diegoh@gmail.com",
+    "start_date": "2023-05-01",
+    "description": " Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate rem perferendis nobis deleniti laborum nesciunt a porro laboriosam temporibus sint.",
+    "contact": "651567689",
+    "status": "Active",
+    "position": "Manager"
+  },
+  {
+    "employee_name": "Elena Mara",
+    "id": 3,
+    "image": "",
+    "email": "elenamara@gmail.com",
+    "start_date": "2023-06-01",
+    "description": " Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate rem perferendis nobis deleniti laborum nesciunt a porro laboriosam temporibus sint.",
+    "contact": "651567689",
+    "status": "Inactive",
+    "position": "Manager"
+  },
+  {
+    "employee_name": "New User",
+    "image": "",
+    "email": "elenamara@gmail.com",
+    "start_date": "2023-06-01",
+    "description": " Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate rem perferendis nobis deleniti laborum nesciunt a porro laboriosam temporibus sint.",
+    "contact": "651567689",
+    "status": "Inactive",
+    "position": "Manager",
+    "id": 4
+  }
+]

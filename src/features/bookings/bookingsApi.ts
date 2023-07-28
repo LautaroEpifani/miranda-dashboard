@@ -55,3 +55,4 @@ export const deleteBooking = createAsyncThunk("type/deleteBooking", async (paylo
   });
   return payload as string | undefined;
 });
+

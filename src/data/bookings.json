@@ -1,0 +1,58 @@
+[
+  {
+    "id": "asd",
+    "guest": "New Booking",
+    "image": "",
+    "room_type": "Double Bed",
+    "check_in": "2023-05-01",
+    "check_out": "2023-05-01",
+    "order_date": "2023-05-01",
+    "special_request": " Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate rem perferendis nobis deleniti laborum nesciunt a porro laboriosam temporibus sint.",
+    "status": "Check In",
+    "room_number": 10,
+    "color": "",
+    "bgr_Color": ""
+  },
+  {
+    "id": "sffef",
+    "guest": "New Booking Test 2",
+    "image": "",
+    "room_type": "Double Bed",
+    "check_in": "2023-05-01",
+    "check_out": "2023-05-01",
+    "order_date": "2023-05-01",
+    "special_request": " Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate rem perferendis nobis deleniti laborum nesciunt a porro laboriosam temporibus sint.",
+    "status": "Check In",
+    "room_number": 10,
+    "color": "",
+    "bgr_Color": ""
+  },
+  {
+    "id": "asfdadfqwd",
+    "guest": "New Booking Test 3",
+    "image": "",
+    "room_type": "Double Bed",
+    "check_in": "2023-05-01",
+    "check_out": "2023-05-01",
+    "order_date": "2023-05-01",
+    "special_request": " Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate rem perferendis nobis deleniti laborum nesciunt a porro laboriosam temporibus sint.",
+    "status": "Check In",
+    "room_number": 10,
+    "color": "",
+    "bgr_color": ""
+  },
+  {
+    "id": "asdasdads",
+    "guest": "New Booking Test 5",
+    "image": "",
+    "room_type": "Double Bed",
+    "check_in": "2023-05-01",
+    "check_out": "2023-05-01",
+    "order_date": "2023-05-01",
+    "special_request": " Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate rem perferendis nobis deleniti laborum nesciunt a porro laboriosam temporibus sint.",
+    "status": "Check In",
+    "room_number": 10,
+    "color": "",
+    "bgr_color": ""
+  }
+]
