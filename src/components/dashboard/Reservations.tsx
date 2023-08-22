@@ -65,6 +65,11 @@ font-weight: 300;
   color: #000;
 `;
 
+const StyledT = styled.p`
+font-weight: 300;
+  color: #000;
+`;
+
 const Reservations = () => {
   const colors = ["#135846", "#E23428", "#FB9F44"];
   return (
