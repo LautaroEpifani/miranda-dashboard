@@ -60,6 +60,11 @@ const ViewMore = styled.h1`
  width: 100%;
 `;
 
+const StyledP = styled.p`
+font-weight: 300;
+  color: #000;
+`;
+
 const Reservations = () => {
   const colors = ["#135846", "#E23428", "#FB9F44"];
   return (
@@ -71,7 +76,7 @@ const Reservations = () => {
             <div style={{ paddingTop: "20px", paddingBottom: "20px" }}>
               <ClientContainer>
                 <Title>{reservation.title}</Title>
-                <ViewMore>{reservation.status}</ViewMore>
+                <ViewMore>{reservation.numbers} <StyledP> Reservations </StyledP></ViewMore>
               </ClientContainer>
             </div>
           </SubContainer>

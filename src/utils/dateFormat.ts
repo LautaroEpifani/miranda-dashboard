@@ -11,6 +11,5 @@ export const formatTime = (date: Date) => {
 export const inputDateFormat = (date: Date) => {
     const newDate = new Date(date)
     const d = newDate.getFullYear() + "-" + newDate.getMonth() + "-" + newDate.getDate() as string;
-    console.log(d)
     return  newDate.getFullYear() + "-" + newDate.getMonth() + "-" + newDate.getDate() as string;
 }

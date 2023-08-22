@@ -156,7 +156,6 @@ const NewRoom = () => {
 
   //HandleChange for Amenities
   const handleCheckbox = (index: number, { target: { name } }: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(name);
     isChecked[index] = !isChecked[index];
     setIsChecked(isChecked);
     if (isChecked[index]) {

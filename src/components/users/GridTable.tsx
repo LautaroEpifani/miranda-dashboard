@@ -48,6 +48,14 @@ const StyledDate = styled.h6`
   font-weight: 400;
 `;
 
+const StyledDescr = styled.h6`
+  font-weight: 400;
+  font-size: 11px;
+  text-align: left;
+  margin-top: 25px;
+`;
+
+
 const StyledButtonStatus = styled.button<{bgColor: string}>`
   padding-top: 14px;
   padding-bottom: 14px;
@@ -232,7 +240,7 @@ const GridTable = ({ searchUser }: Props) => {
                 <StyledTd>
                   <StyledDate>{user.start_date.toString()}</StyledDate>
                 </StyledTd>
-                <StyledTd>{user.description}</StyledTd>
+                <StyledDescr>{user.description}</StyledDescr>
                 <StyledTd>{user.contact}</StyledTd>
                 <StyledTd>
                   <ContainerStatus>

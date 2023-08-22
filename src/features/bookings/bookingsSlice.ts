@@ -35,7 +35,6 @@ export const bookingsSlice = createSlice({
       state.loading = "rejected";
     });
     builder.addCase(postBooking.fulfilled, (state, action) => {
-      console.log(action.payload)
       state.bookingsState.push(action.payload);
     });
     builder.addCase(editBooking.fulfilled, (state, action) => {

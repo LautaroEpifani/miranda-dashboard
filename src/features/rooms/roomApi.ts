@@ -3,15 +3,9 @@ import { Room } from "../../interfaces/interfaces";
 import { getItem } from "../../utils/localStorage";
 
 const API_URI = process.env.REACT_APP_API_URI;
-let token = "";
-const tokenRes = async() => {
-  token = await getItem("token");
-  return token;
-}
-
-tokenRes();
 
 export const getRooms = createAsyncThunk("type/getRooms", async () => {
+  const token = await getItem("token");
   const response = await fetch(`${API_URI}/api/rooms`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -22,6 +16,7 @@ export const getRooms = createAsyncThunk("type/getRooms", async () => {
 });
 
 export const getRoom = createAsyncThunk("type/getRoom", async (payload: string | undefined) => {
+  const token = await getItem("token");
   const response = await fetch(`${API_URI}/api/rooms/` + payload, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -32,6 +27,7 @@ export const getRoom = createAsyncThunk("type/getRoom", async (payload: string |
 });
 
 export const postRoom = createAsyncThunk("type/postRoom", async (payload: Room) => {
+  const token = await getItem("token");
   await fetch(`${API_URI}/api/rooms`, {
     method: "POST",
     body: JSON.stringify(payload),
@@ -44,6 +40,7 @@ export const postRoom = createAsyncThunk("type/postRoom", async (payload: Room) 
 });
 
 export const editRequestRoom = createAsyncThunk("type/editRoom", async (payload: Room) => {
+  const token = await getItem("token");
   await fetch(`${API_URI}/api/rooms/` + payload._id, {
     method: "PATCH",
     body: JSON.stringify(payload),
@@ -56,6 +53,7 @@ export const editRequestRoom = createAsyncThunk("type/editRoom", async (payload:
 });
 
 export const deleteRequestRoom = createAsyncThunk("type/deleteRoom", async (payload: string | undefined) => {
+  const token = await getItem("token");
   await fetch(`${process.env.REACT_APP_API_URI}/api/rooms/` + payload, {
     method: "DELETE",
     headers: {

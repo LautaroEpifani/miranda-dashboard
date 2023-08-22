@@ -6,7 +6,6 @@ import { Booking } from "../interfaces/interfaces";
 
 const Bookings = () => {
   const setTitle: (arg0: string) => void = useOutletContext()
- 
   const [searchBooking, setSearchBooking] = useState<Booking[] | null>(null);
   useEffect(() => {
     setTitle("Bookings")

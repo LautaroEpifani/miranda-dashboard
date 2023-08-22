@@ -3,17 +3,11 @@ import { User } from "../../interfaces/interfaces";
 import { getItem } from "../../utils/localStorage";
 
 const API_URI = process.env.REACT_APP_API_URI;
-let token = "";
-const tokenRes = async() => {
-  token = await getItem("token");
-  return token;
-}
-
-tokenRes();
 
 export const getUsers = createAsyncThunk(
   'users/getUsers',
   async () => {
+    const token = await getItem("token");
     const response = await fetch(`${API_URI}/api/users`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -27,6 +21,7 @@ export const getUsers = createAsyncThunk(
 export const postUser = createAsyncThunk(
   "type/postUser",
   async (payload: User) => {
+    const token = await getItem("token");
     await fetch(`${API_URI}/api/users`, {
       method: "POST",
       body: JSON.stringify(payload),
@@ -42,6 +37,7 @@ export const postUser = createAsyncThunk(
 export const editUser = createAsyncThunk(
   "type/editUser",
   async (payload: User) => {
+    const token = await getItem("token");
     await fetch(`${API_URI}/api/users/` + payload._id, {
       method: "PATCH",
       body: JSON.stringify(payload),
@@ -57,6 +53,7 @@ export const editUser = createAsyncThunk(
 export const deleteUser = createAsyncThunk(
   "type/deleteUser",
   async (payload: string | undefined) => {
+    const token = await getItem("token");
     await fetch(`${API_URI}/api/users/` + payload, {
       method: "DELETE",
       headers: {

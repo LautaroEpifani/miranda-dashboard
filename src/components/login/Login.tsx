@@ -9,7 +9,7 @@ import AuthContext from "../../context/AuthContext";
 import fetch from 'cross-fetch'
 
 const FormContainer = styled.form`
-  width: 40%;
+  width: 50%;
   margin: 0 auto;
   margin-top: 10%;
   padding: 40px;
@@ -47,9 +47,14 @@ const StyledImage = styled.img`
   margin-right: 20px;
 `;
 
+const StyledContainerEdit = styled.div`
+  margin-top: 40px;
+`;
+
 const StyledEdit = styled.a`
   text-decoration: underline;
-  margin-left: 50px;
+  margin-left: 10px;
+  margin-right: 50px;
   cursor: pointer;
 `;
 
@@ -67,17 +72,11 @@ const Login = () => {
 
   const submitLogin = async (event: React.FormEvent) => {
     event.preventDefault();
-    const body = JSON.stringify(login)
+    const { email, password } = login;
+    const body = JSON.stringify({email, password});
     const response = await fetch(`${API_URI}/api/login`, {
       method: "POST",
       body: body,
-      headers: {
-        "Acces-Control-Allow-Headers": '*',
-        "Access-Control-Allow-Origin": '*',
-        "Access-Control-Allow-Methods": '*',
-        "Accept": '*/*',
-        "Content-Type": "application/json",
-      },
     });
     const json = await response.json()
     setItem("token", json.token);
@@ -87,7 +86,7 @@ const Login = () => {
       setActiveUpdate(false);
       dispatch({ type: "updateUser", payload: login });
     }
-    if (userState.email === login.email && userState.password === login.password) {
+    if (json.token) {
       navigate("/");
     } else {
       navigate("/login");
@@ -106,8 +105,12 @@ const Login = () => {
     <FormContainer onSubmit={submitLogin}>
       <LogoContainer>
         <StyledImage src={logo} alt="" />
-        <StyledEdit onClick={() => setActiveUpdate(false)}>Log In</StyledEdit>
-        <StyledEdit onClick={() => setActiveUpdate(true)}>Edit User</StyledEdit>
+        {/* <StyledEdit onClick={() => setActiveUpdate(false)}>Log In</StyledEdit>
+        <StyledEdit onClick={() => setActiveUpdate(true)}>Edit User</StyledEdit> */}
+        <StyledContainerEdit>
+        User Acces:<StyledEdit> Nikko.Beatty98@hotmail.com</StyledEdit>
+        Password:<StyledEdit> fPSvMNCBtO</StyledEdit>
+        </StyledContainerEdit>
       </LogoContainer>
       {/* <InputContainer>
         <StyledLabel htmlFor="userName">Username</StyledLabel>

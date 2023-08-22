@@ -6,7 +6,7 @@ import { TfiKey } from "react-icons/tfi";
 import { BsCalendarCheck } from "react-icons/bs";
 import { BiUser } from "react-icons/bi";
 import { HiOutlinePuzzle } from "react-icons/hi";
-import {  useState } from "react";
+import {  useEffect, useState } from "react";
 import { LogoContainer } from "../styledComponents/styled";
 import { Link } from "react-router-dom";
 import React from "react";

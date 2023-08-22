@@ -175,8 +175,6 @@ const NewBooking = () => {
     }
   }, [setTitle, editBookingSelected, navigate, state]);
 
-console.log(booking.order_date)
-
   return (
     <StyledContainer>
       <StyledForm action="" onSubmit={handleSubmit} openModal={openModal}>

@@ -2,7 +2,7 @@ import {useContext, useEffect, useState } from "react";
 import { NavBar } from "../components/NavBar";
 import SideBard from "../components/SideBard";
 import styled from "styled-components";
-import { Navigate, Outlet} from "react-router-dom";
+import { Navigate, Outlet, useLocation, useNavigate} from "react-router-dom";
 import React from "react";
 import AuthContext from "../context/AuthContext";
 import { getItem, setItem } from "../utils/localStorage";
@@ -30,11 +30,12 @@ const Layout =  ({ children }: Props) => {
 
   useEffect(() => {
     setItem("loginUser", userState);
+   
   }, [userState]);
 
   return (
     <>
-    { userState.email !== "" && userState.password !== "" ?
+    {Object.keys(userState).length !== 0  ?
     <StyledContainer>
       <SideBard openSideBar={openSideBar} />
       <NavStretch openSideBar={openSideBar}>

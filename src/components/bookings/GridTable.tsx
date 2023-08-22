@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Options from "./Options";
 import ModalDelete from "./ModalDelete";
 import { getBookings } from "../../features/bookings/bookingsApi";

@@ -9,6 +9,7 @@ export const ContainerBetween = styled.div`
 export const LogoContainer = styled.div`
   margin-bottom: 40px;
   padding-left: 40px;
+  width: 100%;
 `;
 
 export const NavTitle = styled.h1`

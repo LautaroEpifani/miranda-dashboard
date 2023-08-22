@@ -252,8 +252,6 @@ const BookingsDetail = () => {
     }
   }, [setTitle, dispatch, loading,  room_id]);
 
-  console.log(room);
-
   return (
     <DetailContainer>
       <Details>
