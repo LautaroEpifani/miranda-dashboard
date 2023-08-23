@@ -37,12 +37,6 @@ width: 100%;
   padding-left: 10px;
 `;
 
-const Client = styled.div`
-  font-size: 12px;
-  font-weight: 500;
-  color: #393939;
-`;
-
 const Room = styled.div`
   padding: 20px;
   padding-top: 10px;
@@ -65,10 +59,6 @@ font-weight: 300;
   color: #000;
 `;
 
-const StyledT = styled.p`
-font-weight: 300;
-  color: #000;
-`;
 
 const Reservations = () => {
   const colors = ["#135846", "#E23428", "#FB9F44"];
