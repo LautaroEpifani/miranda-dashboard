@@ -108,8 +108,8 @@ const Login = () => {
         {/* <StyledEdit onClick={() => setActiveUpdate(false)}>Log In</StyledEdit>
         <StyledEdit onClick={() => setActiveUpdate(true)}>Edit User</StyledEdit> */}
         <StyledContainerEdit>
-        User Acces:<StyledEdit> user@gmail.com</StyledEdit>
-        Password:<StyledEdit> 1234</StyledEdit>
+        User Acces:<StyledEdit>user@gmail.com</StyledEdit>
+        Password:<StyledEdit>1234</StyledEdit>
         </StyledContainerEdit>
       </LogoContainer>
       {/* <InputContainer>

@@ -78,7 +78,8 @@ interface Props {
 
 export const NavBar = ({ openSideBar, setOpenSideBar, title }: Props) => {
   const messages = useSelector((state: RootState) => state.messages.messagesState);
-  const [notifications, setNotifications] = useState(87);
+  const filteredMessages = messages.filter((messages) => messages.archived === false);
+  const [notifications, setNotifications] = useState(1);
 
   const { dispatch } = useContext(AuthContext);
 
@@ -102,7 +103,7 @@ export const NavBar = ({ openSideBar, setOpenSideBar, title }: Props) => {
         <Icons>
           <NotifContainer>
             <HiOutlineMail />
-            <Notifications>{messages.length}</Notifications>
+            <Notifications>{filteredMessages.length}</Notifications>
           </NotifContainer>
           <NotifContainer>
             <MdOutlineNotifications />

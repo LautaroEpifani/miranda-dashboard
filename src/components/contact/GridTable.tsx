@@ -121,7 +121,6 @@ const GridTable = ({ activeTable }: Props) => {
   const loading = useSelector((state: RootState) => state.messages.loading);
   const archived = messages.filter((messages) => messages.archived === true);
   const filteredMessages = messages.filter((messages) => messages.archived === false);
-  const [editMessage, setEditMessage] = useState<Message>(initialState);
   const dispatch = useDispatch<AppDispatch>();
   const pages = [1, 2, 3, 4, 5];
   const [activeButton, setActiveButton] = useState([true, false, false, false, false]);
@@ -234,9 +233,15 @@ const GridTable = ({ activeTable }: Props) => {
           </tbody>
         </StyledTable>
       </ContainerTable>
-      <ShowingData>
-        Showing {messages.length} of {messages.length} Data
-      </ShowingData>
+      {!activeTable ? (
+        <ShowingData>
+          Showing {filteredMessages.slice(firstElement, lastElement).length} of {filteredMessages.length} Data
+        </ShowingData>
+      ) : (
+        <ShowingData>
+          Showing {archived.slice(firstElement, lastElement).length} of {messages.length} Data
+        </ShowingData>
+      )}
       <PaginationContainer>
         <DirectionButton onClick={() => movePaginationLeft()}>Prev</DirectionButton>
         {pages.map((page, index) => (

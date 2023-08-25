@@ -46,9 +46,9 @@ const StyledA = styled.button`
 `;
 
 const ContainerSections = styled.div`
+  width: 40%;
   display: flex;
   justify-content: space-between;
-  gap: 60px;
 `;
 
 export const ContainerInput = styled.div`
@@ -161,9 +161,9 @@ const Menu = ({ setSearchBooking }: Props) => {
       <SubContainer>
         <ContainerSections>
           <StyledA  onClick={() => { allBookings(); changeMargin("0%")}} >All Bookings</StyledA>
-          <StyledA  onClick={() => {checkInBookings(); changeMargin("25%")}}>Cheking In</StyledA>
-          <StyledA onClick={() => {checkOutBookings(); changeMargin("50%")}}>Cheking Out</StyledA>
-          <StyledA onClick={() => {inProgressBookings(); changeMargin("75%")}}>In Progress</StyledA>
+          <StyledA  onClick={() => {checkInBookings(); changeMargin("22.5%")}}>Cheking In</StyledA>
+          <StyledA onClick={() => {checkOutBookings(); changeMargin("45%")}}>Cheking Out</StyledA>
+          <StyledA onClick={() => {inProgressBookings(); changeMargin("70%")}}>In Progress</StyledA>
         </ContainerSections>
         <ContainerInput>
           <StyledSearch

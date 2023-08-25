@@ -365,9 +365,15 @@ const GridTable = ({ searchBooking }: Props) => {
           </tbody>
         </StyledTable>
       </ContainerTable>
-      <ShowingData>
-        Showing {bookings.length} of {bookings.length} Data
-      </ShowingData>
+      {searchBooking ? (
+        <ShowingData>
+          Showing {searchBooking.slice(firstElement, lastElement).length} of {searchBooking.length} Data
+        </ShowingData>
+      ) : (
+        <ShowingData>
+          Showing {bookings.slice(firstElement, lastElement).length} of {bookings.length} Data
+        </ShowingData>
+      )}
       <PaginationContainer>
         <DirectionButton onClick={() => movePaginationLeft()}>Prev</DirectionButton>
         {pages.map((page, index) => (

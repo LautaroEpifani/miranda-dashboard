@@ -6,10 +6,13 @@ import { TfiKey } from "react-icons/tfi";
 import { BsCalendarCheck } from "react-icons/bs";
 import { BiUser } from "react-icons/bi";
 import { HiOutlinePuzzle } from "react-icons/hi";
-import {  useEffect, useState } from "react";
+import {  useContext, useEffect, useState } from "react";
 import { LogoContainer } from "../styledComponents/styled";
 import { Link } from "react-router-dom";
 import React from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../app/store";
+import AuthContext from "../context/AuthContext";
 
 const SbContainer = styled.div<{openSideBar: boolean}>`
   position: absolute;
@@ -94,6 +97,7 @@ const ContactUsButton = styled.button`
   font-size: 12px;
   font-weight: 600;
   color: #135846;
+  cursor: pointer;
 `;
 
 const FootTitle = styled(CardTitle)`
@@ -114,13 +118,10 @@ interface Props {
 }
 
 const SideBard = ({ openSideBar }: Props) => {
-  const [activeLink, setActiveLink] = useState([
-    false,
-    false,
-    false,
-    false,
-    false,
-  ]);
+  const users = useSelector((state: RootState) => state.users.usersState);
+  const admin = users.find(user => user.employee_name === "Admin");
+  const { dispatch } = useContext(AuthContext);
+  const [activeLink, setActiveLink] = useState(new Array(5).fill(false));
 
   const changeActive = (index: number) => {
     let updatedLinks = [...activeLink];
@@ -131,6 +132,8 @@ const SideBard = ({ openSideBar }: Props) => {
    setActiveLink(updatedLinks)
     ;
   };
+
+
 
 
   return (
@@ -175,14 +178,16 @@ const SideBard = ({ openSideBar }: Props) => {
       <CardContainer>
         <img
           style={{ borderRadius: "10px" }}
-          src={guest}
+          src={admin?.image}
           alt=""
           width={50}
           height={50}
         />
-        <CardTitle>William Johanson</CardTitle>
-        <Email>williamjh@gmail.com</Email>
-        <ContactUsButton>Contact Us</ContactUsButton>
+        <CardTitle>{admin?.employee_name}</CardTitle>
+        <Email>{admin?.email}</Email>
+        <Link to={"/login"}  onClick={() => dispatch({ type: "logout", payload: { userName: "", email: "", password: ""}})}>
+        <ContactUsButton>Log Out</ContactUsButton>
+        </Link>
       </CardContainer>
       <div className="footerContainer">
         <FootTitle>Tavl Hotel Admin Dashboard</FootTitle>

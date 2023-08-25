@@ -44,19 +44,18 @@ const StyledTd = styled.td`
   vertical-align: middle;
 `;
 
-const StyledDate = styled.h6`
+const StyledDate = styled.p`
   font-weight: 400;
 `;
 
-const StyledDescr = styled.h6`
+const StyledDescr = styled.p`
   font-weight: 400;
   font-size: 11px;
   text-align: left;
   margin-top: 25px;
 `;
 
-
-const StyledButtonStatus = styled.button<{bgColor: string}>`
+const StyledButtonStatus = styled.button<{ bgColor: string }>`
   padding-top: 14px;
   padding-bottom: 14px;
   border-radius: 7px;
@@ -74,13 +73,6 @@ const ContainerStatus = styled.div`
   position: relative;
 `;
 
-const Styledh6 = styled.h6`
-  font-weight: 300;
-  font-size: 10px;
-  padding: 0;
-  margin: 0;
-`;
-
 const PaginationContainer = styled.div`
   padding-top: 5px;
   display: flex;
@@ -91,11 +83,10 @@ const PaginationContainer = styled.div`
   font-size: 12px;
 `;
 
-const PageButton = styled.button<{activeButton: boolean}>`
+const PageButton = styled.button<{ activeButton: boolean }>`
   border: none;
   color: ${(props) => (props.activeButton ? "#FFF" : "#393939")};
-  background-color: ${(props) =>
-    props.activeButton ? "#135846" : "transparent"};
+  background-color: ${(props) => (props.activeButton ? "#135846" : "transparent")};
   padding: 10px;
   border-radius: 6px;
   padding-right: 15px;
@@ -114,7 +105,7 @@ const DirectionButton = styled.button`
   font-family: "Poppins", sans-serif;
 `;
 
-const ShowingData = styled.h6`
+const ShowingData = styled.div`
   padding-left: 80px;
   font-size: 10px;
 `;
@@ -125,9 +116,17 @@ const StyledContainerGuest = styled.div`
   align-items: center;
 `;
 
-const StyledH1 = styled.h1`
+const StyledP1 = styled.p`
   color: #222222;
 `;
+
+const StyledP2 = styled.p`
+  font-weight: 300;
+  font-size: 10px;
+  padding: 0;
+  margin: 0;
+`;
+
 
 const StyledImage = styled.img`
   width: 40px;
@@ -147,13 +146,7 @@ const GridTable = ({ searchUser }: Props) => {
   const [options, setOptions] = useState(new Array(users.length).fill(false));
   const [userId, setUserId] = useState<string | undefined>();
   const [modalDelete, setModalDelete] = useState(false);
-  const [activeButton, setActiveButton] = useState([
-    true,
-    false,
-    false,
-    false,
-    false,
-  ]);
+  const [activeButton, setActiveButton] = useState([true, false, false, false, false]);
 
   const [indexPagination, setIndexPagination] = useState(1);
   let firstElement = indexPagination * 10 - 10;
@@ -216,130 +209,112 @@ const GridTable = ({ searchUser }: Props) => {
             </tr>
           </thead>
           <tbody>
-            {searchUser ? 
-
-              searchUser.slice(firstElement, lastElement).map((user, index) => (
-              <tr key={user._id}>
-                <StyledTd>
-                  {" "}
-                  <StyledContainerGuest>
-                    <StyledImage
-                      src={user.image
-                      }
-                      alt=""
-                    />
-                    <div>
-                      <StyledH1>{user.employee_name}</StyledH1>
-                      <Styledh6>{user.id}</Styledh6>
-                    </div>
-                  </StyledContainerGuest>
-                </StyledTd>
-                <StyledTd>
-                  <h1>{user.email}</h1>
-                </StyledTd>
-                <StyledTd>
-                  <StyledDate>{user.start_date.toString()}</StyledDate>
-                </StyledTd>
-                <StyledDescr>{user.description}</StyledDescr>
-                <StyledTd>{user.contact}</StyledTd>
-                <StyledTd>
-                  <ContainerStatus>
-                    <StyledButtonStatus
-                      bgColor={user.status === "Active" ? "#5AD07A" : "#E23428"}
-                    >
-                      {user.status}
-                    </StyledButtonStatus>
-                    {!options[index] ? (
-                      <BsThreeDotsVertical
-                        onClick={() => {
-                          setOptionsFunc(index);
-                        }}
-                      />
-                    ) : (
-                      <Options
-                        setModalDelete={setModalDelete}
-                        user={user}
-                        setOptions={setOptionsFunc}
-                        index={index}
-                        setUserId={setUserId}
-                      />
-                    )}
-                  </ContainerStatus>
-                </StyledTd>
-                {modalDelete ? (
-                  <ModalDelete setModalDelete={setModalDelete} id={userId} />
-                ) : (
-                  <></>
-                )}
-              </tr>
-            ))
-
-             : 
-            users.slice(firstElement, lastElement).map((user, index) => (
-              <tr key={user._id}>
-                <StyledTd>
-                  {" "}
-                  <StyledContainerGuest>
-                    <StyledImage
-                      src={user.image
-                        }
-                      alt=""
-                    />
-                    <div>
-                      <StyledH1>{user.employee_name}</StyledH1>
-                      <Styledh6>{user.id}</Styledh6>
-                    </div>
-                  </StyledContainerGuest>
-                </StyledTd>
-                <StyledTd>
-                  <h1>{user.email}</h1>
-                </StyledTd>
-                <StyledTd>
-                  <StyledDate>{user.start_date.toString()}</StyledDate>
-                </StyledTd>
-                <StyledTd>{user.description}</StyledTd>
-                <StyledTd>{user.contact}</StyledTd>
-                <StyledTd>
-                  <ContainerStatus>
-                    <StyledButtonStatus
-                      bgColor={user.status === "Active" ? "#5AD07A" : "#E23428"}
-                    >
-                      {user.status}
-                    </StyledButtonStatus>
-                    {!options[index] ? (
-                      <BsThreeDotsVertical
-                        onClick={() => {
-                          setOptionsFunc(index);
-                        }}
-                      />
-                    ) : (
-                      <Options
-                        setModalDelete={setModalDelete}
-                        user={user}
-                        setOptions={setOptionsFunc}
-                        index={index}
-                        setUserId={setUserId}
-                      />
-                    )}
-                  </ContainerStatus>
-                </StyledTd>
-                {modalDelete ? (
-                  <ModalDelete setModalDelete={setModalDelete} id={userId} />
-                ) : (
-                  <></>
-                )}
-              </tr>
-            ))}
+            {searchUser
+              ? searchUser.slice(firstElement, lastElement).map((user, index) => (
+                  <tr key={user._id}>
+                    <StyledTd>
+                      {" "}
+                      <StyledContainerGuest>
+                        <StyledImage src={user.image} alt="" />
+                        <div>
+                          <StyledP1>{user.employee_name}</StyledP1>
+                          <StyledP2>{user.id}</StyledP2>
+                        </div>
+                      </StyledContainerGuest>
+                    </StyledTd>
+                    <StyledTd>
+                      <h1>{user.email}</h1>
+                    </StyledTd>
+                    <StyledTd>
+                      <StyledDate>{user.start_date.toString()}</StyledDate>
+                    </StyledTd>
+                    <StyledTd>{user.description}</StyledTd>
+                    <StyledTd>{user.contact}</StyledTd>
+                    <StyledTd>
+                      <ContainerStatus>
+                        <StyledButtonStatus bgColor={user.status === "Active" ? "#5AD07A" : "#E23428"}>
+                          {user.status}
+                        </StyledButtonStatus>
+                        {!options[index] ? (
+                          <BsThreeDotsVertical
+                            onClick={() => {
+                              setOptionsFunc(index);
+                            }}
+                          />
+                        ) : (
+                          <Options
+                            setModalDelete={setModalDelete}
+                            user={user}
+                            setOptions={setOptionsFunc}
+                            index={index}
+                            setUserId={setUserId}
+                          />
+                        )}
+                      </ContainerStatus>
+                    </StyledTd>
+                    {modalDelete ? <ModalDelete setModalDelete={setModalDelete} id={userId} /> : <></>}
+                  </tr>
+                ))
+              : users.slice(firstElement, lastElement).map((user, index) => (
+                  <tr key={user._id}>
+                    <StyledTd>
+                      {" "}
+                      <StyledContainerGuest>
+                        <StyledImage src={user.image} alt="" />
+                        <div>
+                          <StyledP1>{user.employee_name}</StyledP1>
+                          <StyledP2>{user.id}</StyledP2>
+                        </div>
+                      </StyledContainerGuest>
+                    </StyledTd>
+                    <StyledTd>
+                      <h1>{user.email}</h1>
+                    </StyledTd>
+                    <StyledTd>
+                      <StyledDate>{user.start_date.toString()}</StyledDate>
+                    </StyledTd>
+                    <StyledTd>{user.description}</StyledTd>
+                    <StyledTd>{user.contact}</StyledTd>
+                    <StyledTd>
+                      <ContainerStatus>
+                        <StyledButtonStatus bgColor={user.status === "Active" ? "#5AD07A" : "#E23428"}>
+                          {user.status}
+                        </StyledButtonStatus>
+                        {!options[index] ? (
+                          <BsThreeDotsVertical
+                            onClick={() => {
+                              setOptionsFunc(index);
+                            }}
+                          />
+                        ) : (
+                          <Options
+                            setModalDelete={setModalDelete}
+                            user={user}
+                            setOptions={setOptionsFunc}
+                            index={index}
+                            setUserId={setUserId}
+                          />
+                        )}
+                      </ContainerStatus>
+                    </StyledTd>
+                    {modalDelete ? <ModalDelete setModalDelete={setModalDelete} id={userId} /> : <></>}
+                  </tr>
+                ))}
           </tbody>
         </StyledTable>
       </ContainerTable>
-      <ShowingData>
-        Showing {users.length} of {users.length} Data
-      </ShowingData>
+      {searchUser ? (
+        <ShowingData>
+          Showing {searchUser.slice(firstElement, lastElement).length} of {searchUser.length} Data
+        </ShowingData>
+      ) : (
+        <ShowingData>
+          Showing {users.slice(firstElement, lastElement).length} of {users.length} Data
+        </ShowingData>
+      )}
+
       <PaginationContainer>
-        <DirectionButton onClick={() => movePaginationLeft()}>
-          Prev
-        </DirectionButton>
+        <DirectionButton onClick={() => movePaginationLeft()}>Prev</DirectionButton>
         {pages.map((page, index) => (
           <PageButton
             key={page}
@@ -352,9 +327,7 @@ const GridTable = ({ searchUser }: Props) => {
             {page}
           </PageButton>
         ))}
-        <DirectionButton onClick={() => movePaginationRight()}>
-          Next
-        </DirectionButton>
+        <DirectionButton onClick={() => movePaginationRight()}>Next</DirectionButton>
       </PaginationContainer>
     </>
   );

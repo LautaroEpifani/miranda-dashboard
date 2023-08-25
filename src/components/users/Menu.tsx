@@ -45,9 +45,9 @@ const StyledA = styled.a`
 `;
 
 const ContainerSections = styled.div`
+  width: 40%;
   display: flex;
   justify-content: space-between;
-  gap: 60px;
 `;
 
 const SelectContainer = styled.div`
@@ -142,8 +142,8 @@ const Menu = ({ setSearchUser }: Props) => {
       <SubContainer>
         <ContainerSections>
           <StyledA  onClick={() => { allEmployees(); changeMargin("0%")}} >All Employees</StyledA>
-          <StyledA  onClick={() => {activeEmployees(); changeMargin("30%")}}>Active Employees</StyledA>
-          <StyledA onClick={() => {inactiveEmployees(); changeMargin("68%")}}>Inactive Employees</StyledA>
+          <StyledA  onClick={() => {activeEmployees(); changeMargin("27%")}}>Active Employees</StyledA>
+          <StyledA onClick={() => {inactiveEmployees(); changeMargin("60%")}}>Inactive Employees</StyledA>
         </ContainerSections>
         <ContainerInput>
           <StyledSearch

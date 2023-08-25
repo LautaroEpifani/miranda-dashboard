@@ -132,6 +132,7 @@ const ButtonRight = styled(SliderButtons)`
 
 const Messages = () => {
   const messages = useSelector((state: RootState) => state.messages.messagesState);
+  const filteredMessages = messages.filter((messages) => messages.archived === false);
   const loading = useSelector((state: RootState) => state.messages.loading);
   const dispatch = useDispatch<AppDispatch>()
   const initialPopup = new Array(messages.length).fill(false);
@@ -171,7 +172,9 @@ const Messages = () => {
   };
 
   const archiveMessageFunc = (message: Message) => {
-      dispatch(postArchiveMessage(message));
+    const { _id, date, hour, id, name, email, phone, subject, comment } = message;
+    const newMessage = { _id, date, hour, id, name, email, phone, subject, comment, archived: true };
+    dispatch(postArchiveMessage(newMessage));
   }
 
 
@@ -186,7 +189,7 @@ const Messages = () => {
       <h1 style={{ color: "#393939" }}>New Messages</h1>
       <MessagesContainer popup={popup}>
         <MessagesSubContainer>
-          {messages.slice(slideIndex, messages.length).map((message: Message, index: number) => (
+          {filteredMessages.slice(slideIndex, messages.length).map((message: Message, index: number) => (
             <StyledMessage key={message._id}>
               <div>
                 <StyledH2>{message.subject}</StyledH2>

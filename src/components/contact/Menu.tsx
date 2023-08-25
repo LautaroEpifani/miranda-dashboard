@@ -26,9 +26,9 @@ const StyledA = styled.a`
 `;
 
 const ContainerSections = styled.div`
+  width: 20%;
   display: flex;
   justify-content: space-between;
-  gap: 60px;
 `;
 
 const SelectContainer = styled.div`
