@@ -52,7 +52,9 @@ const StyledSelect = styled.select`
   font-family: "Poppins", sans-serif;
 `;
 
-const StyledOption = styled.option``;
+const StyledOption = styled.option`
+  padding: 2px;
+`;
 
 const StyledArrow = styled(TiArrowSortedDown)`
   position: absolute;
