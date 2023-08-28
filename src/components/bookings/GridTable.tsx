@@ -42,16 +42,14 @@ const StyledTh = styled.th`
 const StyledTd = styled.td`
   padding: 20px;
   font-size: 12px;
-  padding-left: 30px;
-  padding-right: 10px;
   color: #393939;
   font-weight: 600;
   position: relative;
+  text-align: center;
 `;
 
 const StyledButtonView = styled.button`
   width: 120px;
-  padding: 20px;
   padding-top: 14px;
   padding-bottom: 14px;
   border-radius: 7px;
@@ -61,7 +59,8 @@ const StyledButtonView = styled.button`
 `;
 
 const StyledDate = styled.h6`
-  font-weight: 400;
+  text-align: center;
+  font-weight: 600;
 `;
 
 const ContainerStatus = styled.div`
@@ -259,12 +258,12 @@ const GridTable = ({ searchBooking }: Props) => {
                     </StyledTd>
                     <StyledTd>
                       <CheckContainer>
-                        <h1>{formatDate(booking.check_in)}</h1>
+                      <StyledDate>{formatDate(booking.check_in)}</StyledDate>
                       </CheckContainer>
                     </StyledTd>
                     <StyledTd>
                       <CheckContainer>
-                        <h1>{formatDate(booking.check_out)}</h1>
+                      <StyledDate>{formatDate(booking.check_out)}</StyledDate>
                       </CheckContainer>
                     </StyledTd>
                     <StyledTd>

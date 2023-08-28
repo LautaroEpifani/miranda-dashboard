@@ -23,7 +23,7 @@ const SubContainer = styled(ContainerBetween)`
 `;
 
 const Bar = styled.div<{margin: string}>`
-  width: 32%;
+  width: 30%;
   margin-left: ${(props) => (props.margin)};
   margin-top: 5px;
   height: 2px;
@@ -45,7 +45,7 @@ const StyledA = styled.a`
 `;
 
 const ContainerSections = styled.div`
-  width: 40%;
+  width: 39%;
   display: flex;
   justify-content: space-between;
 `;
@@ -142,8 +142,8 @@ const Menu = ({ setSearchUser }: Props) => {
       <SubContainer>
         <ContainerSections>
           <StyledA  onClick={() => { allEmployees(); changeMargin("0%")}} >All Employees</StyledA>
-          <StyledA  onClick={() => {activeEmployees(); changeMargin("27%")}}>Active Employees</StyledA>
-          <StyledA onClick={() => {inactiveEmployees(); changeMargin("60%")}}>Inactive Employees</StyledA>
+          <StyledA  onClick={() => {activeEmployees(); changeMargin("28%")}}>Active Employees</StyledA>
+          <StyledA onClick={() => {inactiveEmployees(); changeMargin("59%")}}>Inactive Employees</StyledA>
         </ContainerSections>
         <ContainerInput>
           <StyledSearch

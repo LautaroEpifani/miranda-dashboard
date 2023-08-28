@@ -39,7 +39,6 @@ const StyledTd = styled.td`
   padding: 20px;
   font-size: 12px;
   color: #393939;
-  font-weight: 600;
   text-align: center;
   vertical-align: middle;
 `;
@@ -118,15 +117,15 @@ const StyledContainerGuest = styled.div`
 
 const StyledP1 = styled.p`
   color: #222222;
+  font-weight: 600;
 `;
 
 const StyledP2 = styled.p`
-  font-weight: 300;
   font-size: 10px;
   padding: 0;
   margin: 0;
+  font-weight: 600;
 `;
-
 
 const StyledImage = styled.img`
   width: 40px;
@@ -223,13 +222,13 @@ const GridTable = ({ searchUser }: Props) => {
                       </StyledContainerGuest>
                     </StyledTd>
                     <StyledTd>
-                      <h1>{user.email}</h1>
+                    <StyledP2>{user.email} </StyledP2>
                     </StyledTd>
                     <StyledTd>
                       <StyledDate>{user.start_date.toString()}</StyledDate>
                     </StyledTd>
-                    <StyledTd>{user.description}</StyledTd>
-                    <StyledTd>{user.contact}</StyledTd>
+                    <StyledTd><StyledDescr>{user.description}</StyledDescr></StyledTd>
+                    <StyledTd> <StyledP2>{user.contact} </StyledP2></StyledTd>
                     <StyledTd>
                       <ContainerStatus>
                         <StyledButtonStatus bgColor={user.status === "Active" ? "#5AD07A" : "#E23428"}>
@@ -268,13 +267,13 @@ const GridTable = ({ searchUser }: Props) => {
                       </StyledContainerGuest>
                     </StyledTd>
                     <StyledTd>
-                      <h1>{user.email}</h1>
+                    <StyledP2>{user.email}</StyledP2>
                     </StyledTd>
                     <StyledTd>
                       <StyledDate>{user.start_date.toString()}</StyledDate>
                     </StyledTd>
-                    <StyledTd>{user.description}</StyledTd>
-                    <StyledTd>{user.contact}</StyledTd>
+                    <StyledTd><StyledDescr>{user.description}</StyledDescr></StyledTd>
+                    <StyledTd><StyledP2>{user.contact}</StyledP2></StyledTd>
                     <StyledTd>
                       <ContainerStatus>
                         <StyledButtonStatus bgColor={user.status === "Active" ? "#5AD07A" : "#E23428"}>
